@@ -4,6 +4,7 @@ import { useState } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockMemoryRooms, MemoryRoom, MemoryObject } from '@/lib/mock-data';
 import { Plus, Pencil, Trash2, Sparkles, ChevronRight, ChevronDown } from 'lucide-react';
+import MemoryRoomSVG from '@/components/ui/MemoryRoomSVG';
 import styles from './page.module.css';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -67,6 +68,9 @@ export default function MemoryRoomPage() {
     return (
         <div className={styles.page}>
             <GuardianHeader title="Memory Room Manager" subtitle="Ravi's home mapped for cognitive recall training" />
+            <div className={styles.roomMapWrap}>
+                <MemoryRoomSVG className={styles.roomMap} />
+            </div>
             <main className={styles.content}>
                 {/* Room overview */}
                 <div className={styles.roomOverview}>

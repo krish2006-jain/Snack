@@ -415,3 +415,17 @@ export const mockHealthRecords: HealthRecord[] = [
         facility: 'Fortis Hospital Noida',
     },
 ]
+
+export interface Report {
+    id: string
+    title: string
+    type: string
+    date: string
+    summary?: string
+}
+
+export const mockReports: Report[] = [
+    { id: 'r-1', title: 'Monthly Cognitive Summary - Feb 2026', type: 'Clinical', date: '28-02-2026', summary: 'Cognitive scores show mild fluctuations; no acute decline.' },
+    { id: 'r-2', title: 'Medication Adherence Report', type: 'Pharmacy', date: '15-02-2026', summary: 'Adherence 92% for prescribed medications this month.' },
+    { id: 'r-3', title: 'Quarterly Geofence & Wandering Log', type: 'Safety', date: '01-01-2026', summary: 'No high-risk wandering events recorded during the quarter.' },
+]

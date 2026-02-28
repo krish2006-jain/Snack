@@ -64,8 +64,8 @@ export default function LoginPage() {
         setLoading(true)
         setError('')
 
-        // Simulate auth delay
-        await new Promise((r) => setTimeout(r, 700))
+        // Simulate fetch delay to feel like real data
+        await new Promise((r) => setTimeout(r, 2500))
 
         const match = demoAccounts.find(
             (a) => a.email === email && a.password === password && a.role === role
@@ -78,6 +78,20 @@ export default function LoginPage() {
         }
 
         router.push(ROLE_REDIRECTS[role])
+    }
+
+    if (loading && !error) {
+        return (
+            <div className={styles.page}>
+                <div className="orb orb--bg-top-left" aria-hidden="true" />
+                <div className="orb orb--bg-bottom-right" aria-hidden="true" />
+                <div className={styles.container} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '24px' }}>
+                    <div className={styles.spinner} style={{ width: '40px', height: '40px', borderTopColor: 'var(--color-primary)' }} aria-label="Loading…" />
+                    <h2 className={styles.cardTitle}>Authenticating...</h2>
+                    <p className={styles.cardSubtitle}>Fetching real-time care data from backend...</p>
+                </div>
+            </div>
+        )
     }
 
     return (

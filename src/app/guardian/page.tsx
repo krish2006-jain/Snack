@@ -11,6 +11,7 @@ import {
     Brain, Calendar, Smile, Zap, Gamepad2, QrCode,
     AlertTriangle, ChevronRight, TrendingUp, CheckCircle2
 } from 'lucide-react';
+import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import styles from './page.module.css';
 
 function CognitiveTrendChart({ scores }: { scores: { date: string; score: number }[] }) {
@@ -119,7 +120,7 @@ export default function GuardianDashboard() {
                                     <div>
                                         <span className={styles.cardLabel}>Cognitive Score</span>
                                         <div className={styles.scoreRow}>
-                                            <span className={styles.scoreNum}>72</span>
+                                            <span className={styles.scoreNum}><AnimatedNumber value={72} /></span>
                                             <span className={styles.scoreMax}>/100</span>
                                             <span className={styles.scoreDelta}>
                                                 <TrendingUp size={13} aria-hidden="true" /> +3 this week
@@ -137,15 +138,15 @@ export default function GuardianDashboard() {
                                 </div>
                                 <div className={styles.featuredStats}>
                                     <div className={styles.fStat}>
-                                        <span className={styles.fStatNum}>87%</span>
+                                        <span className={styles.fStatNum}><AnimatedNumber value={87} suffix="%" /></span>
                                         <span className={styles.fStatLabel}>Medication adherence</span>
                                     </div>
                                     <div className={styles.fStat}>
-                                        <span className={styles.fStatNum}>78%</span>
+                                        <span className={styles.fStatNum}><AnimatedNumber value={78} suffix="%" /></span>
                                         <span className={styles.fStatLabel}>Avg recall rate</span>
                                     </div>
                                     <div className={styles.fStat}>
-                                        <span className={styles.fStatNum}>{mockAnalytics.gameStreak}d</span>
+                                        <span className={styles.fStatNum}><AnimatedNumber value={mockAnalytics.gameStreak} suffix="d" /></span>
                                         <span className={styles.fStatLabel}>Game streak</span>
                                     </div>
                                 </div>
@@ -198,7 +199,7 @@ export default function GuardianDashboard() {
                                     <Link href="/guardian/memories" className={styles.viewAll}>View</Link>
                                 </div>
                                 <div className={styles.recallScore}>
-                                    <span className={styles.recallNum}>85%</span>
+                                    <span className={styles.recallNum}><AnimatedNumber value={85} suffix="%" /></span>
                                     <span className={styles.recallLbl}>family recognition</span>
                                 </div>
                                 <div className={styles.recallBar} role="meter" aria-valuenow={85} aria-valuemin={0} aria-valuemax={100} aria-label="85% recall">
@@ -216,7 +217,7 @@ export default function GuardianDashboard() {
                                     <Link href="/guardian/games" className={styles.viewAll}>View</Link>
                                 </div>
                                 <div className={styles.streakWrap}>
-                                    <span className={styles.streakNum}>{mockAnalytics.gameStreak}</span>
+                                    <span className={styles.streakNum}><AnimatedNumber value={mockAnalytics.gameStreak} /></span>
                                     <span className={styles.streakText}>day streak 🔥</span>
                                 </div>
                                 {latestGame && (
@@ -260,7 +261,7 @@ export default function GuardianDashboard() {
                                     <Link href="/guardian/qr" className={styles.viewAll}>Manage</Link>
                                 </div>
                                 <div className={styles.qrCount}>
-                                    <span className={styles.qrNum}>{mockQRScans.length}</span>
+                                    <span className={styles.qrNum}><AnimatedNumber value={mockQRScans.length} /></span>
                                     <span className={styles.qrLbl}>scans in 30 days</span>
                                 </div>
                                 <ul className={styles.qrLog}>

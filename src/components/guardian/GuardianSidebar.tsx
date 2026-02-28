@@ -16,7 +16,7 @@ const navItems = [
     { href: '/guardian/people', label: 'People Wallet', icon: Users },
     { href: '/guardian/memory-room', label: 'Memory Room', icon: Home },
     { href: '/guardian/games', label: 'Games', icon: Gamepad2 },
-    { href: '/guardian/health-records', label: 'Health Records', icon: FileText },
+    { href: '/guardian/health', label: 'Health Records', icon: FileText },
     { href: '/guardian/qr', label: 'QR Code', icon: QrCode },
     { href: '/guardian/alerts', label: 'Alerts', icon: Bell, badge: 2 },
     { href: '/guardian/analytics', label: 'Analytics', icon: BarChart3 },
