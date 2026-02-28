@@ -343,6 +343,54 @@
     color: var(--color-primary);
 }
 
+@media (max-width: 600px) {
+    .header {
+        padding: var(--space-3) var(--space-4);
+        gap: var(--space-2);
+    }
+
+    .gameTitle {
+        font-size: 17px;
+    }
+
+    .content {
+        padding: var(--space-5) var(--space-4);
+    }
+
+    .wordItem {
+        font-size: 24px;
+        padding: var(--space-4) var(--space-6);
+    }
+
+    .chip {
+        padding: 10px 18px;
+        font-size: 16px;
+        min-height: 46px;
+    }
+
+    .chipGrid {
+        gap: var(--space-2);
+    }
+
+    .memoriseInstruction,
+    .recallInstruction {
+        font-size: 16px;
+    }
+
+    .resultTitle {
+        font-size: 24px;
+    }
+
+    .resultSub {
+        font-size: 16px;
+    }
+
+    .resultWord {
+        font-size: 16px;
+        padding: var(--space-3) var(--space-4);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .wordItem {
         animation: none;

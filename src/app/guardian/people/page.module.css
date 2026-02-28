@@ -392,6 +392,32 @@
     justify-content: flex-end;
 }
 
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .formGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .editGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .statCard {
+        min-width: auto;
+    }
+
+    .formCard {
+        padding: var(--space-4);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     .personCard,

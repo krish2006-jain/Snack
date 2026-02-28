@@ -15,6 +15,7 @@ import {
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 function SkeletonDash() {
@@ -54,28 +55,12 @@ const MoodIcon = ({ score }: { score: number }) => {
 
 export default function CaretakerDashboard() {
     const [loaded, setLoaded] = useState(false);
-    const [userName, setUserName] = useState('Anita');
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || caretakerProfile.firstName;
 
     useEffect(() => {
         const t = setTimeout(() => setLoaded(true), 700);
         return () => clearTimeout(t);
-    }, []);
-
-    useEffect(() => {
-        const stored = localStorage.getItem('saathi_user');
-        if (stored) {
-            try {
-                const u = JSON.parse(stored);
-                const fullName = u.name || u;
-                setUserName(fullName.split(' ')[0]);
-            } catch {
-                // if parse fails, use caretaker profile default
-                setUserName(caretakerProfile.firstName);
-            }
-        } else {
-            // if no localStorage, use caretaker profile default
-            setUserName(caretakerProfile.firstName);
-        }
     }, []);
 
     const completedTasks = todaysTasks.filter(t => t.status === 'completed').length;

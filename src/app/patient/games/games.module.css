@@ -118,13 +118,17 @@
     flex-direction: column;
     gap: var(--space-4);
     position: relative;
-    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    transition: all 200ms ease;
 }
 
 .gameCard:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-elevated);
     border-color: rgba(45, 90, 61, 0.3);
+}
+
+.gameCard:active {
+    transform: scale(0.97);
 }
 
 /* Featured card — side-by-side layout */
@@ -255,6 +259,7 @@
 
 .playBtn:hover {
     transform: translateY(-2px);
+    filter: brightness(1.1);
 }
 
 .playBtn:active {
@@ -280,6 +285,62 @@
 
     .title {
         font-size: 26px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page {
+        padding: var(--space-5) var(--space-4) var(--space-12);
+    }
+
+    .title {
+        font-size: 22px;
+    }
+
+    .subtitle {
+        font-size: 15px;
+    }
+
+    .gameIcon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+    }
+
+    .gameName {
+        font-size: 18px;
+    }
+
+    .gameDesc {
+        font-size: 14px;
+    }
+
+    .gameCardFeatured .gameName {
+        font-size: 20px;
+    }
+
+    .gameCardFeatured .gameIcon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .playBtn {
+        padding: 10px 20px;
+        font-size: 14px;
+        min-height: 44px;
+    }
+
+    .scoreCard {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .statChip {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .gameCard {
+        padding: var(--space-4);
     }
 }
 

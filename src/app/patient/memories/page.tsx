@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CheckCircle, HelpCircle, ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './memories.module.css';
 import { mockFlashcards, type Flashcard } from '@/lib/mock-data/patient';
 
@@ -29,6 +30,8 @@ const categoryMap: Record<string, string> = {
 };
 
 export default function MemoriesPage() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
     const [allCards, setAllCards] = useState<Flashcard[]>(mockFlashcards);
     const [activeCategory, setActiveCategory] = useState<Category>('all');
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -167,7 +170,7 @@ export default function MemoriesPage() {
                             {cardState === true ? (
                                 <div className={styles.successMsg}>
                                     <CheckCircle size={28} color="var(--color-success)" />
-                                    <span>Great remembering, Ravi!</span>
+                                    <span>Great remembering, {userName}!</span>
                                 </div>
                             ) : (
                                 <>

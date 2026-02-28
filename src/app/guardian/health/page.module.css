@@ -220,3 +220,32 @@
     border-radius: var(--radius-card);
     border: 1px dashed var(--border-subtle);
 }
+
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+        gap: var(--space-5);
+    }
+
+    .actionBar {
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .searchBox {
+        max-width: 100%;
+    }
+
+    .medGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .recordCard {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .recordRight {
+        gap: var(--space-3);
+    }
+}

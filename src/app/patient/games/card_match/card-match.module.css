@@ -368,6 +368,70 @@
     color: var(--color-primary);
 }
 
+@media (max-width: 600px) {
+    .header {
+        padding: var(--space-3) var(--space-4);
+        gap: var(--space-2);
+        flex-wrap: wrap;
+    }
+
+    .gameTitle {
+        font-size: 17px;
+        order: -1;
+        flex-basis: 100%;
+        text-align: left;
+    }
+
+    .stats {
+        gap: var(--space-2);
+    }
+
+    .stat {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+
+    .content {
+        padding: var(--space-5) var(--space-4);
+        gap: var(--space-4);
+    }
+
+    .cardGrid {
+        gap: var(--space-3);
+        max-width: 340px;
+    }
+
+    .cardAvatar {
+        width: 56px;
+        height: 56px;
+        font-size: 20px;
+    }
+
+    .cardName {
+        font-size: 14px;
+    }
+
+    .cardRelation {
+        font-size: 11px;
+    }
+
+    .hint {
+        font-size: 16px;
+    }
+
+    .winCard {
+        padding: var(--space-6);
+    }
+
+    .winTitle {
+        font-size: 24px;
+    }
+
+    .winStat {
+        padding: var(--space-3) var(--space-4);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .cardInner {
         transition: none;

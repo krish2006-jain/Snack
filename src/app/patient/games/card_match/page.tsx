@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Timer, RotateCcw, Star } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './card-match.module.css';
 import { mockPeople } from '@/lib/mock-data';
 
@@ -41,6 +42,8 @@ function calcStars(flips: number, time: number): number {
 }
 
 export default function CardMatchGame() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
     const router = useRouter();
     const [cards, setCards] = useState<Card[]>(() => makeCards());
     const [selected, setSelected] = useState<string[]>([]);
@@ -142,7 +145,7 @@ export default function CardMatchGame() {
             </div>
 
             <div className={styles.content}>
-                <p className={styles.hint}>Find the matching pairs of your family, Ravi.</p>
+                <p className={styles.hint}>Find the matching pairs of your family, {userName}.</p>
 
                 {/* Card grid */}
                 <div className={styles.cardGrid} aria-label="Card matching game grid" role="grid">
@@ -186,7 +189,7 @@ export default function CardMatchGame() {
                                 <Star key={s} size={40} fill={s <= stars ? '#F59E0B' : 'transparent'} color={s <= stars ? '#F59E0B' : '#D1C4E9'} />
                             ))}
                         </div>
-                        <h2 className={styles.winTitle}>Excellent, Ravi! 🎉</h2>
+                        <h2 className={styles.winTitle}>Excellent, {userName}! 🎉</h2>
                         <p className={styles.winSub}>You matched all pairs in {fmt(seconds)} with {flips} flips.</p>
                         <div className={styles.winStats}>
                             <div className={styles.winStat}>

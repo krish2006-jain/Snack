@@ -1,4 +1,8 @@
-/** Pre-written warm responses for when the Gemini API is unavailable. */
+/** 
+ * Pre-written warm responses for when the Gemini API is unavailable. 
+ * Note: These are hardcoded for the demo user profile (Ravi, Priya, Meera, etc.).
+ * In a production system, these would be generated dynamically or use a template engine.
+ */
 export const companionFallbacks = [
     "I'm right here, Ravi. What's on your mind today?",
     "That's a lovely thought. Tell me more about it.",

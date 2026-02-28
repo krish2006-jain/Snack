@@ -9,6 +9,7 @@ import {
     CheckSquare, BookOpen, Pill, MessageCircle, ChevronDown,
 } from 'lucide-react';
 import { Logo } from './AppHeader';
+import { useSession } from '@/lib/useSession';
 
 type SidebarRole = 'guardian' | 'caretaker';
 
@@ -93,28 +94,10 @@ interface AppSidebarProps {
 
 export function AppSidebar({ role }: AppSidebarProps) {
     const pathname = usePathname();
-    const router = useRouter();
     const groups = role === 'guardian' ? guardianGroups : caretakerGroups;
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
-    const [userName, setUserName] = useState('');
-
-    useEffect(() => {
-        // read whichever identity the app has stored (guardian or caretaker)
-        const stored = localStorage.getItem('saathi_user');
-        let name = '';
-        if (stored) {
-            try {
-                const u = JSON.parse(stored);
-                name = u.name || u || '';
-            } catch {
-                name = stored;
-            }
-        }
-        if (!name) {
-            name = role === 'caretaker' ? 'Caregiver' : 'Guardian';
-        }
-        setUserName(name);
-    }, [role]);
+    const { user, logout } = useSession();
+    const userName = user?.name || (role === 'caretaker' ? 'Caregiver' : 'Guardian');
 
     const toggleGroup = (label: string) => {
         setCollapsed((prev) => ({ ...prev, [label]: !prev[label] }));
@@ -280,12 +263,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                     </div>
                 </div>
                 <button
-                    onClick={() => {
-                        localStorage.removeItem('saathi_token');
-                        localStorage.removeItem('saathi_user');
-                        localStorage.removeItem('demoUser');
-                        router.push('/login');
-                    }}
+                    onClick={logout}
                     className="btn btn--ghost btn--sm"
                     style={{ width: '100%' }}
                 >

@@ -456,6 +456,112 @@
     color: var(--color-primary);
 }
 
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5) var(--space-4);
+    }
+
+    .moodTitle {
+        font-size: 22px;
+    }
+
+    .moodSub {
+        font-size: 15px;
+    }
+
+    .moodCard {
+        padding: var(--space-4) var(--space-5);
+    }
+
+    .moodIcon {
+        width: 44px;
+        height: 44px;
+    }
+
+    .moodLabel {
+        font-size: 18px;
+    }
+
+    .albumArt {
+        width: 110px;
+        height: 110px;
+    }
+
+    .vinylRing {
+        width: 86px;
+        height: 86px;
+    }
+
+    .playBtn {
+        width: 64px;
+        height: 64px;
+    }
+
+    .skipBtn {
+        width: 52px;
+        height: 52px;
+    }
+
+    .controls {
+        gap: var(--space-4);
+    }
+
+    .trackName {
+        font-size: 19px;
+    }
+
+    .nowPlayingCard {
+        padding: var(--space-6);
+    }
+
+    .topNav {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .tab {
+        padding: 6px 14px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: var(--space-4);
+    }
+
+    .moodCard {
+        padding: var(--space-3) var(--space-4);
+        min-height: 68px;
+    }
+
+    .moodLabel {
+        font-size: 16px;
+    }
+
+    .moodSublabel {
+        font-size: 13px;
+    }
+
+    .albumArt {
+        width: 90px;
+        height: 90px;
+    }
+
+    .trackRowName {
+        font-size: 14px;
+    }
+
+    .postMoodChip {
+        padding: 10px 16px;
+        font-size: 14px;
+        min-height: 44px;
+    }
+
+    .postMoodQ {
+        font-size: 16px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .playingDot {
         animation: none;

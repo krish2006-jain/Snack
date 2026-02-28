@@ -25,7 +25,8 @@ export async function GET(_req: Request, { params }: Params) {
 
         // Get guardian info
         const guardian = db.prepare(`
-      SELECT u.id, u.name, u.email, gp.relationship
+      SELECT u.id, u.name, u.email, gp.relationship,
+             (SELECT phone FROM people_cards pc WHERE pc.name = u.name AND pc.patient_id = gp.patient_id LIMIT 1) as phone
       FROM guardian_patient gp
       JOIN users u ON u.id = gp.guardian_id
       WHERE gp.patient_id = ?
@@ -33,7 +34,8 @@ export async function GET(_req: Request, { params }: Params) {
 
         // Get caretaker info
         const caretaker = db.prepare(`
-      SELECT u.id, u.name, u.email, cp.shift
+      SELECT u.id, u.name, u.email, cp.shift,
+             (SELECT phone FROM people_cards pc WHERE pc.name = u.name AND pc.patient_id = cp.patient_id LIMIT 1) as phone
       FROM caretaker_patient cp
       JOIN users u ON u.id = cp.caretaker_id
       WHERE cp.patient_id = ?
@@ -68,17 +70,17 @@ export async function GET(_req: Request, { params }: Params) {
                 guardian && {
                     name: guardian.name,
                     relation: guardian.relationship || 'Guardian',
-                    phone: '+91 98765 43210', // Demo phone
+                    phone: guardian.phone || 'Not available',
                 },
                 caretaker && {
                     name: caretaker.name,
                     relation: 'Caretaker',
-                    phone: '+91 98765 67890',
+                    phone: caretaker.phone || 'Not available',
                 },
                 {
                     name: 'Dr. Sunita Patel',
                     relation: 'Neurologist',
-                    phone: '+91 98765 99999',
+                    phone: '+91 98765 99999', // Still demo, but clear it is not the main ones
                 },
             ].filter(Boolean),
             careInstructions: profile.emergency_instructions || '',

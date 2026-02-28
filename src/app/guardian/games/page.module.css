@@ -369,3 +369,35 @@
     font-size: 14px;
     font-weight: 600;
 }
+
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+    }
+
+    .gameGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .kpiCard {
+        min-width: auto;
+    }
+
+    .gameCard {
+        padding: var(--space-4);
+    }
+
+    .tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .settingsCard {
+        padding: var(--space-4);
+    }
+}

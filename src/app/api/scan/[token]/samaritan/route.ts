@@ -10,7 +10,7 @@ export async function POST(req: Request, { params }: Params) {
     try {
         const { token } = await params;
         const body = await req.json();
-        const { name, phone, photoBase64, latitude, longitude } = body;
+        const { name, latitude, longitude } = body;
 
         const db = getDb();
 

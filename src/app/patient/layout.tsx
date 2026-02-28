@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Home, Calendar, Users, MessageCircle, AlertTriangle, Gamepad2, Brain } from 'lucide-react';
 import { AppHeader } from '@/components/ui/AppHeader';
+import { useSession } from '@/lib/useSession';
 import styles from './patient.module.css';
 
 const tabs = [
@@ -23,29 +24,8 @@ export default function PatientLayout({
 }) {
     const pathname = usePathname();
     const router = useRouter();
-
-    const [userName, setUserName] = useState<string>('Patient');
-
-    useEffect(() => {
-        const raw = localStorage.getItem('saathi_user');
-        if (raw) {
-            try {
-                const u = JSON.parse(raw);
-                if (u.name) setUserName(u.name.split(' ')[0]);
-            } catch {
-                setUserName(raw as string);
-            }
-        }
-    }, []);
-
-    const handleSignOut = () => {
-        try {
-            localStorage.removeItem('saathi_user');
-            localStorage.removeItem('saathi_token');
-            localStorage.removeItem('demoUser');
-        } catch {}
-        router.push('/login');
-    };
+    const { user, logout } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'Patient';
 
     const isActive = (tab: typeof tabs[0]) => {
         if (tab.exact) return pathname === tab.href;
@@ -58,7 +38,7 @@ export default function PatientLayout({
             <AppHeader
                 variant="patient"
                 userName={userName}
-                onSignOut={handleSignOut}
+                onSignOut={logout}
                 onSOS={() => router.push('/patient/sos')}
             />
 

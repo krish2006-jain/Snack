@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Mic, Heart, Volume2, VolumeX } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './companion.module.css';
 
 interface Message {
@@ -12,15 +13,15 @@ interface Message {
 }
 
 const warmResponses = [
-    "I'm right here, Ravi. What's on your mind today?",
+    "I'm right here. What's on your mind today?",
     "That's a lovely thought. Tell me more about it.",
     "It's completely okay to feel that way. I'm listening.",
-    "Priya called earlier — she loves you very much.",
+    "Your family called earlier — they love you very much.",
     "Would you like me to remind you of a happy memory?",
     "You are safe and you are home. I'm here with you.",
     "Let's take it one moment at a time. No rush at all.",
-    "Shall we talk about your grandchildren Aarav and Riya?",
-    "You are loved by so many people, Ravi.",
+    "Shall we talk about your family?",
+    "You are loved by so many people.",
     "Would you like to hear some of your favourite old songs?",
 ];
 
@@ -44,7 +45,16 @@ function formatTime() {
 }
 
 export default function CompanionPage() {
-    const [messages, setMessages] = useState<Message[]>(initialMessages);
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            id: 'm1',
+            role: 'ai',
+            text: `Namaste ${userName}! I'm Saathi, your companion. I'm here whenever you need to talk, remember something, or just want company. How are you feeling today?`,
+            time: '9:00 AM',
+        },
+    ]);
     const [input, setInput] = useState('');
     const [voiceOn, setVoiceOn] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
@@ -78,7 +88,7 @@ export default function CompanionPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    patientId: 'patient-ravi-001',
+                    patientId: user?.id || 'anonymous',
                     message: text,
                     history,
                 }),

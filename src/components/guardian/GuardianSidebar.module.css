@@ -297,3 +297,9 @@
     background: var(--color-danger-bg);
     color: var(--color-danger);
 }
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+}

@@ -566,6 +566,62 @@
     }
 }
 
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+        gap: var(--space-4);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+
+    .cardFeatured {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .scoreNum {
+        font-size: 42px;
+    }
+
+    .scoreMax {
+        font-size: 20px;
+    }
+
+    .featuredStats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-2);
+    }
+
+    .card {
+        padding: var(--space-4) var(--space-5);
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: var(--space-4);
+    }
+
+    .scoreNum {
+        font-size: 36px;
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
+
+    .digest {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .digestText {
+        font-size: 13px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .card {
         transition: none;

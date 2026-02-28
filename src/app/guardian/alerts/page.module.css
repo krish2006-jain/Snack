@@ -324,6 +324,48 @@
     line-height: 1.5;
 }
 
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+        gap: var(--space-4);
+    }
+
+    .tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .summaryChip {
+        padding: var(--space-2) var(--space-3);
+    }
+
+    .chipNum {
+        font-size: 20px;
+    }
+
+    .qrTableHead,
+    .qrTableRow {
+        grid-template-columns: 100px 1fr 100px 1fr;
+        gap: var(--space-2);
+        padding: var(--space-3) var(--space-4);
+        font-size: 12px;
+    }
+
+    .alertItem {
+        padding: var(--space-4);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     .alertItem,

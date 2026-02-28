@@ -53,7 +53,7 @@ export default function PeoplePage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="People Wallet" subtitle="Who Ravi should remember — 6 faces in his wallet" />
+            <GuardianHeader title="People Wallet" subtitle={`People to remember — ${people.length} faces in the wallet`} />
             <main className={styles.content}>
                 {/* Stats */}
                 <div className={styles.statsRow}>
@@ -82,9 +82,9 @@ export default function PeoplePage() {
                             <button className={styles.closeBtn} onClick={() => setShowAdd(false)} aria-label="Close"><X size={18} /></button>
                         </div>
                         <div className={styles.formGrid}>
-                            <Field label="Full Name" id="pn-name" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} placeholder="Priya Sharma" />
+                            <Field label="Full Name" id="pn-name" value={form.name} onChange={v => setForm(p => ({ ...p, name: v }))} placeholder="Full Name" />
                             <Field label="Relation" id="pn-rel" value={form.relation} onChange={v => setForm(p => ({ ...p, relation: v }))} placeholder="Daughter" />
-                            <Field label="Nickname" id="pn-nick" value={form.nickname || ''} onChange={v => setForm(p => ({ ...p, nickname: v }))} placeholder="Priya beti" />
+                            <Field label="Nickname" id="pn-nick" value={form.nickname || ''} onChange={v => setForm(p => ({ ...p, nickname: v }))} placeholder="e.g. 'Beti'" />
                             <Field label="Phone" id="pn-phone" value={form.phone || ''} onChange={v => setForm(p => ({ ...p, phone: v }))} placeholder="+91 99887 76655" />
                             <div style={{ gridColumn: '1 / -1' }}>
                                 <Field label="Description / Context" id="pn-desc" value={form.description} onChange={v => setForm(p => ({ ...p, description: v }))} placeholder="First daughter, lives in Gurugram, visits every Sunday" />

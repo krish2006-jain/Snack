@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Bell, Search, ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useSession } from '@/lib/useSession';
 import styles from './GuardianHeader.module.css';
 
 interface GuardianHeaderProps {
@@ -20,17 +21,11 @@ export default function GuardianHeader({ title, subtitle }: GuardianHeaderProps)
     });
 
     const [profileOpen, setProfileOpen] = useState(false);
-    const [user, setUser] = useState<{ name: string; role?: string } | null>(null);
+    const { user, logout } = useSession();
     const router = useRouter();
     const menuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        // Prefer real auth user if present, otherwise demoUser
-        const raw = localStorage.getItem('saathi_user') || localStorage.getItem('demoUser');
-        if (raw) {
-            try { setUser(JSON.parse(raw)); } catch { setUser(null); }
-        }
-
         function onDoc(e: MouseEvent) {
             if (!menuRef.current) return;
             if (!menuRef.current.contains(e.target as Node)) setProfileOpen(false);
@@ -40,23 +35,11 @@ export default function GuardianHeader({ title, subtitle }: GuardianHeaderProps)
     }, []);
 
     const handleSignOut = () => {
-        // Clear any stored auth/demo tokens and user data
-        try {
-            localStorage.removeItem('saathi_user');
-            localStorage.removeItem('demoUser');
-            localStorage.removeItem('saathi_token');
-        } catch {}
-        setUser(null);
+        logout();
         setProfileOpen(false);
-        router.push('/login');
     };
 
-    const handleSignIn = () => {
-        setProfileOpen(false);
-        router.push('/login');
-    };
-
-    const initials = user ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'PS';
+    const initials = user ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '??';
 
     return (
         <header className={styles.header} role="banner">
@@ -101,7 +84,7 @@ export default function GuardianHeader({ title, subtitle }: GuardianHeaderProps)
                                     <div className={styles.profileInfo}>
                                         <div className={styles.profileName}>Not signed in</div>
                                     </div>
-                                    <button className={styles.profileItem} onClick={handleSignIn}>Sign in</button>
+                                    <button className={styles.profileItem} onClick={() => router.push('/login')}>Sign in</button>
                                 </>
                             )}
                         </div>

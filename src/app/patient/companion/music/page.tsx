@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Play, Pause, SkipForward, SkipBack, Music2, Wind, Smile, Frown, Zap, Meh, MessageCircle } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './music.module.css';
 
 type Mood = 'calm' | 'anxious' | 'happy' | 'sad' | 'angry';
@@ -66,6 +67,8 @@ const moods: MoodOption[] = [
 ];
 
 export default function MusicPage() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
     const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTrack, setCurrentTrack] = useState(0);
@@ -102,7 +105,7 @@ export default function MusicPage() {
                     /* MOOD CHECK-IN */
                     <section className={styles.moodSection}>
                         <div className={styles.moodHeader}>
-                            <h1 className={styles.moodTitle}>How are you feeling right now, Ravi?</h1>
+                            <h1 className={styles.moodTitle}>How are you feeling right now, {userName}?</h1>
                             <p className={styles.moodSub}>We&apos;ll pick the right music for your mood.</p>
                         </div>
                         <div className={styles.moodGrid}>
@@ -212,7 +215,7 @@ export default function MusicPage() {
                             </div>
                         ) : (
                             <div className={styles.postMoodThanks}>
-                                <p>Thank you, Ravi. Nurse Anita has been updated. 💜</p>
+                                <p>Thank you, {userName}. Your caretaker has been updated. 💜</p>
                             </div>
                         )}
 

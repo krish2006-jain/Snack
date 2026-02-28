@@ -9,6 +9,7 @@ import {
     Gamepad2, FileText, QrCode, Bell, BarChart3,
     Layers, ClipboardList, LogOut, Heart, ChevronDown,
 } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './GuardianSidebar.module.css';
 
 interface NavGroup {
@@ -57,29 +58,13 @@ const navGroups: NavGroup[] = [
 
 export default function GuardianSidebar() {
     const pathname = usePathname();
-    const router = useRouter();
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
-    const [guardianName, setGuardianName] = useState('Priya Sharma');
-    const [guardianRole, setGuardianRole] = useState('Guardian • Daughter');
-    const [guardianInitials, setGuardianInitials] = useState('PS');
+    const { user, logout } = useSession();
 
-    useEffect(() => {
-        const raw = localStorage.getItem('saathi_user') || localStorage.getItem('demoUser');
-        if (raw) {
-            try {
-                const u = JSON.parse(raw);
-                if (u.name) setGuardianName(u.name);
-                if (u.role) setGuardianRole(`${u.role.charAt(0).toUpperCase()}${u.role.slice(1)}`);
-                const initials = (u.name || 'Priya Sharma').split(' ').map((n: any) => n[0]).join('').slice(0, 2).toUpperCase();
-                setGuardianInitials(initials);
-            } catch {}
-        }
-    }, []);
-
-    const handleSignOut = () => {
-        try { localStorage.removeItem('saathi_user'); localStorage.removeItem('saathi_token'); localStorage.removeItem('demoUser'); } catch {}
-        router.push('/login');
-    };
+    const guardianName = user?.name || 'Guardian';
+    const guardianRole = user?.role ? `${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}` : 'Guardian';
+    const guardianInitials = guardianName.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
+    const patientName = user?.patientName || 'Patient';
 
     const toggleGroup = (label: string) => {
         setCollapsed((prev) => ({ ...prev, [label]: !prev[label] }));
@@ -107,10 +92,10 @@ export default function GuardianSidebar() {
             </div>
 
             <div className={styles.patientChip}>
-                <div className={styles.patientAvatar}>RS</div>
+                <div className={styles.patientAvatar}>{(patientName || 'Patient').split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase()}</div>
                 <div className={styles.patientInfo}>
-                    <span className={styles.patientName}>Ravi Sharma</span>
-                    <span className={styles.patientStage}>Moderate Stage</span>
+                    <span className={styles.patientName}>{patientName || 'Patient'}</span>
+                    <span className={styles.patientStage}>Care Plan Active</span>
                 </div>
             </div>
 
@@ -182,7 +167,7 @@ export default function GuardianSidebar() {
                         <span className={styles.guardianRole}>{guardianRole}</span>
                     </div>
                 </div>
-                <button className={styles.logoutBtn} aria-label="Sign out" onClick={handleSignOut}>
+                <button className={styles.logoutBtn} aria-label="Sign out" onClick={logout}>
                     <LogOut size={16} aria-hidden="true" />
                     <span>Sign out</span>
                 </button>

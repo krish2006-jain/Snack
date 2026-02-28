@@ -2,7 +2,8 @@
 
 .page {
     min-height: 100vh;
-    background: var(--bg-base);
+    background: #111111;
+    /* Dark background so inverse text is visible */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -218,5 +219,55 @@
 
     .callBtnName {
         font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page {
+        padding: var(--space-4) var(--space-4);
+    }
+
+    .patientAvatar {
+        width: 80px;
+        height: 80px;
+    }
+
+    .avatarInitials {
+        font-size: 30px;
+    }
+
+    .patientName {
+        font-size: 22px;
+    }
+
+    .patientAge {
+        font-size: 16px;
+    }
+
+    .locationBadge {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .callBtn {
+        min-height: 64px;
+        padding: 0 var(--space-4);
+    }
+
+    .callBtnName {
+        font-size: 16px;
+    }
+
+    .callBtnPhone {
+        font-size: 13px;
+    }
+
+    .cancelBtn {
+        padding: 12px 22px;
+        font-size: 14px;
+    }
+
+    .identityBlock {
+        margin-top: var(--space-5);
     }
 }

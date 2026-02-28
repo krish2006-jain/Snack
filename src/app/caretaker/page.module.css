@@ -369,4 +369,36 @@
     .page {
         padding: var(--space-4) var(--space-4) var(--space-8);
     }
+
+    .greetingRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-3);
+    }
+
+    .greetingTitle {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page {
+        padding: var(--space-3) var(--space-3) var(--space-6);
+    }
+
+    .greetingTitle {
+        font-size: 22px;
+    }
+
+    .greetingSub {
+        font-size: 14px;
+    }
+
+    .statCard {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .card {
+        padding: var(--space-4);
+    }
 }

@@ -15,6 +15,8 @@ import {
     Home,
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
+import { useSession } from '@/lib/useSession';
+import { apiFetch } from '@/lib/api';
 import styles from './home.module.css';
 import { mockSchedule } from '@/lib/mock-data/patient';
 
@@ -56,30 +58,47 @@ function formatDate() {
 }
 
 export default function PatientHome() {
+    const { user, isDemo } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'Patient';
+
     const [time, setTime] = useState(formatTime());
     const [medTaken, setMedTaken] = useState(false);
     const [loaded, setLoaded] = useState(false);
-    const [userName, setUserName] = useState('Ravi');
-
-    useEffect(() => {
-        const raw = localStorage.getItem('saathi_user');
-        if (raw) {
-            try {
-                const u = JSON.parse(raw);
-                if (u.name) setUserName(u.name.split(' ')[0]);
-            } catch {}
-        }
-    }, []);
+    const todayDate = formatDate();
 
     useEffect(() => { const t = setTimeout(() => setLoaded(true), 700); return () => clearTimeout(t); }, []);
-
     useEffect(() => {
         const interval = setInterval(() => setTime(formatTime()), 30000);
         return () => clearInterval(interval);
     }, []);
 
-    const pendingTasks = mockSchedule.filter((t) => t.status !== 'done').length;
-    const todayDate = formatDate();
+    interface ScheduleTaskAPI {
+        id: string;
+        title: string;
+        scheduled_time: string;
+        category: string;
+        is_completed: number;
+    }
+    const [apiTasks, setApiTasks] = useState<ScheduleTaskAPI[]>([]);
+
+    useEffect(() => {
+        apiFetch<{ tasks: ScheduleTaskAPI[] }>('/api/schedule')
+            .then((data) => setApiTasks(data.tasks || []))
+            .catch(() => { /* fallback to mock */ });
+    }, []);
+
+    // Use API data if available, mock data as fallback
+    const hasApiData = apiTasks.length > 0;
+    const pendingTasks = hasApiData
+        ? apiTasks.filter(t => !t.is_completed).length
+        : mockSchedule.filter((t) => t.status !== 'done').length;
+    const completedTasks = hasApiData
+        ? apiTasks.filter(t => t.is_completed).length
+        : mockSchedule.filter(t => t.status === 'done').length;
+    const totalTasks = hasApiData ? apiTasks.length : mockSchedule.length;
+    const upcomingTasks = hasApiData
+        ? apiTasks.filter(t => !t.is_completed).slice(0, 3).map(t => ({ id: t.id, title: t.title, time: t.scheduled_time, status: 'upcoming' }))
+        : mockSchedule.filter((t) => t.status === 'upcoming').slice(0, 3);
 
     return (
         <div className={`${styles.page} patient-page-enter`}>
@@ -106,7 +125,7 @@ export default function PatientHome() {
                                     <span className={styles.quickBadge}><AnimatedNumber value={pendingTasks} /> left</span>
                                 </div>
                                 <h2 className={styles.quickTitle}>Today&apos;s Schedule</h2>
-                                <p className={styles.quickSub}><AnimatedNumber value={mockSchedule.filter(t => t.status === 'done').length} /> of {mockSchedule.length} tasks done</p>
+                                <p className={styles.quickSub}><AnimatedNumber value={completedTasks} /> of {totalTasks} tasks done</p>
                                 <ChevronRight size={22} className={styles.chevron} />
                             </Link>
 
@@ -114,14 +133,14 @@ export default function PatientHome() {
                             <Link href="/patient/memories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '100ms' }}>
                                 <Brain size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Memory Time</h2>
-                                <p className={styles.quickSub}><AnimatedNumber value={14} /> flashcards waiting</p>
+                                <p className={styles.quickSub}><AnimatedNumber value={hasApiData ? 0 : 14} /> flashcards waiting</p>
                             </Link>
 
                             {/* My People */}
                             <Link href="/patient/people" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '200ms' }}>
                                 <Users size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>My People</h2>
-                                <p className={styles.quickSub}><AnimatedNumber value={6} /> people who love you</p>
+                                <p className={styles.quickSub}><AnimatedNumber value={hasApiData ? 0 : 6} /> people who love you</p>
                             </Link>
 
                             {/* Talk to Saathi */}
@@ -194,9 +213,7 @@ export default function PatientHome() {
                     <section className={styles.section}>
                         <h2 className={styles.sectionTitle}>Coming up today</h2>
                         <div className={styles.upcomingList}>
-                            {mockSchedule
-                                .filter((t) => t.status === 'upcoming')
-                                .slice(0, 3)
+                            {upcomingTasks
                                 .map((task) => (
                                     <div key={task.id} className={styles.upcomingItem}>
                                         <div className={styles.upcomingDot} data-status={task.status} />

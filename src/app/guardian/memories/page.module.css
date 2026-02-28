@@ -410,6 +410,33 @@
     font-weight: 700;
 }
 
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+    }
+
+    .statsRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchWrap {
+        min-width: auto;
+    }
+
+    .uploadPanel {
+        padding: var(--space-4);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     .memCard,

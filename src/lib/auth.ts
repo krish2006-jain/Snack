@@ -29,13 +29,6 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
     }
 }
 
-export async function requireAuth(req: Request): Promise<JWTPayload | null> {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) return null;
-    const token = authHeader.split(' ')[1];
-    return verifyToken(token);
-}
-
 export async function hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
 }

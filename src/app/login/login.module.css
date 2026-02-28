@@ -32,7 +32,7 @@
 .logoSaathi {
     font-size: 22px;
     font-weight: 800;
-    color: var(--text-inverse);
+    color: var(--text-heading);
     letter-spacing: -0.01em;
 }
 
@@ -304,4 +304,35 @@
 
 .link:hover {
     color: var(--color-primary-hover);
+}
+
+@media (max-width: 480px) {
+    .page {
+        padding: var(--space-4);
+    }
+
+    .card {
+        padding: var(--space-5);
+    }
+
+    .cardTitle {
+        font-size: 22px;
+    }
+
+    .container {
+        gap: var(--space-4);
+    }
+
+    .roleCard {
+        padding: var(--space-3);
+        min-height: 56px;
+    }
+
+    .demoAccount {
+        padding: var(--space-2);
+    }
+
+    .demoEmail {
+        font-size: 12px;
+    }
 }

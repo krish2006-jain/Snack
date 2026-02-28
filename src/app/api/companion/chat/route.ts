@@ -1,16 +1,21 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getNextFallback } from '@/lib/companion-fallbacks';
+import { getSessionUser } from '@/lib/session';
 
 export async function POST(req: Request) {
     try {
-        const { patientId, message, history } = await req.json();
+        const session = await getSessionUser(req);
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+        const { message, history } = await req.json();
 
         if (!message) {
             return NextResponse.json({ error: 'Message is required.' }, { status: 400 });
         }
 
-        const pid = patientId || 'patient-ravi-001';
+        const pid = session.patientId;
 
         // Get patient context from DB
         const db = getDb();
@@ -46,12 +51,16 @@ export async function POST(req: Request) {
             ? people.map(p => `${p.name} (${p.relationship})`).join(', ')
             : 'Priya Sharma (daughter), Meera Sharma (wife), Rahul (grandson), Arjun (son)';
 
+        const age = profile?.dob
+            ? Math.floor((Date.now() - new Date(profile.dob as string).getTime()) / (365.25 * 24 * 3600 * 1000))
+            : 'Unknown';
+
         // Build system prompt
         const systemPrompt = `You are Saathi, a warm and compassionate AI companion for ${patientName}, an elderly person with ${careStage}-stage Alzheimer's disease.
 
 PATIENT CONTEXT:
 - Name: ${patientName} (full name: ${profile?.name || 'Ravi Sharma'})
-- Age: 72 years old, retired mathematics teacher from Jaipur
+- Age: ${age} years old
 - Cognitive stage: ${careStage}
 - Known allergies: ${allergies.join(', ') || 'Penicillin, Shellfish'}
 - Conditions: ${conditions.join(', ') || "Moderate Alzheimer's, Hypertension, Diabetes"}

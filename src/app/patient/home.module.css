@@ -74,10 +74,9 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    transition: all var(--transition-base);
+    transition: all 200ms ease;
     position: relative;
     min-height: 150px;
-    box-shadow: var(--shadow-soft);
 }
 
 .quickCard:hover {
@@ -87,7 +86,7 @@
 }
 
 .quickCard:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 /* Featured card — schedule — spans full row */
@@ -101,6 +100,49 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    margin-bottom: var(--space-2);
+}
+
+.iconWrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-3);
+    flex-shrink: 0;
+}
+
+/* Icon specific colors/backgrounds */
+.iconSchedule {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3B82F6;
+}
+
+.iconMemory {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
+}
+
+.iconPeople {
+    background: rgba(236, 72, 153, 0.1);
+    color: #EC4899;
+}
+
+.iconCompanion {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.iconRoom {
+    background: rgba(245, 158, 11, 0.1);
+    color: #F59E0B;
+}
+
+.iconGames {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366F1;
 }
 
 .quickBadge {
@@ -319,6 +361,61 @@
     }
 
     .greeting {
-        font-size: 36px;
+        font-size: 32px;
+    }
+
+    .dateLabel {
+        font-size: 13px;
+    }
+
+    .timeLabel {
+        font-size: 18px;
+    }
+
+    .sectionTitle {
+        font-size: 22px;
+    }
+
+    .quickCard {
+        min-height: 110px;
+        padding: var(--space-4);
+    }
+
+    .quickTitle {
+        font-size: 19px;
+    }
+
+    .quickSub {
+        font-size: 15px;
+    }
+
+    .quickBadge {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .medIcon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .medTitle {
+        font-size: 22px;
+    }
+
+    .medMeta {
+        font-size: 14px;
+    }
+
+    .upcomingTitle {
+        font-size: 17px;
+    }
+
+    .upcomingTime {
+        font-size: 15px;
+    }
+
+    .upcomingItem {
+        padding: var(--space-3) var(--space-4);
     }
 }

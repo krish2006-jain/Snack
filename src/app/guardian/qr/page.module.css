@@ -418,6 +418,28 @@
     }
 }
 
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+    }
+
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .qrCard {
+        padding: var(--space-4);
+    }
+
+    .privacySection {
+        padding: var(--space-4);
+    }
+
+    .privacyTitle {
+        font-size: 18px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
     .qrCard,

@@ -49,13 +49,18 @@ export default function LoginPage() {
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
 
+    function selectRole(selectedRole: CareRole) {
+        setRole(selectedRole)
+        setError('')
+    }
+
     function fillDemo(selectedRole: CareRole) {
         const account = demoAccounts.find((a) => a.role === selectedRole)
         if (account) {
             setEmail(account.email)
             setPassword(account.password)
+            setRole(selectedRole)
         }
-        setRole(selectedRole)
         setError('')
     }
 
@@ -81,7 +86,7 @@ export default function LoginPage() {
 
             // Store JWT token
             localStorage.setItem('saathi_token', data.token)
-            localStorage.setItem('saathi_user', JSON.stringify(data.user))
+            localStorage.setItem('saathi_user', JSON.stringify(data.user))  // includes isDemo from server
 
             router.push(ROLE_REDIRECTS[role])
         } catch {
@@ -96,9 +101,9 @@ export default function LoginPage() {
             }
             // store demo user locally so header/profile shows signed-in state
             try {
-                localStorage.setItem('saathi_user', JSON.stringify({ name: match.name, role: match.role, email: match.email }))
+                localStorage.setItem('saathi_user', JSON.stringify({ name: match.name, role: match.role, email: match.email, isDemo: true }))
                 localStorage.setItem('saathi_token', 'demo-token')
-            } catch {}
+            } catch { }
             router.push(ROLE_REDIRECTS[role])
         }
     }
@@ -145,7 +150,7 @@ export default function LoginPage() {
                                 role="radio"
                                 aria-checked={role === r.id}
                                 className={`${styles.roleCard} ${role === r.id ? styles.roleCardActive : ''}`}
-                                onClick={() => fillDemo(r.id)}
+                                onClick={() => selectRole(r.id)}
                                 id={`role-${r.id}`}
                             >
                                 <span className={styles.roleIcon}>{r.icon}</span>

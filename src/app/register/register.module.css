@@ -32,7 +32,7 @@
 .logoSaathi {
     font-size: 22px;
     font-weight: 800;
-    color: var(--text-inverse);
+    color: var(--text-heading);
     letter-spacing: -0.01em;
 }
 
@@ -203,6 +203,49 @@
 
 .link:hover {
     color: var(--color-primary-hover);
+}
+
+/* Care stage selector */
+.careStageGrid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.careStageCard {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-card-sm);
+    border: 1.5px solid var(--border-subtle);
+    background: var(--bg-surface-soft);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.careStageCard:hover {
+    border-color: var(--color-primary-light);
+    background: var(--bg-surface);
+}
+
+.careStageCardActive {
+    border-color: var(--color-primary);
+    background: var(--bg-surface);
+    box-shadow: 0 0 0 2px var(--color-primary-muted);
+}
+
+.careStageLabel {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.careStageDesc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
 }
 
 @media (max-width: 540px) {

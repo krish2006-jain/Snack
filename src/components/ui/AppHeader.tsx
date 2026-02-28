@@ -16,7 +16,7 @@ interface AppHeaderProps {
 
 export function AppHeader({
     variant = 'default',
-    userName = 'Priya Sharma',
+    userName = '',
     alertCount = 3,
     onSOS,
     onSignOut,

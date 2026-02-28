@@ -1021,6 +1021,54 @@ h6 {
   }
 }
 
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0 var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .sos-fab {
+    width: 64px;
+    height: 64px;
+    bottom: 80px;
+    right: var(--space-4);
+  }
+
+  .sos-fab svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .tab-item {
+    min-height: 60px;
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  .tab-item svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .btn--patient {
+    min-height: 56px;
+    font-size: 16px;
+    padding: 0 24px;
+  }
+
+  .stat-card {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .stat-card__value {
+    font-size: 26px;
+  }
+
+  .bottom-tab-bar {
+    padding: var(--space-2) 0;
+  }
+}
+
 /* ── Stat Card ──────────────────────────────────────────────── */
 .stat-card {
   background: var(--bg-surface);
@@ -1096,6 +1144,144 @@ h6 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   PATIENT UI — PURPOSEFUL MOTION (per design.md §6)
+   Rules: max 600ms entrances, max 200ms hover, selective use,
+   no pulsing/shimmer at rest, vary effects by element type.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Fade Up (THE one entrance — used selectively) ────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+
+.fade-up--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger util — 80ms per child, max 5 */
+.fade-up--s1 {
+  transition-delay: 0ms;
+}
+
+.fade-up--s2 {
+  transition-delay: 80ms;
+}
+
+.fade-up--s3 {
+  transition-delay: 160ms;
+}
+
+.fade-up--s4 {
+  transition-delay: 240ms;
+}
+
+.fade-up--s5 {
+  transition-delay: 320ms;
+}
+
+/* ── Fade In (badges, success states — 200ms) ─────────────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 200ms ease both;
+}
+
+/* ── Chat Bubble Slide (purposeful — shows direction) ─────── */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-left {
+  animation: slideInLeft 300ms ease both;
+}
+
+.slide-in-right {
+  animation: slideInRight 300ms ease both;
+}
+
+/* ── Checkmark Pop (purposeful — completion feedback) ─────── */
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.checkmark-pop {
+  animation: checkmarkPop 400ms ease both;
+}
+
+/* ── Reveal Slide (answer panels — simple slide down) ─────── */
+@keyframes revealDown {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-down {
+  animation: revealDown 300ms ease both;
 }
 
 /* ── Reduced Motion ─────────────────────────────────────────── */

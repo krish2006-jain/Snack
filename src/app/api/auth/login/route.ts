@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { comparePassword, signToken } from '@/lib/auth';
+import { DEMO_IDS } from '@/lib/session';
 
 export async function POST(req: Request) {
     try {
@@ -40,6 +41,17 @@ export async function POST(req: Request) {
             email: user.email,
         });
 
+        const isDemo = DEMO_IDS.includes(user.id);
+
+        // Look up patient name for guardian users
+        let patientName: string | undefined;
+        if (user.role === 'guardian') {
+            const gp = db.prepare(
+                'SELECT u.name FROM guardian_patient gp JOIN users u ON u.id = gp.patient_id WHERE gp.guardian_id = ? LIMIT 1'
+            ).get(user.id) as { name: string } | undefined;
+            if (gp) patientName = gp.name;
+        }
+
         return NextResponse.json({
             token,
             user: {
@@ -47,6 +59,8 @@ export async function POST(req: Request) {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                isDemo,
+                ...(patientName && { patientName }),
             },
         });
     } catch (err) {

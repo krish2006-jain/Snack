@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Star } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './pattern-tap.module.css';
 
 const COLORS = [
@@ -22,6 +23,8 @@ function calcStars(level: number): number {
 }
 
 export default function PatternTapGame() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
     const router = useRouter();
     const [sequence, setSequence] = useState<number[]>([]);
     const [playerSeq, setPlayerSeq] = useState<number[]>([]);
@@ -177,7 +180,7 @@ export default function PatternTapGame() {
                                 <Star key={n} size={44} fill={n <= s ? '#F59E0B' : 'transparent'} color={n <= s ? '#F59E0B' : '#D1C4E9'} />
                             ))}
                         </div>
-                        <h2 className={styles.wonTitle}>{level > 4 ? 'Outstanding, Ravi! 🎉' : 'Well done, Ravi! 👏'}</h2>
+                        <h2 className={styles.wonTitle}>{level > 4 ? `Outstanding, ${userName}! 🎉` : `Well done, ${userName}! 👏`}</h2>
                         <p className={styles.wonSub}>You reached level {level} — sequence of {sequence.length} colours.</p>
                         <div className={styles.wonActions}>
                             <button className={styles.playAgainBtn} onClick={startGame}>Play Again</button>

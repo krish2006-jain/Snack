@@ -13,7 +13,6 @@ import {
     CheckCircle,
     Clock,
     Check,
-    ChevronRight,
 } from 'lucide-react';
 import styles from './schedule.module.css';
 import { mockSchedule, type ScheduleTask } from '@/lib/mock-data/patient';
@@ -24,14 +23,14 @@ interface CategoryConfig {
     icon: React.ReactNode;
     color: string;      // text / icon colour
     bg: string;         // subtle tinted background
-    accent: string;     // left-border / pill colour
+    accent: string;     // button / active-tab colour
     emoji: string;
 }
 
 const CATEGORY: Record<string, CategoryConfig> = {
     Medicine: {
         label: 'Medicine',
-        icon: <Pill size={22} strokeWidth={2} />,
+        icon: <Pill size={20} strokeWidth={2} />,
         color: '#B91C1C',
         bg: '#FEF2F2',
         accent: '#EF4444',
@@ -39,7 +38,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Medication: {
         label: 'Medicine',
-        icon: <Pill size={22} strokeWidth={2} />,
+        icon: <Pill size={20} strokeWidth={2} />,
         color: '#B91C1C',
         bg: '#FEF2F2',
         accent: '#EF4444',
@@ -47,7 +46,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Meal: {
         label: 'Meal',
-        icon: <Utensils size={22} strokeWidth={2} />,
+        icon: <Utensils size={20} strokeWidth={2} />,
         color: '#B45309',
         bg: '#FFFBEB',
         accent: '#F59E0B',
@@ -55,7 +54,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Game: {
         label: 'Game',
-        icon: <Gamepad2 size={22} strokeWidth={2} />,
+        icon: <Gamepad2 size={20} strokeWidth={2} />,
         color: '#6D28D9',
         bg: '#F5F3FF',
         accent: '#8B5CF6',
@@ -63,7 +62,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Chore: {
         label: 'Chore',
-        icon: <Sparkles size={22} strokeWidth={2} />,
+        icon: <Sparkles size={20} strokeWidth={2} />,
         color: '#0369A1',
         bg: '#F0F9FF',
         accent: '#0EA5E9',
@@ -71,7 +70,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Therapy: {
         label: 'Therapy',
-        icon: <Brain size={22} strokeWidth={2} />,
+        icon: <Brain size={20} strokeWidth={2} />,
         color: '#065F46',
         bg: '#ECFDF5',
         accent: '#10B981',
@@ -79,7 +78,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Exercise: {
         label: 'Exercise',
-        icon: <Dumbbell size={22} strokeWidth={2} />,
+        icon: <Dumbbell size={20} strokeWidth={2} />,
         color: '#14532D',
         bg: '#F0FDF4',
         accent: '#22C55E',
@@ -87,7 +86,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Rest: {
         label: 'Rest',
-        icon: <Moon size={22} strokeWidth={2} />,
+        icon: <Moon size={20} strokeWidth={2} />,
         color: '#1E3A5F',
         bg: '#EFF6FF',
         accent: '#3B82F6',
@@ -95,7 +94,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
     },
     Social: {
         label: 'Social',
-        icon: <Phone size={22} strokeWidth={2} />,
+        icon: <Phone size={20} strokeWidth={2} />,
         color: '#9D174D',
         bg: '#FDF2F8',
         accent: '#EC4899',
@@ -105,7 +104,7 @@ const CATEGORY: Record<string, CategoryConfig> = {
 
 const DEFAULT_CONFIG: CategoryConfig = {
     label: 'Task',
-    icon: <CheckCircle size={22} strokeWidth={2} />,
+    icon: <CheckCircle size={20} strokeWidth={2} />,
     color: '#374151',
     bg: '#F9FAFB',
     accent: '#6B7280',
@@ -200,97 +199,100 @@ export default function SchedulePage() {
         });
     }
 
+    const circumference = 2 * Math.PI * 18;
+
     return (
         <div className={styles.page}>
-            {/* ── Header ── */}
-            <div className={styles.pageHeader}>
-                <div>
-                    <h1 className={styles.pageTitle}>Today&apos;s Schedule</h1>
-                    <p className={styles.pageSubtitle}>{doneCount} of {tasks.length} tasks complete</p>
+            {/* ── Hero Banner ── */}
+            <div className={styles.heroBanner}>
+                <div className={styles.heroContent}>
+                    <div className={styles.heroTextBlock}>
+                        <h1 className={styles.pageTitle}>Today&apos;s Schedule</h1>
+                        <p className={styles.pageSubtitle}>
+                            {doneCount} of {tasks.length} tasks complete
+                        </p>
+                    </div>
+                    <div className={styles.progressRing} aria-label={`${pct}% complete`}>
+                        <svg viewBox="0 0 44 44" className={styles.ringSvg} aria-hidden="true">
+                            <circle cx="22" cy="22" r="18" className={styles.ringTrack} />
+                            <circle
+                                cx="22" cy="22" r="18"
+                                className={styles.ringProgress}
+                                strokeDasharray={`${(pct / 100) * circumference} ${circumference}`}
+                                transform="rotate(-90 22 22)"
+                            />
+                        </svg>
+                        <span className={styles.ringPct}>{pct}%</span>
+                    </div>
                 </div>
-                <div className={styles.progressRing} aria-label={`${pct}% complete`}>
-                    <svg viewBox="0 0 44 44" className={styles.ringSvg} aria-hidden="true">
-                        <circle cx="22" cy="22" r="18" fill="none" stroke="var(--border-subtle)" strokeWidth="4" />
-                        <circle
-                            cx="22" cy="22" r="18" fill="none"
-                            stroke="var(--color-primary)" strokeWidth="4"
-                            strokeLinecap="round"
-                            strokeDasharray={`${(pct / 100) * 113} 113`}
-                            transform="rotate(-90 22 22)"
-                        />
-                    </svg>
-                    <span className={styles.ringPct}>{pct}%</span>
-                </div>
             </div>
 
-            {/* ── Category legend pills ── */}
-            <div className={styles.legendRow} role="group" aria-label="Category legend">
-                {presentCategories.map(cat => {
-                    const cfg = getCat(cat);
-                    return (
-                        <div key={cat} className={styles.legendPill} style={{ background: cfg.bg, borderColor: cfg.accent }}>
-                            <span style={{ color: cfg.color }}>{cfg.icon}</span>
-                            <span style={{ color: cfg.color, fontWeight: 600 }}>{cfg.label}</span>
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* ── Filter tabs ── */}
-            <div className={styles.filterRow} role="tablist" aria-label="Filter tasks by category">
-                {['All', ...presentCategories].map(cat => {
-                    const cfg = cat === 'All' ? null : getCat(cat);
-                    const isActive = filter === cat;
-                    return (
-                        <button
-                            key={cat}
-                            role="tab"
-                            aria-selected={isActive}
-                            className={`${styles.filterTab} ${isActive ? styles.filterTabActive : ''}`}
-                            style={isActive && cfg ? { background: cfg.accent, borderColor: cfg.accent, color: '#fff' } : undefined}
-                            onClick={() => setFilter(cat)}
-                        >
-                            {cfg && <span className={styles.filterTabIcon}>{cfg.emoji}</span>}
-                            {cfg?.label ?? 'All'}
-                        </button>
-                    );
-                })}
-            </div>
-
-            {/* ── Task list ── */}
-            {filter === 'All' ? (
-                // Grouped view
-                <div className={styles.groupedList}>
-                    {Object.entries(grouped).map(([cat, items]) => {
-                        const cfg = getCat(cat);
+            {/* ── Body ── */}
+            <div className={styles.bodyContent}>
+                {/* ── Filter tabs ── */}
+                <div className={styles.filterRow} role="tablist" aria-label="Filter tasks by category">
+                    {['All', ...presentCategories].map(cat => {
+                        const cfg = cat === 'All' ? null : getCat(cat);
+                        const isActive = filter === cat;
                         return (
-                            <section key={cat} className={styles.categorySection}>
-                                <div className={styles.sectionHeading} style={{ borderLeftColor: cfg.accent }}>
-                                    <span style={{ color: cfg.color }}>{cfg.icon}</span>
-                                    <h2 className={styles.sectionTitle} style={{ color: cfg.color }}>{cfg.emoji} {cfg.label}</h2>
-                                    <span className={styles.sectionCount}>
-                                        {items.filter(t => t.status === 'done').length}/{items.length}
-                                    </span>
-                                </div>
-                                <ul className={styles.taskList} aria-label={`${cfg.label} tasks`}>
-                                    {items.map(task => (
-                                        <TaskCard key={task.id} task={task} cfg={cfg} onDone={markDone} />
-                                    ))}
-                                </ul>
-                            </section>
+                            <button
+                                key={cat}
+                                role="tab"
+                                aria-selected={isActive}
+                                className={`${styles.filterTab} ${isActive ? styles.filterTabActive : ''}`}
+                                style={isActive && cfg
+                                    ? { background: cfg.accent, borderColor: cfg.accent, color: '#fff' }
+                                    : isActive
+                                        ? { background: 'var(--color-primary)', borderColor: 'var(--color-primary)', color: '#fff' }
+                                        : undefined}
+                                onClick={() => setFilter(cat)}
+                            >
+                                {cfg && <span className={styles.filterTabIcon}>{cfg.emoji}</span>}
+                                {cfg?.label ?? 'All'}
+                            </button>
                         );
                     })}
                 </div>
-            ) : (
-                <ul className={styles.taskList} aria-label={`${filter} tasks`}>
-                    {filtered.map(task => (
-                        <TaskCard key={task.id} task={task} cfg={getCat(task.category)} onDone={markDone} />
-                    ))}
-                    {filtered.length === 0 && (
-                        <li className={styles.emptyState}>No tasks in this category today.</li>
-                    )}
-                </ul>
-            )}
+
+                {/* ── Task list ── */}
+                {filter === 'All' ? (
+                    // Grouped view
+                    <div className={styles.groupedList}>
+                        {Object.entries(grouped).map(([cat, items]) => {
+                            const cfg = getCat(cat);
+                            return (
+                                <section key={cat} className={styles.categorySection}>
+                                    <div className={styles.sectionHeading}>
+                                        <div className={styles.sectionIcon} style={{ background: cfg.bg }}>
+                                            <span style={{ color: cfg.color }}>{cfg.icon}</span>
+                                        </div>
+                                        <h2 className={styles.sectionTitle} style={{ color: cfg.color }}>
+                                            {cfg.label}
+                                        </h2>
+                                        <span className={styles.sectionCount}>
+                                            {items.filter(t => t.status === 'done').length}/{items.length}
+                                        </span>
+                                    </div>
+                                    <ul className={styles.taskList} aria-label={`${cfg.label} tasks`}>
+                                        {items.map(task => (
+                                            <TaskCard key={task.id} task={task} cfg={cfg} onDone={markDone} />
+                                        ))}
+                                    </ul>
+                                </section>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <ul className={styles.taskList} aria-label={`${filter} tasks`}>
+                        {filtered.map(task => (
+                            <TaskCard key={task.id} task={task} cfg={getCat(task.category)} onDone={markDone} />
+                        ))}
+                        {filtered.length === 0 && (
+                            <li className={styles.emptyState}>No tasks in this category today.</li>
+                        )}
+                    </ul>
+                )}
+            </div>
         </div>
     );
 }
@@ -306,43 +308,38 @@ function TaskCard({ task, cfg, onDone }: {
     return (
         <li
             className={`${styles.taskCard} ${isDone ? styles.taskDone : ''} ${isMissed ? styles.taskMissed : ''}`}
-            style={{ '--cat-accent': cfg.accent, '--cat-bg': cfg.bg, '--cat-color': cfg.color } as React.CSSProperties}
             aria-label={`${task.title} at ${task.time}, ${statusLabel[task.status]}`}
         >
-            {/* Left accent bar */}
-            <div className={styles.accentBar} style={{ background: cfg.accent }} />
-
-            {/* Icon block */}
-            <div className={styles.iconBlock} style={{ background: cfg.bg }}>
+            {/* Category icon badge */}
+            <div className={styles.catIconBadge} style={{ background: cfg.bg }}>
                 <span style={{ color: isDone ? 'var(--text-muted)' : cfg.color }}>
                     {cfg.icon}
-                </span>
-                <span className={styles.iconLabel} style={{ color: isDone ? 'var(--text-muted)' : cfg.color }}>
-                    {cfg.label}
                 </span>
             </div>
 
             {/* Main content */}
             <div className={styles.taskContent}>
-                <div className={styles.taskMeta}>
-                    <div className={styles.timeRow}>
-                        <Clock size={13} color="var(--text-muted)" />
-                        <span className={styles.taskTime}>{task.time}</span>
-                        <span
-                            className={styles.statusBadge}
-                            style={{
-                                background: isDone ? '#DCFCE7' : isMissed ? '#FEE2E2' : cfg.bg,
-                                color: isDone ? '#166534' : isMissed ? '#B91C1C' : cfg.color,
-                                borderColor: isDone ? '#86EFAC' : isMissed ? '#FCA5A5' : cfg.accent,
-                            }}
-                        >
-                            {isDone ? '✓ ' : ''}{statusLabel[task.status]}
-                        </span>
-                    </div>
-                    <h2 className={`${styles.taskTitle} ${isDone ? styles.taskTitleDone : ''}`}>{task.title}</h2>
-                    <p className={styles.taskDesc}>{task.description}</p>
+                <div className={styles.taskTopRow}>
+                    <Clock size={12} color="var(--text-muted)" />
+                    <span className={styles.taskTime}>{task.time}</span>
+                    <span
+                        className={styles.statusBadge}
+                        style={{
+                            background: isDone ? '#DCFCE7' : isMissed ? '#FEE2E2' : cfg.bg,
+                            color: isDone ? '#166534' : isMissed ? '#B91C1C' : cfg.color,
+                        }}
+                    >
+                        {statusLabel[task.status]}
+                    </span>
                 </div>
+                <h2 className={`${styles.taskTitle} ${isDone ? styles.taskTitleDone : ''}`}>{task.title}</h2>
+                {task.description && (
+                    <p className={styles.taskDesc}>{task.description}</p>
+                )}
+            </div>
 
+            {/* Action area */}
+            <div className={styles.actionArea}>
                 {!isDone && !isMissed && (
                     <button
                         className={styles.doneBtn}
@@ -350,16 +347,15 @@ function TaskCard({ task, cfg, onDone }: {
                         onClick={() => onDone(task.id)}
                         aria-label={`Mark ${task.title} as done`}
                     >
-                        <Check size={18} strokeWidth={2.5} />
-                        <span>Done</span>
-                        <ChevronRight size={16} />
+                        <Check size={16} strokeWidth={2.5} />
+                        Done
                     </button>
                 )}
 
                 {isDone && (
                     <div className={styles.doneIndicator}>
-                        <CheckCircle size={22} color="#22C55E" />
-                        <span>Done!</span>
+                        <CheckCircle size={20} />
+                        <span>Done</span>
                     </div>
                 )}
             </div>

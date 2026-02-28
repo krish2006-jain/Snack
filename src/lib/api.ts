@@ -1,5 +1,3 @@
-const BASE = '';
-
 /** Get the stored JWT token */
 export function getToken(): string | null {
     if (typeof window === 'undefined') return null;
@@ -31,7 +29,7 @@ export async function apiFetch<T = unknown>(
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const res = await fetch(`${BASE}${path}`, {
+    const res = await fetch(path, {
         ...options,
         headers,
     });

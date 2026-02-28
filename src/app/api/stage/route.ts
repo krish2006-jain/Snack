@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getSessionUser } from '@/lib/session';
 
-const PATIENT_ID = 'patient-ravi-001';
-
-export async function GET() {
+export async function GET(req: Request) {
     try {
+        const session = await getSessionUser(req);
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         const db = getDb();
         const profile = db.prepare(
             'SELECT care_stage, cognitive_score FROM patient_profiles WHERE user_id = ?'
-        ).get(PATIENT_ID) as { care_stage: string; cognitive_score: number } | undefined;
+        ).get(session.patientId) as { care_stage: string; cognitive_score: number } | undefined;
 
         const stage = profile?.care_stage || 'moderate';
 
@@ -48,7 +51,7 @@ export async function GET() {
 
         return NextResponse.json({
             stage,
-            cognitiveScore: profile?.cognitive_score || 72,
+            cognitiveScore: profile?.cognitive_score || 0,
             config: stageConfig[stage] || stageConfig['moderate'],
         });
     } catch (err) {
@@ -59,12 +62,16 @@ export async function GET() {
 
 export async function PUT(req: Request) {
     try {
+        const session = await getSessionUser(req);
+        if (!session) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
         const { stage } = await req.json();
         if (!stage || !['early', 'moderate', 'severe'].includes(stage)) {
             return NextResponse.json({ error: 'Valid stage (early/moderate/severe) is required.' }, { status: 400 });
         }
         const db = getDb();
-        db.prepare('UPDATE patient_profiles SET care_stage = ? WHERE user_id = ?').run(stage, PATIENT_ID);
+        db.prepare('UPDATE patient_profiles SET care_stage = ? WHERE user_id = ?').run(stage, session.patientId);
         return NextResponse.json({ success: true, stage });
     } catch (err) {
         console.error('[API /stage PUT]', err);

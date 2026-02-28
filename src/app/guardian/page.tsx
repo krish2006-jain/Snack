@@ -12,6 +12,7 @@ import {
     AlertTriangle, ChevronRight, TrendingUp, CheckCircle2
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 function CognitiveTrendChart({ scores }: { scores: { date: string; score: number }[] }) {
@@ -83,6 +84,9 @@ function SkeletonDash() {
 }
 
 export default function GuardianDashboard() {
+    const { user } = useSession();
+    const guardianName = user?.name?.split(' ')[0] || 'there';
+    const patientName = user?.patientName?.split(' ')[0] || 'your loved one';
     const [loaded, setLoaded] = useState(false);
     useEffect(() => { const t = setTimeout(() => setLoaded(true), 700); return () => clearTimeout(t); }, []);
 
@@ -100,16 +104,16 @@ export default function GuardianDashboard() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Welcome back, Priya" />
+            <GuardianHeader title={`Welcome back, ${guardianName}`} />
             <main className={styles.content}>
                 {!loaded ? <SkeletonDash /> : (
                     <>
                         <section className={styles.digest} aria-label="Daily digest">
                             <div className={styles.digestIcon}><Zap size={15} aria-hidden="true" /></div>
                             <p className={styles.digestText}>
-                                <strong>Today&rsquo;s summary:</strong> Ravi had a calm morning — completed his walk and medication on time.
+                                <strong>Today&rsquo;s summary:</strong> {patientName} had a calm morning — completed the walk and medication on time.
                                 Cognitive score is stable at <strong>72/100</strong>, up 3 points from last week.
-                                Nurse Anita is on shift until 4 PM. Two alerts need your attention.
+                                The caretaker is on shift until 4 PM. Two alerts need your attention.
                             </p>
                         </section>
 
@@ -180,7 +184,7 @@ export default function GuardianDashboard() {
                             </article>
 
                             {/* MOOD */}
-                            <article className={styles.card} aria-label="Ravi's mood today">
+                            <article className={styles.card} aria-label="Patient's mood today">
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><Smile size={13} aria-hidden="true" /> Mood Today</span>
                                 </div>

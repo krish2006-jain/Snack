@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/auth';
+import { getSessionUser, DEMO_IDS } from '@/lib/session';
 
 export async function GET(req: Request) {
     try {
-        const payload = await requireAuth(req);
+        const payload = await getSessionUser(req);
         if (!payload) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
@@ -14,6 +14,7 @@ export async function GET(req: Request) {
                 name: payload.name,
                 email: payload.email,
                 role: payload.role,
+                isDemo: DEMO_IDS.includes(payload.userId),
             },
         });
     } catch (err) {

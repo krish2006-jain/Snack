@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Phone, Calendar, Play, Volume2 } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './people.module.css';
 import { mockPeople, type PersonCard } from '@/lib/mock-data/patient';
 
@@ -25,6 +26,8 @@ const personInitials = (name: string) => {
 };
 
 export default function PeoplePage() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
     const [allPeople, setAllPeople] = useState<PersonCard[]>(mockPeople);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [playing, setPlaying] = useState(false);
@@ -75,7 +78,7 @@ export default function PeoplePage() {
     return (
         <div className={styles.page}>
             <h1 className={styles.pageTitle}>My People</h1>
-            <p className={styles.pageSubtitle}>People who love you, Ravi</p>
+            <p className={styles.pageSubtitle}>People who love you, {userName}</p>
 
             {/* CARD DECK */}
             <div className={styles.deckWrapper} aria-live="polite" aria-atomic="true">

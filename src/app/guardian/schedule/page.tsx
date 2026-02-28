@@ -57,7 +57,7 @@ export default function SchedulePage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Schedule Editor" subtitle="Ravi's weekly care plan — Monday, 28 Feb 2026" />
+            <GuardianHeader title="Schedule Editor" subtitle="Weekly care plan — Monday, 28 Feb 2026" />
             <main className={styles.content}>
                 {/* Week overview bar */}
                 <section className={styles.weekBar} aria-label="Week completion overview">

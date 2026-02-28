@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { UtensilsCrossed, BedDouble, Sofa, Flower2, FlameKindling, Home } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './memory-room.module.css';
 
 interface RoomCard {
@@ -75,6 +76,9 @@ const rooms: RoomCard[] = [
 ];
 
 export default function MemoryRoomPage() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
+
     return (
         <div className={styles.page}>
             <div className={styles.pageHeader}>
@@ -84,7 +88,7 @@ export default function MemoryRoomPage() {
                 </span>
                 <h1 className={styles.title}>Explore Your Home</h1>
                 <p className={styles.subtitle}>
-                    Tap a room to see familiar objects and remember their stories, Ravi.
+                    Tap a room to see familiar objects and remember their stories, {userName}.
                 </p>
             </div>
 

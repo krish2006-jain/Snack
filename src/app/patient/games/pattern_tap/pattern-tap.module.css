@@ -299,6 +299,53 @@
     color: var(--color-primary);
 }
 
+@media (max-width: 600px) {
+    .header {
+        padding: var(--space-3) var(--space-4);
+        gap: var(--space-2);
+    }
+
+    .gameTitle {
+        font-size: 17px;
+    }
+
+    .content {
+        padding: var(--space-5) var(--space-4);
+        gap: var(--space-4);
+    }
+
+    .grid {
+        gap: var(--space-3);
+        max-width: 280px;
+    }
+
+    .pad {
+        border-radius: 16px;
+    }
+
+    .instruction {
+        font-size: 17px;
+    }
+
+    .startBtn {
+        padding: 14px 36px;
+        font-size: 18px;
+        min-height: 52px;
+    }
+
+    .statusBar {
+        font-size: 16px;
+    }
+
+    .wonTitle {
+        font-size: 24px;
+    }
+
+    .wonSub {
+        font-size: 15px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .pad {
         animation: none !important;

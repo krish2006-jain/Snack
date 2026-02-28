@@ -58,19 +58,19 @@
     border-radius: var(--radius-card);
     border: 1px solid var(--border-subtle);
     background: var(--room-hue, var(--bg-surface-soft));
-    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    transition: all 200ms ease;
     position: relative;
     overflow: hidden;
 }
 
 .roomCard:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-elevated);
     border-color: rgba(45, 90, 61, 0.3);
 }
 
 .roomCard:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 .cardInner {
@@ -178,6 +178,11 @@
     font-weight: 600;
     align-self: flex-start;
     flex-shrink: 0;
+}
+
+/* Glow pulse on featured room card */
+.roomCardFeatured {
+    grid-column: 1 / -1;
 }
 
 /* Mobile: single column */

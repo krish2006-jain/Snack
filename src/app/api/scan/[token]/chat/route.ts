@@ -24,8 +24,9 @@ const CARETAKER_REPLIES = [
     "If he seems agitated, try speaking softly and saying 'Ravi ji, Anita aa rahi hai'.",
 ];
 
-let guardianIdx = 0;
-let caretakerIdx = 0;
+const LYZR_AGENT_ID = '69a32cba675a8bc0688d0ce8';
+const LYZR_API_KEY = 'sk-default-Eo8gWWPsUcfUtXwqinR4sPSPqb1vCIk5';
+const LYZR_ENDPOINT = 'https://agent-prod.studio.lyzr.ai/v3/inference/chat/';
 
 export async function POST(req: Request, { params }: Params) {
     try {
@@ -39,7 +40,7 @@ export async function POST(req: Request, { params }: Params) {
 
         const db = getDb();
 
-        // Verify token
+        // Verify token and fetch patient profile from SQLite
         const profile = db.prepare(`
             SELECT pp.*, u.name
             FROM patient_profiles pp
@@ -51,104 +52,114 @@ export async function POST(req: Request, { params }: Params) {
             return NextResponse.json({ error: 'Invalid QR code.' }, { status: 404 });
         }
 
-        // AI Channel — use companion logic with emergency context
+        // ─── AI Channel — Lyzr Agent (Saathi AI) ─────────────────────────────
         if (channel === 'ai') {
-            const patientName = (profile.preferred_name || profile.name || 'Ravi') as string;
+            const patientName = (profile.preferred_name || profile.name || 'the patient') as string;
             const careStage = (profile.care_stage || 'moderate') as string;
-            const allergies = profile.allergies ? JSON.parse(profile.allergies as string) : [];
-            const conditions = profile.conditions ? JSON.parse(profile.conditions as string) : [];
-            const medications = profile.medications ? JSON.parse(profile.medications as string) : [];
 
-            const systemPrompt = `You are Saathi, an AI emergency assistant for ${patientName}'s care network. A Good Samaritan has found ${patientName} and is communicating with you via a QR code scan.
+            // Parse JSONified arrays stored in SQLite, fall back to demo defaults
+            const allergies: string[] = profile.allergies
+                ? JSON.parse(profile.allergies as string)
+                : ['Penicillin', 'Shellfish'];
+            const conditions: string[] = profile.conditions
+                ? JSON.parse(profile.conditions as string)
+                : ["Moderate Alzheimer's", 'Hypertension', 'Diabetes'];
+            const medications: string[] = profile.medications
+                ? JSON.parse(profile.medications as string)
+                : ['Donepezil 10mg', 'Amlodipine 5mg', 'Metformin 500mg'];
 
-PATIENT MEDICAL CONTEXT:
-- Name: ${patientName} (full: ${profile.name})
-- Care stage: ${careStage} Alzheimer's
-- Blood type: ${profile.blood_type || 'B+'}
-- Allergies: ${allergies.join(', ') || 'Penicillin, Shellfish'}
-- Conditions: ${conditions.join(', ') || "Moderate Alzheimer's, Hypertension, Diabetes"}
-- Medications: ${medications.join(', ') || 'Donepezil 10mg, Amlodipine 5mg, Metformin 500mg'}
-- Address: ${profile.address || 'Sector 15, Noida'}
-- Emergency Instructions: ${profile.emergency_instructions || 'Speak slowly, keep calm, do not leave alone'}
+            // ── Build the patient context block ────────────────────────────
+            // Lyzr has the agent role & instructions pre-configured in Studio.
+            // We embed the patient record at the start of the FIRST message so
+            // the agent can reason over it immediately.
+            const medicalContext = [
+                `[PATIENT MEDICAL RECORD — ${patientName}]`,
+                `Full name: ${profile.name as string}`,
+                `Care stage: ${careStage} Alzheimer's`,
+                `Blood type: ${(profile.blood_type as string) || 'B+'}`,
+                `Known allergies: ${allergies.join(', ')}`,
+                `Medical conditions: ${conditions.join(', ')}`,
+                `Current medications: ${medications.join(', ')}`,
+                `Emergency instructions: ${(profile.emergency_instructions as string) || 'Speak slowly, keep calm, do not leave alone'}`,
+                `Address: ${(profile.address as string) || 'Sector 15, Noida'}`,
+                `[END OF RECORD]`,
+                '',
+                `A Good Samaritan has found ${patientName} and is asking for help:`,
+            ].join('\n');
 
-YOUR ROLE:
-- Help the Good Samaritan understand the patient's condition
-- Provide relevant medical info when asked (allergies, medications, conditions)
-- Give calming instructions: speak slowly, use Hindi/English, say familiar names
-- If asked about medication timing or dosages, share what's on file
-- Reassure the samaritan that family has been notified
-- Keep responses clear, concise (under 80 words), and helpful
-- NEVER diagnose or give new medical advice — only share existing records
-- If the situation sounds dangerous, advise calling 112 immediately`;
+            // Session ID is scoped to this token so Lyzr's memory carries across turns
+            const sessionId = `scan-${token}-ai`;
 
-            const apiKey = process.env.GEMINI_API_KEY;
-            if (apiKey) {
-                try {
-                    const { GoogleGenerativeAI } = await import('@google/generative-ai');
-                    const genAI = new GoogleGenerativeAI(apiKey);
-                    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+            // Prepend medical context only on the first turn
+            const isFirstTurn = !history || (history as unknown[]).length === 0;
+            const lyzrMessage = isFirstTurn ? `${medicalContext}\n${message}` : message;
 
-                    const chatHistory = (history || []).slice(-10).map((m: { role: string; content: string }) => ({
-                        role: m.role === 'user' ? 'user' : 'model',
-                        parts: [{ text: m.content }],
-                    }));
+            try {
+                const lyzrRes = await fetch(LYZR_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': LYZR_API_KEY,
+                    },
+                    body: JSON.stringify({
+                        agent_id: LYZR_AGENT_ID,
+                        session_id: sessionId,
+                        message: lyzrMessage,
+                        user_id: `samaritan-${token}`,
+                    }),
+                });
 
-                    const chat = model.startChat({
-                        history: chatHistory,
-                        systemInstruction: systemPrompt,
-                    });
-
-                    const result = await chat.sendMessage(message);
-                    const reply = result.response.text();
-
-                    return NextResponse.json({
-                        reply,
-                        sender: 'Saathi AI',
-                        channel: 'ai',
-                    });
-                } catch (aiErr) {
-                    console.warn('[Scan Chat] Gemini failed, using fallback:', aiErr);
+                if (!lyzrRes.ok) {
+                    const errText = await lyzrRes.text();
+                    console.warn('[Scan Chat] Lyzr API error:', lyzrRes.status, errText);
+                    throw new Error(`Lyzr API returned ${lyzrRes.status}`);
                 }
+
+                // Lyzr v3 response shape: { response: string, ... }
+                const lyzrData = await lyzrRes.json() as {
+                    response?: string;
+                    message?: string;
+                    output?: string;
+                };
+
+                const reply =
+                    lyzrData.response ||
+                    lyzrData.message ||
+                    lyzrData.output ||
+                    'I received your message but could not form a response. Please call 112 if this is an emergency.';
+
+                return NextResponse.json({
+                    reply,
+                    sender: 'Saathi AI',
+                    channel: 'ai',
+                });
+            } catch (lyzrErr) {
+                console.warn('[Scan Chat] Lyzr Agent failed, using fallback:', lyzrErr);
+                const fallback = getNextFallback();
+                return NextResponse.json({
+                    reply: fallback,
+                    sender: 'Saathi AI',
+                    channel: 'ai',
+                    fallback: true,
+                });
             }
-
-            // Fallback
-            const fallback = getNextFallback();
-            return NextResponse.json({
-                reply: fallback,
-                sender: 'Saathi AI',
-                channel: 'ai',
-                fallback: true,
-            });
         }
 
-        // Guardian Channel — simulated replies
+        // ─── Guardian Channel — simulated replies ─────────────────────────────
         if (channel === 'guardian') {
-            const reply = GUARDIAN_REPLIES[guardianIdx % GUARDIAN_REPLIES.length];
-            guardianIdx++;
-            return NextResponse.json({
-                reply,
-                sender: 'Priya Sharma',
-                channel: 'guardian',
-            });
+            const reply = GUARDIAN_REPLIES[Math.floor(Math.random() * GUARDIAN_REPLIES.length)];
+            return NextResponse.json({ reply, sender: 'Priya Sharma', channel: 'guardian' });
         }
 
-        // Caretaker Channel — simulated replies
+        // ─── Caretaker Channel — simulated replies ────────────────────────────
         if (channel === 'caretaker') {
-            const reply = CARETAKER_REPLIES[caretakerIdx % CARETAKER_REPLIES.length];
-            caretakerIdx++;
-            return NextResponse.json({
-                reply,
-                sender: 'Nurse Anita',
-                channel: 'caretaker',
-            });
+            const reply = CARETAKER_REPLIES[Math.floor(Math.random() * CARETAKER_REPLIES.length)];
+            return NextResponse.json({ reply, sender: 'Nurse Anita', channel: 'caretaker' });
         }
 
         return NextResponse.json({ error: 'Invalid channel.' }, { status: 400 });
     } catch (err) {
         console.error('[API /scan/:token/chat]', err);
-        return NextResponse.json(
-            { error: 'Something went wrong.' },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: 'Something went wrong.' }, { status: 500 });
     }
 }

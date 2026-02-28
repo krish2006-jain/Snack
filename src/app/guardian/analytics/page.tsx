@@ -13,29 +13,60 @@ function LineChart({
     color?: string;
     label: string;
 }) {
-    const w = 100, h = 60;
+    const w = 400, h = 180;
+    const padding = { top: 20, right: 10, bottom: 20, left: 30 };
+    const chartW = w - padding.left - padding.right;
+    const chartH = h - padding.top - padding.bottom;
+
     const scores = data.map(d => d.score);
-    const min = Math.min(...scores) - 2;
-    const max = Math.max(...scores) + 2;
+    const min = Math.max(0, Math.min(...scores) - 5);
+    const max = Math.min(100, Math.max(...scores) + 5);
     const range = max - min;
+
     const pts = scores.map((s, i) => {
-        const x = (i / (scores.length - 1)) * w;
-        const y = h - ((s - min) / range) * h;
-        return `${x},${y}`;
+        const x = padding.left + (i / (scores.length - 1)) * chartW;
+        const y = padding.top + chartH - ((s - min) / range) * chartH;
+        return { x, y, score: s };
     });
-    const area = `M 0,${h} L ${pts.join(' L ')} L ${w},${h} Z`;
-    const line = `M ${pts.join(' L ')}`;
+
+    const area = `M ${padding.left},${padding.top + chartH} L ${pts.map(p => `${p.x},${p.y}`).join(' L ')} L ${pts[pts.length - 1].x},${padding.top + chartH} Z`;
+    const line = `M ${pts.map(p => `${p.x},${p.y}`).join(' L ')}`;
+
+    // Generate 4 grid lines
+    const gridLines = [];
+    for (let i = 0; i < 4; i++) {
+        const val = min + (range * i) / 3;
+        const y = padding.top + chartH - (i / 3) * chartH;
+        gridLines.push({ y, val: Math.round(val) });
+    }
 
     return (
-        <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className={styles.chart} aria-label={label} role="img">
+        <svg viewBox={`0 0 ${w} ${h}`} className={styles.chart} aria-label={label} role="img" preserveAspectRatio="none">
             <defs>
                 <linearGradient id={`grad-${label}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={color} stopOpacity="0.2" />
+                    <stop offset="0%" stopColor={color} stopOpacity="0.3" />
                     <stop offset="100%" stopColor={color} stopOpacity="0" />
                 </linearGradient>
             </defs>
+
+            {/* Grid lines and Y-axis labels */}
+            {gridLines.map((lineDef, i) => (
+                <g key={i}>
+                    <line x1={padding.left} y1={lineDef.y} x2={w - padding.right} y2={lineDef.y} stroke="var(--border-subtle)" strokeWidth="1" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
+                    <text x={padding.left - 8} y={lineDef.y + 4} fontSize="11" fill="var(--text-muted)" textAnchor="end" fontFamily="var(--font-body)">{lineDef.val}</text>
+                </g>
+            ))}
+
+            {/* Area and Line */}
             <path d={area} fill={`url(#grad-${label})`} />
-            <path d={line} stroke={color} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            <path d={line} stroke={color} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+
+            {/* Data Points */}
+            {pts.map((p, i) => (
+                <g key={i}>
+                    <circle cx={p.x} cy={p.y} r="4" fill="var(--bg-surface)" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
+                </g>
+            ))}
         </svg>
     );
 }

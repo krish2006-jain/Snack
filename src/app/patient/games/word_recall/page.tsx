@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Eye, EyeOff, Star } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './word-recall.module.css';
 
 // Personal fact words drawn from Ravi's life
@@ -24,6 +25,8 @@ function calcStars(correct: number, total: number): number {
 }
 
 export default function WordRecallGame() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
     const router = useRouter();
     const [round, setRound] = useState(0);
     const words = WORD_SETS[round % WORD_SETS.length];
@@ -177,7 +180,7 @@ export default function WordRecallGame() {
                             ))}
                         </div>
                         <h2 className={styles.resultTitle}>
-                            {stars === 3 ? 'Perfect, Ravi! 🎉' : stars >= 2 ? 'Well done! 👏' : 'Good try, Ravi 💙'}
+                            {stars === 3 ? `Perfect, ${userName}! 🎉` : stars >= 2 ? 'Well done! 👏' : `Good try, ${userName} 💙`}
                         </h2>
                         <p className={styles.resultSub}>
                             You remembered {results.filter((r) => r.correct).length} of {words.length} words.

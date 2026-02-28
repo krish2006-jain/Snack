@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Layers, Type, Grid2x2, Star, Flame, Zap, Trophy } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './games.module.css';
 import { mockAnalytics } from '@/lib/mock-data';
 
@@ -81,6 +82,8 @@ function CircularScore({ score }: { score: number }) {
 }
 
 export default function GamesPage() {
+    const { user } = useSession();
+    const userName = user?.name?.split(' ')[0] || 'friend';
     const brainScore = mockAnalytics.avgDailyGameScore;
     const streak = mockAnalytics.gameStreak;
 
@@ -90,7 +93,7 @@ export default function GamesPage() {
             <div className={styles.pageHeader}>
                 <div className={styles.headerText}>
                     <h1 className={styles.title}>Brain Games</h1>
-                    <p className={styles.subtitle}>Keep your mind active, Ravi. A little practice each day.</p>
+                    <p className={styles.subtitle}>Keep your mind active, {userName}. A little practice each day.</p>
                 </div>
 
                 {/* Brain score card */}

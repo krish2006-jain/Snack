@@ -118,7 +118,9 @@
 
 /* Line chart */
 .chartWrap {
-    height: 120px;
+    height: 180px;
+    position: relative;
+    margin-top: var(--space-4);
 }
 
 .chart {
@@ -129,11 +131,15 @@
 .chartXAxis {
     display: flex;
     justify-content: space-between;
-    margin-top: -8px;
+    margin-top: 4px;
+    padding-left: 30px;
+    /* Aligns with SVG left padding */
+    padding-right: 10px;
+    /* Aligns with SVG right padding */
 }
 
 .xLabel {
-    font-size: 10px;
+    font-size: 11px;
     color: var(--text-muted);
 }
 
@@ -424,6 +430,38 @@
 
 .exportBtn:active {
     transform: scale(0.97);
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: var(--space-5);
+    }
+
+    .kpiRow {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recognitionGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .chartCard {
+        padding: var(--space-4);
+    }
+
+    .heatmapGrid {
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .exportRow {
+        flex-direction: column;
+        gap: var(--space-3);
+        align-items: stretch;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

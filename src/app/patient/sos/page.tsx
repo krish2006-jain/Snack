@@ -43,7 +43,7 @@ export default function SOSPage() {
                 >
                     <Phone size={26} strokeWidth={2} aria-hidden="true" />
                     <span className={styles.callBtnContent}>
-                        <span className={styles.callBtnName}>Call Priya (Daughter)</span>
+                        <span className={styles.callBtnName}>Call {mockGuardian.name}</span>
                         <span className={styles.callBtnPhone}>{mockGuardian.phone}</span>
                     </span>
                 </button>
@@ -56,7 +56,7 @@ export default function SOSPage() {
                 >
                     <Phone size={26} strokeWidth={2} aria-hidden="true" />
                     <span className={styles.callBtnContent}>
-                        <span className={styles.callBtnName}>Call Nurse Anita</span>
+                        <span className={styles.callBtnName}>Call {mockCaretaker.name}</span>
                         <span className={styles.callBtnPhone}>{mockCaretaker.phone}</span>
                     </span>
                 </button>

@@ -81,3 +81,25 @@
         padding: 0 var(--space-5);
     }
 }
+
+@media (max-width: 480px) {
+    .header {
+        height: 64px;
+        padding: 0 var(--space-4);
+    }
+
+    .logoSaathi,
+    .logoCare {
+        font-size: 22px;
+    }
+
+    .headerSos {
+        padding: 10px 16px;
+        font-size: 15px;
+        min-height: 46px;
+    }
+
+    .main {
+        padding-bottom: 80px;
+    }
+}
