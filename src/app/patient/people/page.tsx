@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Phone, Calendar, Play, Volume2 } from 'lucide-react';
 import styles from './people.module.css';
 import { mockPeople, type PersonCard } from '@/lib/mock-data/patient';
@@ -28,25 +29,26 @@ export default function PeoplePage() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [playing, setPlaying] = useState(false);
 
-    useEffect(() => {
-        fetch('/api/people')
-            .then(r => r.json())
-            .then(data => {
-                if (data.people && data.people.length > 0) {
-                    const mapped: PersonCard[] = data.people.map((p: { id: string; name: string; relationship: string; bio: string; photo_url: string; last_visited: string; phone: string }) => ({
-                        id: p.id,
-                        name: p.name,
-                        relationship: p.relationship,
-                        photo: p.photo_url || '',
-                        bio: p.bio || '',
-                        lastVisited: p.last_visited || '',
-                        phone: p.phone || '',
-                    }));
-                    setAllPeople(mapped);
-                }
-            })
-            .catch(() => { /* keep mock data */ });
-    }, []);
+    // API fetch disabled for now – using mock data directly so names/images stay in sync.
+    // useEffect(() => {
+    //     fetch('/api/people')
+    //         .then(r => r.json())
+    //         .then(data => {
+    //             if (data.people && data.people.length > 0) {
+    //                 const mapped: PersonCard[] = data.people.map((p: { id: string; name: string; relationship: string; bio: string; photo_url: string; last_visited: string; phone: string }) => ({
+    //                     id: p.id,
+    //                     name: p.name,
+    //                     relationship: p.relationship,
+    //                     photo: p.photo_url || '',
+    //                     bio: p.bio || '',
+    //                     lastVisited: p.last_visited || '',
+    //                     phone: p.phone || '',
+    //                 }));
+    //                 setAllPeople(mapped);
+    //             }
+    //         })
+    //         .catch(() => { /* keep mock data */ });
+    // }, []);
 
     const person = allPeople[currentIndex];
     const color = personColors[currentIndex % personColors.length];
@@ -83,9 +85,13 @@ export default function PeoplePage() {
                 >
                     {/* Photo / avatar area */}
                     <div className={styles.photoArea} style={{ background: color.bg }}>
-                        <div className={styles.avatarInitials} style={{ color: color.text }}>
-                            {personInitials(person.name)}
-                        </div>
+                        {person.photo ? (
+                            <Image src={person.photo} alt={person.name} fill className={styles.photoImage} />
+                        ) : (
+                            <div className={styles.avatarInitials} style={{ color: color.text }}>
+                                {personInitials(person.name)}
+                            </div>
+                        )}
                         <span className={styles.photoHint}>(Photo of {person.name.split(' ')[0]})</span>
                     </div>
 
