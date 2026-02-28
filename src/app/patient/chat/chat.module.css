@@ -1,0 +1,303 @@
+/* AI Companion TEXT Chat Page */
+
+.page {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-height));
+    background: var(--bg-surface-soft);
+    max-width: 768px;
+    /* good centered width for text chat */
+    margin: 0 auto;
+    border-left: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.chatHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+
+.aiAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.aiName {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.aiStatus {
+    font-size: 13px;
+    color: var(--color-success);
+    font-weight: 500;
+}
+
+/* MESSAGES */
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    background: var(--bg-surface-soft);
+}
+
+.bubble {
+    display: flex;
+    gap: var(--space-3);
+    max-width: 85%;
+}
+
+.bubbleUser {
+    margin-left: auto;
+    flex-direction: row-reverse;
+}
+
+.bubbleAi {
+    margin-right: auto;
+}
+
+.aiDot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    align-self: flex-end;
+}
+
+.bubbleContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bubbleText {
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-card);
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.bubbleAi .bubbleText {
+    background: var(--bg-surface);
+    color: var(--text-heading);
+    border: 1px solid var(--border-subtle);
+    border-bottom-left-radius: 6px;
+}
+
+.bubbleUser .bubbleText {
+    background: var(--color-primary);
+    color: white;
+    border-bottom-right-radius: 6px;
+}
+
+.bubbleTime {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.bubbleAi .bubbleTime {
+    text-align: left;
+}
+
+.bubbleUser .bubbleTime {
+    text-align: right;
+}
+
+/* QUICK REPLIES */
+.quickReplies {
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex-shrink: 0;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.quickReplies::-webkit-scrollbar {
+    display: none;
+}
+
+.quickChip {
+    white-space: nowrap;
+    padding: 10px 18px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    background: var(--bg-surface);
+    color: var(--text-body);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.quickChip:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-muted);
+}
+
+/* INPUT AREA */
+.inputArea {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+
+.textInput {
+    flex: 1;
+    height: 52px;
+    padding: 0 var(--space-5);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-soft);
+    font-size: 17px;
+    color: var(--text-heading);
+    outline: none;
+}
+
+.textInput:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+}
+
+.sendBtn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sendBtn:hover {
+    background: var(--color-primary-hover);
+    transform: scale(1.05);
+}
+
+.sendBtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* TYPING INDICATOR */
+.typingDots {
+    display: flex;
+    gap: 5px;
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    border-bottom-left-radius: 6px;
+}
+
+.typingDots span {
+    width: 8px;
+    height: 8px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    opacity: 0.6;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .chatHeader {
+        padding: var(--space-3) var(--space-5);
+    }
+
+    .messages {
+        padding: var(--space-5);
+        gap: var(--space-4);
+    }
+
+    .inputArea {
+        padding: var(--space-3) var(--space-5);
+    }
+
+    .quickReplies {
+        padding: var(--space-3) var(--space-5);
+    }
+
+    .bubbleText {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page {
+        border-left: none;
+        border-right: none;
+        box-shadow: none;
+    }
+
+    .chatHeader {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .messages {
+        padding: var(--space-4);
+        gap: var(--space-3);
+    }
+
+    .aiName {
+        font-size: 17px;
+    }
+
+    .bubbleText {
+        padding: var(--space-3) var(--space-4);
+        font-size: 15px;
+    }
+
+    .textInput {
+        height: 46px;
+        font-size: 15px;
+    }
+
+    .sendBtn {
+        width: 46px;
+        height: 46px;
+    }
+
+    .inputArea {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .quickReplies {
+        padding: var(--space-2) var(--space-4);
+    }
+
+    .quickChip {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+}

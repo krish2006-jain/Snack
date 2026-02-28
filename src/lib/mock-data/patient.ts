@@ -402,3 +402,152 @@ export const mockPeople: PersonCard[] = [
         phone: '+91 98765 54321',
     },
 ];
+
+// VOICE JOURNAL — Patient-recorded stories
+export interface VoiceJournalEntry {
+    id: string;
+    transcription: string;
+    entities: string[];
+    sentiment: 'happy' | 'neutral' | 'nostalgic' | 'sad';
+    durationSeconds: number;
+    createdAt: string; // ISO date
+    timeLabel: string; // "Today", "Yesterday", etc.
+}
+
+export const mockVoiceJournal: VoiceJournalEntry[] = [
+    {
+        id: 'vj-1',
+        transcription: 'Today Priya came to visit me. She brought Aarav and Riya. Aarav showed me his cricket trophy — he won at school! We had chai together and I told them about the time I scored 84 runs in the colony match.',
+        entities: ['Priya', 'Aarav', 'Riya', 'cricket', 'chai'],
+        sentiment: 'happy',
+        durationSeconds: 32,
+        createdAt: new Date().toISOString(),
+        timeLabel: 'Today',
+    },
+    {
+        id: 'vj-2',
+        transcription: 'Anita took me for a walk this morning. The marigolds in the garden are blooming so beautifully. I remembered that Smita planted them last spring. The air smelled just like our old house in Varanasi.',
+        entities: ['Anita', 'Smita', 'garden', 'Varanasi'],
+        sentiment: 'nostalgic',
+        durationSeconds: 28,
+        createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+        timeLabel: 'Yesterday',
+    },
+    {
+        id: 'vj-3',
+        transcription: 'I had dal chawal for lunch today. It was good but I miss the way Kamla used to make it with extra ghee. Mohit called in the evening, he said he will come for Holi.',
+        entities: ['Mohit', 'Kamla', 'dal chawal', 'Holi'],
+        sentiment: 'neutral',
+        durationSeconds: 22,
+        createdAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(),
+        timeLabel: '2 days ago',
+    },
+    {
+        id: 'vj-4',
+        transcription: 'I was looking at the old photo of our wedding. Such a beautiful day it was in Varanasi. I can still remember the sound of the shehnai and the smell of the marigold garlands. Smita looked so beautiful that day.',
+        entities: ['Smita', 'Varanasi', 'wedding'],
+        sentiment: 'nostalgic',
+        durationSeconds: 35,
+        createdAt: new Date(Date.now() - 4 * 24 * 3600 * 1000).toISOString(),
+        timeLabel: '4 days ago',
+    },
+    {
+        id: 'vj-5',
+        transcription: 'Played the card match game today and scored 88! Anita said I am getting better. I remembered all the photos — Priya, Smita, Aarav, everyone. Feeling good today.',
+        entities: ['Anita', 'Priya', 'Smita', 'Aarav'],
+        sentiment: 'happy',
+        durationSeconds: 18,
+        createdAt: new Date(Date.now() - 6 * 24 * 3600 * 1000).toISOString(),
+        timeLabel: '6 days ago',
+    },
+];
+
+// FAMILY CONTRIBUTIONS — Stories from family
+export interface FamilyContribution {
+    id: string;
+    contributorName: string;
+    contributorRelation: string;
+    contributorPhoto: string;
+    contentType: 'text' | 'voice' | 'photo';
+    title: string;
+    content: string;
+    photoUrl?: string;
+    status: 'pending' | 'approved' | 'rejected';
+    createdAt: string;
+    timeLabel: string;
+}
+
+export const mockFamilyContributions: FamilyContribution[] = [
+    {
+        id: 'fc-1',
+        contributorName: 'Priya Sharma',
+        contributorRelation: 'Daughter',
+        contributorPhoto: '/images/priya.png',
+        contentType: 'text',
+        title: 'Remember our Sunday Picnic?',
+        content: 'Papa, remember when we went to India Gate for a picnic? You bought us all ice cream — butterscotch for me and chocolate for Mohit. You said "Ice cream is the best medicine!" We sat on the grass and watched the sunset. That was the most peaceful evening. I still think about it whenever I eat butterscotch ice cream. Love you, Papa!',
+        status: 'approved',
+        createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
+        timeLabel: '2 hours ago',
+    },
+    {
+        id: 'fc-2',
+        contributorName: 'Mohit Sharma',
+        contributorRelation: 'Son',
+        contributorPhoto: '/images/mohit.png',
+        contentType: 'text',
+        title: 'Your Cricket Stories',
+        content: 'Papa, I told my friends about your 84 not out in the colony match. They could not believe it! You always said "Cricket teaches patience" — I use that advice every day at work. Missing you in Mumbai. Will come soon for Holi. Keep playing those brain games — your grandson Aarav says he wants to challenge you!',
+        status: 'approved',
+        createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
+        timeLabel: 'Yesterday',
+    },
+    {
+        id: 'fc-3',
+        contributorName: 'Aarav Sharma',
+        contributorRelation: 'Grandson',
+        contributorPhoto: '/images/aarav.png',
+        contentType: 'text',
+        title: 'I Won a Trophy, Dadu!',
+        content: 'Dadu! I won the cricket trophy at school! 🏆 I scored 42 runs just like you taught me. Opening batsman! My coach said I play like a champion. I am going to bring the trophy to show you next time. I want to play the card game with you too! Love you Dadu!',
+        status: 'approved',
+        createdAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+        timeLabel: '3 days ago',
+    },
+    {
+        id: 'fc-4',
+        contributorName: 'Riya Sharma',
+        contributorRelation: 'Granddaughter',
+        contributorPhoto: '/images/riya.png',
+        contentType: 'text',
+        title: 'I Drew You, Dadu!',
+        content: 'Dadu, I drew a picture of you and me in the garden! You are watering the marigolds and I am painting. Mummy said she will bring it when we visit. I used your favourite colour — orange like the marigolds! I love you Dadu. 🌸🎨',
+        status: 'approved',
+        createdAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
+        timeLabel: '5 days ago',
+    },
+    {
+        id: 'fc-5',
+        contributorName: 'Smita Sharma',
+        contributorRelation: 'Wife',
+        contributorPhoto: '/images/smita.png',
+        contentType: 'text',
+        title: 'Our Evening Chai Routine',
+        content: 'My dear Ravi, every evening we sit together on the balcony with chai. You always ask for extra ginger and two spoons of sugar. We watch the birds come home to the neem tree. These small moments are everything. I am always right here beside you. Always.',
+        status: 'approved',
+        createdAt: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
+        timeLabel: '1 week ago',
+    },
+    {
+        id: 'fc-6',
+        contributorName: 'Mohit Sharma',
+        contributorRelation: 'Son',
+        contributorPhoto: '/images/mohit.png',
+        contentType: 'text',
+        title: 'Your Favourite Sholay Dialogue',
+        content: 'Papa, at the office party I quoted your favourite dialogue — "Kitne aadmi the?" Everyone laughed! You would have loved it. Remember how we watched Sholay together 7 times? I think the next time I visit we should watch it again. Regal Cinema style, at home!',
+        status: 'pending',
+        createdAt: new Date(Date.now() - 1 * 3600 * 1000).toISOString(),
+        timeLabel: '1 hour ago',
+    },
+];

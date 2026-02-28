@@ -14,6 +14,8 @@ import {
     Gamepad2,
     Home,
     Mic,
+    BookOpen,
+    Heart,
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { useSession } from '@/lib/useSession';
@@ -190,6 +192,20 @@ export default function PatientHome() {
                                 <Gamepad2 size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Brain Games</h2>
                                 <p className={styles.quickSub}>Keep your mind active</p>
+                            </Link>
+
+                            {/* Voice Journal */}
+                            <Link href="/patient/journal" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '600ms' }}>
+                                <BookOpen size={44} color="var(--color-primary)" aria-hidden="true" />
+                                <h2 className={styles.quickTitle}>My Journal</h2>
+                                <p className={styles.quickSub}>Record your stories</p>
+                            </Link>
+
+                            {/* Family Stories */}
+                            <Link href="/patient/family-stories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '700ms' }}>
+                                <Heart size={44} color="var(--color-primary)" aria-hidden="true" />
+                                <h2 className={styles.quickTitle}>Family Stories</h2>
+                                <p className={styles.quickSub}>Messages from loved ones</p>
                             </Link>
                         </div>
                     </section>

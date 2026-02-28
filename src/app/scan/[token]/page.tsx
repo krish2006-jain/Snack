@@ -5,14 +5,14 @@ import { useParams, useSearchParams } from 'next/navigation'
 import ScanClient from './ScanClient'
 import type { QRProfile } from '@/types'
 
-type TabId = 'card' | 'info' | 'chat'
+type TabId = 'card' | 'info' | 'map' | 'chat'
 
 export default function ScanPage() {
     const params = useParams()
     const searchParams = useSearchParams()
     const token = params.token as string
     const tabParam = searchParams.get('tab') as TabId | null
-    const defaultTab: TabId = (tabParam === 'info' || tabParam === 'chat') ? tabParam : 'card'
+    const defaultTab: TabId = (tabParam === 'info' || tabParam === 'chat' || tabParam === 'map') ? tabParam : 'card'
 
     const [profile, setProfile] = useState<QRProfile | null>(null)
     const [loading, setLoading] = useState(true)

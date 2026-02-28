@@ -5,13 +5,19 @@ import {
     Phone, MessageCircle, MapPin, AlertTriangle, ShieldAlert,
     Droplet, Pill, HeartPulse, ExternalLink, User, Camera,
     Send, Bot, Users, Stethoscope, CheckCircle2, Image, ChevronRight,
-    Mic, MicOff
+    Mic, MicOff, Navigation2
 } from 'lucide-react'
 import type { QRProfile } from '@/types'
 import SaathiAvatar from '@/components/avatar/SaathiAvatar'
+import dynamic from 'next/dynamic'
 import styles from './scan.module.css'
 
-type TabId = 'card' | 'info' | 'chat' | 'talk'
+const LocationMap = dynamic(() => import('@/components/map/LocationMap'), { ssr: false })
+
+// Hardcoded coordinates for Sector 15, Noida (patient home location for demo)
+const PATIENT_HOME_COORDS = { lat: 28.5855, lng: 77.3100 }
+
+type TabId = 'card' | 'info' | 'map' | 'chat' | 'talk'
 type ChatChannel = 'ai' | 'guardian' | 'caretaker'
 
 interface ChatMsg {
@@ -32,6 +38,7 @@ interface Props {
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
     { id: 'card', label: 'Patient ID', icon: <ShieldAlert size={16} /> },
     { id: 'info', label: 'Your Info', icon: <User size={16} /> },
+    { id: 'map', label: 'Map', icon: <Navigation2 size={16} /> },
     { id: 'chat', label: 'Chat', icon: <MessageCircle size={16} /> },
     { id: 'talk', label: 'Talk to Saathi', icon: <Bot size={16} /> },
 ]
@@ -681,7 +688,31 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
                     </div>
                 )}
 
-                {/* ══════════ SECTION 3: CHAT HUB ══════════ */}
+                {/* ══════════ SECTION 3: MAP VIEW ══════════ */}
+                {activeTab === 'map' && (
+                    <div className={styles.tabContent} role="tabpanel" aria-labelledby="tab-map">
+                        <div className={styles.mapPanel}>
+                            <div className={styles.mapHeader}>
+                                <Navigation2 size={18} className={styles.mapHeaderIcon} />
+                                <div>
+                                    <h2 className={styles.mapTitle}>Live Location Map</h2>
+                                    <p className={styles.mapSubtitle}>
+                                        See where {patient.name} lives and share your location
+                                    </p>
+                                </div>
+                            </div>
+                            <LocationMap
+                                samaritanLocation={samLocation}
+                                patientLocation={PATIENT_HOME_COORDS}
+                                patientName={patient.name}
+                                onDetectLocation={detectLocation}
+                                locationLoading={samLocationLoading}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* ══════════ SECTION 4: CHAT HUB ══════════ */}
                 {activeTab === 'chat' && (
                     <div className={styles.tabContent} role="tabpanel" aria-labelledby="tab-chat">
                         {/* Channel selector */}

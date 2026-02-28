@@ -37,6 +37,7 @@ const navGroups: NavGroup[] = [
             { href: '/guardian/schedule', label: 'Schedule', icon: <Calendar size={18} /> },
             { href: '/guardian/memories', label: 'Memories', icon: <Brain size={18} /> },
             { href: '/guardian/people', label: 'People Wallet', icon: <Users size={18} /> },
+            { href: '/guardian/contributions', label: 'Contributions', icon: <Heart size={18} />, badge: 1 },
         ],
     },
     {

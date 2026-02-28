@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { Heart, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useSession } from '@/lib/useSession';
@@ -13,8 +13,13 @@ const warmResponses = [
     "It's completely okay to feel that way. I'm listening.",
 ];
 
+interface ChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
 export default function CompanionVoicePage() {
-    const { user } = useSession();
+    const { user, token } = useSession();
     const [hasStarted, setHasStarted] = useState(false);
     const [voiceOn, setVoiceOn] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
@@ -23,6 +28,9 @@ export default function CompanionVoicePage() {
     const [aiCaption, setAiCaption] = useState('Tap to start talking');
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isListening, setIsListening] = useState(false);
+
+    // Full conversation history for context-aware Lyzr agent responses
+    const conversationHistory = useRef<ChatMessage[]>([]);
 
     // Trigger greeting once the user has tapped to start
     const handleStart = () => {
@@ -36,40 +44,64 @@ export default function CompanionVoicePage() {
         }
 
         const userName = user?.name?.split(' ')[0] || 'friend';
-        const greeting = `Namaste ${userName}! I'm Saathi. I'm here to listen. How are you feeling today?`;
+        const greeting = `Namaste ${userName}! I'm Saathi, your memory companion. I know all about your family and the people who love you. How are you feeling today?`;
         setLatestAiResponse(greeting);
         setAiCaption(greeting);
+
+        // Record the greeting in conversation history
+        conversationHistory.current.push({ role: 'assistant', content: greeting });
     };
 
-    const handleVoiceInput = async (text: string) => {
+    const handleVoiceInput = useCallback(async (text: string) => {
         if (!text) return;
         setUserCaption(text);
         setAiCaption('');
         setIsTyping(true);
 
+        // Add user message to history
+        conversationHistory.current.push({ role: 'user', content: text });
+
         try {
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json',
+            };
+            // Attach auth token for session validation on the server
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const res = await fetch('/api/companion/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                     patientId: user?.id || 'anonymous',
                     message: text,
-                    history: [{ role: 'user', content: text }],
+                    history: conversationHistory.current,
                 }),
             });
             const data = await res.json();
             const aiText = data.reply || warmResponses[Math.floor(Math.random() * warmResponses.length)];
 
+            // Record AI response in history
+            conversationHistory.current.push({ role: 'assistant', content: aiText });
+
             setLatestAiResponse(aiText);
             setAiCaption(aiText);
             setIsTyping(false);
-        } catch {
+
+            // If the API flagged an alert (emotional distress detected), log it
+            if (data.alert) {
+                console.log('[Companion] Alert triggered — emotional distress detected in conversation');
+            }
+        } catch (err) {
+            console.warn('[Companion] API call failed, using warm fallback:', err);
             const aiText = warmResponses[Math.floor(Math.random() * warmResponses.length)];
+            conversationHistory.current.push({ role: 'assistant', content: aiText });
             setLatestAiResponse(aiText);
             setAiCaption(aiText);
             setIsTyping(false);
         }
-    };
+    }, [user?.id, token]);
 
     const handleSpeakingChange = (speaking: boolean) => {
         setIsSpeaking(speaking);

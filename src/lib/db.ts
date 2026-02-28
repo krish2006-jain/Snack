@@ -4,24 +4,24 @@ import path from 'path';
 let _db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
-    if (!_db) {
-        _db = new Database(path.join(process.cwd(), 'saathicare.db'));
-        _db.pragma('journal_mode = WAL');
-        _db.pragma('foreign_keys = ON');
-        initSchema(_db);
+  if (!_db) {
+    _db = new Database(path.join(process.cwd(), 'saathicare.db'));
+    _db.pragma('journal_mode = WAL');
+    _db.pragma('foreign_keys = ON');
+    initSchema(_db);
 
-        // Auto-seed if empty
-        const count = _db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number };
-        if (count.c === 0) {
-            const { seedDatabase } = require('./seed');
-            seedDatabase(_db);
-        }
+    // Auto-seed if empty
+    const count = _db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number };
+    if (count.c === 0) {
+      const { seedDatabase } = require('./seed');
+      seedDatabase(_db);
     }
-    return _db;
+  }
+  return _db;
 }
 
 function initSchema(db: Database.Database) {
-    db.exec(`
+  db.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -233,6 +233,29 @@ function initSchema(db: Database.Database) {
       mood_detected TEXT,
       alert_triggered INTEGER DEFAULT 0,
       session_date TEXT,
+      created_at INTEGER DEFAULT (unixepoch())
+    );
+
+    CREATE TABLE IF NOT EXISTS voice_journal (
+      id TEXT PRIMARY KEY,
+      patient_id TEXT REFERENCES users(id),
+      transcription TEXT NOT NULL,
+      entities_extracted TEXT,
+      sentiment TEXT DEFAULT 'neutral',
+      duration_seconds INTEGER,
+      created_at INTEGER DEFAULT (unixepoch())
+    );
+
+    CREATE TABLE IF NOT EXISTS memory_contributions (
+      id TEXT PRIMARY KEY,
+      patient_id TEXT NOT NULL,
+      contributor_name TEXT NOT NULL,
+      contributor_relation TEXT,
+      content_type TEXT NOT NULL CHECK(content_type IN ('text','voice','photo')),
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      photo_url TEXT,
+      status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
       created_at INTEGER DEFAULT (unixepoch())
     );
   `);

@@ -1,0 +1,735 @@
+/* ══════════════════════════════════════════════════════════
+   Voice Journal — Snap Stories-style Patient Page
+   ══════════════════════════════════════════════════════════ */
+
+.page {
+    background: var(--bg-surface-soft);
+    min-height: 100vh;
+    padding-bottom: 100px;
+}
+
+/* ── Page Header ── */
+.pageHeader {
+    padding: var(--space-8) var(--space-8) var(--space-4);
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--space-2);
+}
+
+.title {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-1);
+}
+
+.subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ── Stories Row (Snap-style horizontal circles) ── */
+.storiesRow {
+    display: flex;
+    gap: 16px;
+    padding: var(--space-4) var(--space-8);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.storiesRow::-webkit-scrollbar {
+    display: none;
+}
+
+.storyBubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.storyBubble:hover {
+    transform: scale(1.06);
+}
+
+.storyRing {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(135deg, #7C3AED, #C084FC, #E9D5FF);
+    position: relative;
+}
+
+.storyRingViewed {
+    background: linear-gradient(135deg, #D1C4E9, #E8E0F0);
+}
+
+.storyRingRecord {
+    background: linear-gradient(135deg, #EF4444, #F97316, #F59E0B);
+    animation: recordPulse 2s infinite;
+}
+
+@keyframes recordPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+    }
+}
+
+.storyAvatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.storyAvatarImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.storyLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-body);
+    max-width: 72px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.storyLabelActive {
+    color: var(--color-primary);
+}
+
+/* ── Sentiment badge on story bubble ── */
+.sentimentDot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Story Cards Feed ── */
+.storiesFeed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: var(--space-4) var(--space-8);
+}
+
+.storyCard {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.storyCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+}
+
+.storyCardHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid rgba(124, 58, 237, 0.06);
+}
+
+.storyCardAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.storyCardInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.storyCardName {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.storyCardTime {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.storyCardDuration {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary);
+    background: var(--color-primary-muted);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+}
+
+.storyCardBody {
+    padding: var(--space-5) var(--space-6) var(--space-6);
+}
+
+.storyCardTranscription {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text-heading);
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.005em;
+}
+
+.entityHighlight {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(192, 132, 252, 0.15));
+    color: var(--color-primary);
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.entityHighlight:hover {
+    background: rgba(124, 58, 237, 0.2);
+}
+
+.storyCardFooter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.sentimentBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+}
+
+.sentimentHappy {
+    background: var(--color-success-bg);
+    color: #15803D;
+}
+
+.sentimentNostalgic {
+    background: var(--color-warning-bg);
+    color: #B45309;
+}
+
+.sentimentNeutral {
+    background: rgba(124, 58, 237, 0.1);
+    color: var(--color-primary);
+}
+
+.sentimentSad {
+    background: var(--color-info-bg);
+    color: #1D4ED8;
+}
+
+.entityTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-surface-soft);
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+}
+
+/* ── Record Button (Floating) ── */
+.recordFab {
+    position: fixed;
+    bottom: 100px;
+    right: 28px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EF4444, #F97316);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.35);
+    z-index: 50;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.recordFab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 40px rgba(239, 68, 68, 0.45);
+}
+
+.recordFab:active {
+    transform: scale(0.95);
+}
+
+/* ── Recording Overlay ── */
+.recordOverlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, #1F1135 0%, #0F0A19 100%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    animation: fadeInOverlay 0.3s ease;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.recordVisual {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(249, 115, 22, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.recordVisualInner {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EF4444, #F97316);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: recordPulseInner 1.5s infinite;
+}
+
+@keyframes recordPulseInner {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+    }
+}
+
+.recordWaveRing {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    animation: waveExpand 2s infinite;
+}
+
+.recordWaveRing:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.recordWaveRing:nth-child(3) {
+    animation-delay: 1s;
+}
+
+@keyframes waveExpand {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
+
+.recordTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+}
+
+.recordLiveText {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.6;
+    min-height: 60px;
+    font-style: italic;
+}
+
+.recordTimer {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+}
+
+.recordActions {
+    display: flex;
+    gap: var(--space-5);
+    margin-top: var(--space-4);
+}
+
+.recordStopBtn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.recordStopBtn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05);
+}
+
+.recordCancelBtn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    align-self: center;
+    transition: all 0.2s ease;
+}
+
+.recordCancelBtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+/* ── Fullscreen Story Viewer ── */
+.storyViewer {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    animation: fadeInOverlay 0.3s ease;
+}
+
+.storyViewerBg {
+    position: absolute;
+    inset: 0;
+}
+
+.storyViewerBgHappy {
+    background: linear-gradient(180deg, #065F46 0%, #022C22 100%);
+}
+
+.storyViewerBgNostalgic {
+    background: linear-gradient(180deg, #78350F 0%, #451A03 100%);
+}
+
+.storyViewerBgNeutral {
+    background: linear-gradient(180deg, #312E81 0%, #1E1B4B 100%);
+}
+
+.storyViewerBgSad {
+    background: linear-gradient(180deg, #1E3A5F 0%, #0F172A 100%);
+}
+
+.storyViewerHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    position: relative;
+    z-index: 5;
+}
+
+.storyViewerAvatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.storyViewerInfo {
+    flex: 1;
+}
+
+.storyViewerName {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+}
+
+.storyViewerTime {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.storyViewerClose {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease;
+}
+
+.storyViewerClose:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.storyViewerProgress {
+    display: flex;
+    gap: 4px;
+    padding: 0 var(--space-6);
+    position: relative;
+    z-index: 5;
+}
+
+.progressSegment {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.progressSegmentActive {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.progressSegmentViewed {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.storyViewerBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-10) var(--space-8);
+    position: relative;
+    z-index: 5;
+}
+
+.storyViewerText {
+    font-size: 22px;
+    line-height: 1.7;
+    color: white;
+    text-align: center;
+    max-width: 560px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.storyViewerSentiment {
+    margin-top: var(--space-6);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    backdrop-filter: blur(8px);
+}
+
+.storyViewerNav {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-6);
+    position: relative;
+    z-index: 5;
+}
+
+.storyNavBtn {
+    padding: 10px 24px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.storyNavBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.storyNavBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ── Empty State ── */
+.emptyState {
+    text-align: center;
+    padding: var(--space-16) var(--space-8);
+}
+
+.emptyIcon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-5);
+    border-radius: 50%;
+    background: var(--color-primary-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+
+.emptyTitle {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: var(--space-2);
+}
+
+.emptyDesc {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 300px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .pageHeader {
+        padding: var(--space-6) var(--space-5) var(--space-3);
+    }
+
+    .title {
+        font-size: 26px;
+    }
+
+    .storiesRow {
+        padding: var(--space-3) var(--space-5);
+        gap: 12px;
+    }
+
+    .storiesFeed {
+        padding: var(--space-3) var(--space-5);
+    }
+
+    .storyRing {
+        width: 62px;
+        height: 62px;
+    }
+
+    .storyCardTranscription {
+        font-size: 15px;
+    }
+
+    .storyViewerText {
+        font-size: 18px;
+    }
+
+    .recordFab {
+        bottom: 80px;
+        right: 20px;
+    }
+}

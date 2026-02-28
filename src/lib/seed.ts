@@ -82,17 +82,18 @@ export function seedDatabase(db: Database.Database) {
         insertMemory.run(uuid(), PATIENT_ID, q, a, desc, cat, recall, total, GUARDIAN_ID);
     }
 
-    // ── People Wallet (6 people) ──
+    // ── People Wallet (7 people — matches mockPeople in patient.ts) ──
     const insertPerson = db.prepare(
         'INSERT INTO people_cards (id, patient_id, name, relationship, bio, last_visited, phone, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
     );
     const people = [
-        ['Priya Sharma', 'Daughter', 'Your first daughter. Lives in Gurugram with her husband. Visits every Sunday with Rahul.', '2 days ago', '+91 98765 43210', 1],
-        ['Meera Sharma', 'Wife', 'Your wife of 41 years. She loves gardening and makes the best chai.', 'Lives with you', '+91 98765 12345', 0],
-        ['Rahul Sharma', 'Grandson', 'Priya\'s son, 8 years old. Loves cricket and drawing. Calls you "Dadu".', '2 days ago', null, 2],
-        ['Dr. Sunita Patel', 'Neurologist', 'Your doctor for 3 years. Appointments every 6 weeks at Fortis Hospital.', '2 weeks ago', '+91 98765 99999', 3],
-        ['Nurse Anita', 'Caretaker', 'Your daily caretaker. She comes at 8 AM and helps with medicines and walks.', 'Today', '+91 98765 67890', 4],
-        ['Arjun Sharma', 'Son', 'Your second child. Lives in Bangalore. Software engineer at Infosys.', '3 weeks ago', '+91 98765 55555', 5],
+        ['Ravi Sharma (You)', 'Self', 'This is you. A retired LIC officer with a warm heart, you enjoy music and stories from the past.', 'Today', '', 0],
+        ['Smita Sharma', 'Wife', 'Your beloved wife of over 40 years. She takes care of you every day and keeps the household running smoothly. Her gentle presence comforts you.', 'Today', '', 1],
+        ['Priya Sharma', 'Daughter', 'Your eldest daughter. Calls every Sunday and visits weekly with her husband Rajesh and the kids. She manages your medication schedule and health appointments.', '3 days ago', '+91 98765 12345', 2],
+        ['Nurse Anita', 'Caretaker', 'Anita is with you every day from 8 AM–4 PM. She helps with medication, walks, and everyday tasks. You trust her deeply.', 'Today', '+91 98765 67890', 3],
+        ['Aarav Sharma', 'Grandson', 'Priya\'s 8-year-old son. Loves cricket and always runs to give you a hug when he visits during school holidays.', '2 weeks ago', '', 4],
+        ['Riya Sharma', 'Granddaughter', 'Priya\'s 5-year-old daughter. She adores drawing and painted a picture of you that hangs in your room.', '2 weeks ago', '', 5],
+        ['Mohit Sharma', 'Son', 'Your younger son working in Mumbai as a software engineer. Visits during festivals and calls frequently to check on you.', '1 week ago', '+91 98765 54321', 6],
     ];
     for (const [name, rel, bio, visited, phone, order] of people) {
         insertPerson.run(uuid(), PATIENT_ID, name, rel, bio, visited, phone, order);
