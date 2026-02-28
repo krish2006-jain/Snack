@@ -237,44 +237,30 @@ export interface Memory {
     emotion: 'happy' | 'neutral' | 'nostalgic'
     tags: string[]
     recallScore: number  // 0-100
+    image?: string  // path to image
 }
 
 export const mockMemories: Memory[] = [
     {
-        id: 'mem-01', title: "Priya's Wedding Day",
-        description: "Ravi walking Priya down the aisle at Dashashwamedh Ghat, Varanasi. One of the happiest days of his life.",
-        date: '1998-12-18', type: 'photo', emotion: 'happy', tags: ['Priya', 'family', 'wedding', 'Varanasi'],
-        recallScore: 95,
+        id: 'mem-01', title: "Ravi and Smita's Wedding Day",
+        description: "A beautiful moment from Ravi and Smita's wedding celebration — a day filled with joy, family, and the beginning of their beautiful shared journey together. Smita in her bridal ensemble, Ravi in his finest attire, surrounded by the warmth of their loved ones.",
+        date: '1985-06-15', type: 'photo', emotion: 'happy', tags: ['Smita', 'wedding', 'love', 'family'],
+        recallScore: 98,
+        image: '/images/Wedding Day.png',
     },
     {
-        id: 'mem-02', title: 'Sunday Chole Bhature',
-        description: "Kamla making chole bhature every Sunday morning using her grandmother's recipe. The whole neighbourhood knew the smell.",
-        date: '2010-04-15', type: 'photo', emotion: 'nostalgic', tags: ['Kamla', 'food', 'Sunday', 'home'],
-        recallScore: 88,
+        id: 'mem-02', title: 'Family Picnic - Childhood Memories',
+        description: "A joyful family picnic from their younger days — Ravi, Smita, and the children enjoying outdoor games, laughter, and delicious homemade food under the open sky. These moments of togetherness shaped the foundation of the family's strongest bonds.",
+        date: '1995-03-20', type: 'photo', emotion: 'nostalgic', tags: ['family', 'picnic', 'childhood', 'outdoor'],
+        recallScore: 85,
+        image: '/images/Family Picnic (Childhood).png',
     },
     {
-        id: 'mem-03', title: 'Aarav Learning Cricket',
-        description: "Ravi teaching Aarav how to hold the bat in the garden. Aarav hit his first boundary and ran to Dadu for a hug.",
-        date: '2022-06-10', type: 'video', emotion: 'happy', tags: ['Aarav', 'cricket', 'garden', 'grandchildren'],
-        recallScore: 82,
-    },
-    {
-        id: 'mem-04', title: '30 Years at LIC — Retirement Cake',
-        description: "Colleagues surprised Ravi with a cake at the LIC Connaught Place office on his last day after 30 years of service.",
-        date: '2018-03-31', type: 'photo', emotion: 'nostalgic', tags: ['LIC', 'work', 'colleagues', 'retirement'],
-        recallScore: 74,
-    },
-    {
-        id: 'mem-05', title: "Priya's Voice Message",
-        description: "A voice note Priya recorded for Ravi: 'Papa, I love you and I'm proud of you. You've given us everything.'",
-        date: '2025-12-01', type: 'voice', emotion: 'happy', tags: ['Priya', 'love', 'message'],
-        recallScore: 61,
-    },
-    {
-        id: 'mem-06', title: 'Sholay at Regal Cinema',
-        description: "Ravi watching Sholay for the 7th time at Regal Cinema, Connaught Place in 1975. Still remembers Gabbar's dialogues.",
-        date: '1975-08-22', type: 'photo', emotion: 'nostalgic', tags: ['cinema', 'Sholay', 'youth', 'Delhi'],
-        recallScore: 55,
+        id: 'mem-03', title: 'Childhood Home',
+        description: "The cherished home where Ravi and Smita raised their family — the walls that held countless celebrations, quiet moments, and everyday routines. This house became the heart of their family's world, filled with memories of growth and togetherness.",
+        date: '1988-01-10', type: 'photo', emotion: 'nostalgic', tags: ['home', 'childhood', 'family', 'memories'],
+        recallScore: 80,
+        image: '/images/Childhood Home.png',
     },
 ]
 
@@ -337,14 +323,17 @@ export interface Person {
     description: string
     visits: string
     recognitionRate: number // 0-100
+    image?: string  // path to image
 }
 
 export const mockPeople: Person[] = [
-    { id: 'p-01', name: 'Priya Sharma', relation: 'Daughter', nickname: 'Priya beti', phone: '+91 98765 12345', description: "Ravi's eldest daughter. Calls every Sunday. Lives in Gurugram with Rajesh, Aarav and Riya.", visits: 'Weekly', recognitionRate: 96 },
-    { id: 'p-02', name: 'Nurse Anita', relation: 'Caretaker', nickname: 'Anita baai', phone: '+91 98765 67890', description: 'Daytime caretaker 8 AM–4 PM. With Ravi for 2 years. Gives morning medication and accompanies walks.', visits: 'Daily', recognitionRate: 90 },
-    { id: 'p-03', name: 'Aarav', relation: 'Grandson', nickname: 'Aarav', phone: '', description: "Priya's 8-year-old son. Loves cricket and calls Ravi \"Dadu\". Visits during school holidays.", visits: 'Monthly', recognitionRate: 82 },
-    { id: 'p-04', name: 'Riya', relation: 'Granddaughter', nickname: 'Riya mini', phone: '', description: "Priya's 5-year-old daughter. Loves drawing. Made a painting of Ravi on his bedroom wall.", visits: 'Monthly', recognitionRate: 78 },
-    { id: 'p-06', name: 'Dr. Sunita Patel', relation: 'Neurologist', nickname: '', phone: '+91 98765 99999', description: 'Neurologist at Fortis Hospital. Sees Ravi monthly. Explains things slowly and patiently.', visits: 'Monthly', recognitionRate: 65 },
+    { id: 'p-00', name: 'Smita Sharma', relation: 'Wife', nickname: 'Smita', phone: '', description: 'Ravi\'s beloved wife of 40 years. Her love and care keeps the family bonds strong. Always ensures Ravi takes his medications on time.', visits: 'Daily', recognitionRate: 99, image: '/images/Wife (Smita).png' },
+    { id: 'p-01', name: 'Priya Sharma', relation: 'Daughter', nickname: 'Priya beti', phone: '+91 98765 12345', description: "Ravi's eldest daughter. Calls every Sunday. Lives in Gurugram with Rajesh, Aarav and Riya. Works as a project manager.", visits: 'Weekly', recognitionRate: 96, image: '/images/Guardian (Priya).png' },
+    { id: 'p-02', name: 'Nurse Anita', relation: 'Caretaker', nickname: 'Anita baai', phone: '+91 98765 67890', description: 'Daytime caretaker 8 AM–4 PM. With Ravi for 2 years. Gives morning medication and accompanies walks. Patient and compassionate.', visits: 'Daily', recognitionRate: 90, image: '/images/Caretaker (Anita).png' },
+    { id: 'p-03', name: 'Aarav', relation: 'Grandson', nickname: 'Aarav', phone: '', description: "Priya's 8-year-old son. Loves cricket and calls Ravi \"Dadu\". Visits during school holidays and plays board games with Ravi.", visits: 'Monthly', recognitionRate: 82, image: '/images/Grandson (Aarav).png' },
+    { id: 'p-04', name: 'Riya', relation: 'Granddaughter', nickname: 'Riya mini', phone: '', description: "Priya's 5-year-old daughter. Loves drawing and painting. Made a colorful painting of Ravi on his bedroom wall. Very affectionate.", visits: 'Monthly', recognitionRate: 78, image: '/images/Grandaughter (Riya).png' },
+    { id: 'p-05', name: 'Mohit Sharma', relation: 'Son', nickname: 'Mohit', phone: '+91 98765 54321', description: 'Ravi\'s younger son. Works in Mumbai as a software engineer. Visits during major festivals and holidays. Very supportive of family decisions.', visits: 'Bi-weekly', recognitionRate: 88, image: '/images/Son (Mohit).png' },
+    { id: 'p-06', name: 'Patient (Ravi)', relation: 'Self', nickname: 'Ravi', phone: '', description: 'The patient. A retired LIC officer with a warm heart and sharp memory in his prime days. Enjoys music, family stories, and his daily routine.', visits: 'Self', recognitionRate: 100, image: '/images/Patient (Ravi).png' },
 ]
 
 // ── Guardian Memory Rooms ──────────────────────────────────── //

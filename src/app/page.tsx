@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   QrCode, Brain, Layers, Users, ScanLine, HeartHandshake,
   Stethoscope, Shield, Play, ChevronRight, Heart, MapPin,
@@ -53,6 +54,7 @@ export default function LandingPage() {
       >
         <div className={styles.navInner}>
           <Link href="/" className={styles.navLogo} aria-label="SaathiCare home">
+            <Image src="/images/Logo.png" alt="SaathiCare logo" width={24} height={24} className={styles.navLogoImage} />
             <span className={styles.navLogoSaathi}>SAATHI</span>
             <span className={styles.navLogoCare}>Care</span>
           </Link>
@@ -73,8 +75,17 @@ export default function LandingPage() {
 
           {/* ── HERO ── */}
           <section className={styles.hero} aria-labelledby="hero-heading">
+            <div className={styles.heroBackground}>
+              <Image 
+                src="/images/Hero Section Background.png" 
+                alt="Hero background" 
+                fill 
+                className={styles.heroBgImage}
+                priority
+              />
+            </div>
             <div className={styles.heroLeft}>
-              <h1 id="hero-heading" className={`${styles.heroHeading} reveal`}>
+                <h1 id="hero-heading" className={`${styles.heroHeading} reveal`}>
                 <span className={styles.heroLine1}>When Ravi forgets</span>
                 <span className={styles.heroLine1}>the way home—</span>
                 <span className={styles.heroLine2}>
@@ -125,19 +136,21 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className={`${styles.miniStat} animate-slide-up animate-delay-3`}>
-                <MapPin size={16} className={styles.miniStatIcon} aria-hidden="true" />
-                <div>
-                  <div className={styles.miniStatValue}>48hr</div>
-                  <div className={styles.miniStatLabel}>Setup time</div>
+              <div className={styles.miniStatsContainer}>
+                <div className={`${styles.miniStat} animate-slide-up animate-delay-3`}>
+                  <MapPin size={16} className={styles.miniStatIcon} aria-hidden="true" />
+                  <div>
+                    <div className={styles.miniStatValue}>48hr</div>
+                    <div className={styles.miniStatLabel}>Setup time</div>
+                  </div>
                 </div>
-              </div>
 
-              <div className={`${styles.miniStat} ${styles.miniStatRight} animate-slide-up animate-delay-4`}>
-                <Smartphone size={16} className={styles.miniStatIcon} aria-hidden="true" />
-                <div>
-                  <div className={styles.miniStatValue}>0 apps</div>
-                  <div className={styles.miniStatLabel}>Needed to scan</div>
+                <div className={`${styles.miniStat} animate-slide-up animate-delay-4`}>
+                  <Smartphone size={16} className={styles.miniStatIcon} aria-hidden="true" />
+                  <div>
+                    <div className={styles.miniStatValue}>0 apps</div>
+                    <div className={styles.miniStatLabel}>Needed to scan</div>
+                  </div>
                 </div>
               </div>
             </div>

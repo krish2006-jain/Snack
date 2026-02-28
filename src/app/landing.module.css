@@ -52,7 +52,7 @@
 
 .navLogo {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 4px;
     text-decoration: none;
     flex-shrink: 0;
@@ -64,6 +64,13 @@
     font-weight: 700;
     color: var(--text-heading);
     letter-spacing: -0.01em;
+}
+
+.navLogoImage {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
 .navLogoCare {
@@ -108,6 +115,28 @@
     align-items: center;
     padding: 140px var(--outer-padding) 80px;
     min-height: 640px;
+}
+
+.heroBackground {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    border-radius: 24px;
+}
+
+.heroBgImage {
+    object-fit: cover;
+    object-position: center;
+}
+
+.logoImage {
+    display: block;
+    width: auto;
+    height: auto;
 }
 
 .heroLeft {
@@ -160,22 +189,24 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-4);
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--space-6);
 }
 
 .statCard {
     width: 100%;
     max-width: 340px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.6);  /* lighter opacity */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: var(--radius-card);
     padding: var(--space-8);
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    transform: translateY(-20px);
 }
 
 .statCardTop {
@@ -246,16 +277,16 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--radius-button);
     padding: var(--space-3) var(--space-4);
-    align-self: flex-start;
-    box-shadow: var(--shadow-soft);
+    flex: 1;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .miniStatRight {
-    align-self: flex-end;
 }
 
 .miniStatIcon {
@@ -275,6 +306,12 @@
     color: var(--text-muted);
     font-weight: 500;
     margin-top: 2px;
+}
+
+.miniStatsContainer {
+    display: flex;
+    gap: var(--space-4);
+    width: 100%;
 }
 
 /* ── TRUST SECTION ── */
