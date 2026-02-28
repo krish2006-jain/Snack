@@ -7,6 +7,7 @@ import {
     LayoutDashboard, Calendar, Image, Users, Brain, Gamepad2,
     FileText, QrCode, Bell, BarChart3, Activity, ScrollText,
     CheckSquare, BookOpen, Pill, MessageCircle, ChevronDown,
+    ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { Logo } from './AppHeader';
 import { useSession } from '@/lib/useSession';
@@ -96,6 +97,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
     const pathname = usePathname();
     const groups = role === 'guardian' ? guardianGroups : caretakerGroups;
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const { user, logout } = useSession();
     const userName = user?.name || (role === 'caretaker' ? 'Caregiver' : 'Guardian');
 
@@ -112,7 +114,46 @@ export function AppSidebar({ role }: AppSidebarProps) {
         group.items.some((item) => isItemActive(item));
 
     return (
-        <aside className="app-sidebar">
+        <aside className={`app-sidebar ${sidebarCollapsed ? 'app-sidebar--collapsed' : ''}`} role="navigation">
+            {/* Collapse toggle button */}
+            <button
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                style={{
+                    position: 'absolute',
+                    top: 20,
+                    right: -14,
+                    width: 28,
+                    height: 28,
+                    borderRadius: '50%',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--text-muted)',
+                    zIndex: 60,
+                    cursor: 'pointer',
+                    transition: 'background 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--color-primary-muted)';
+                    e.currentTarget.style.color = 'var(--color-primary)';
+                    e.currentTarget.style.transform = 'scale(1.15)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'var(--bg-surface)';
+                    e.currentTarget.style.color = 'var(--text-muted)';
+                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                }}
+            >
+                {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
+
             {/* Logo area */}
             <div style={{
                 padding: '24px 16px 16px',
@@ -120,14 +161,23 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 marginBottom: 8,
                 display: 'flex',
                 alignItems: 'center',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap'
             }}>
-                <Link href={role === 'guardian' ? '/guardian' : '/caretaker'}>
+                <div style={{
+                    width: 36,
+                    height: 36,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                }}>
                     <Logo />
-                </Link>
+                </div>
             </div>
 
             {/* Role label */}
-            <div style={{
+            <div className="sidebar-text" style={{
                 padding: '8px 20px 4px',
                 fontSize: 11,
                 fontWeight: 700,
@@ -156,6 +206,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                             {/* Group header */}
                             {!isOverview && (
                                 <button
+                                    className="sidebar-text"
                                     onClick={() => toggleGroup(group.label)}
                                     aria-expanded={isOpen}
                                     style={{
@@ -216,17 +267,24 @@ export function AppSidebar({ role }: AppSidebarProps) {
                                             href={item.href}
                                             className={`nav-item ${active ? 'nav-item--active' : ''}`}
                                             aria-current={active ? 'page' : undefined}
+                                            title={item.label}
+                                            style={{
+                                                paddingLeft: 12,
+                                                paddingRight: 12
+                                            }}
                                         >
                                             <span style={{
                                                 color: active ? 'var(--color-primary)' : 'var(--text-muted)',
                                                 display: 'flex',
                                                 alignItems: 'center',
+                                                justifyContent: 'center',
                                                 flexShrink: 0,
-                                                transition: 'color 0.25s',
+                                                width: 24,
+                                                transition: 'color 0.25s, transform 0.2s',
                                             }}>
                                                 {item.icon}
                                             </span>
-                                            {item.label}
+                                            <span className="sidebar-text" style={{ flex: 1 }}>{item.label}</span>
                                         </Link>
                                     );
                                 })}
@@ -237,20 +295,31 @@ export function AppSidebar({ role }: AppSidebarProps) {
             </nav>
 
             {/* footer with profile + sign-out for both roles */}
-            <div style={{ marginTop: 'auto', padding: '16px 20px', borderTop: '1px solid var(--border-subtle)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+            <div style={{ marginTop: 'auto', padding: '16px 20px', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 8, overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div style={{
                         width: 32,
                         height: 32,
                         borderRadius: '50%',
-                        background: 'var(--color-primary-muted)',
+                        background: 'linear-gradient(135deg, #2D5A3D, #4A7C5C)',
                         color: '#fff',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: 12,
                         fontWeight: 700,
-                    }}>
+                        flexShrink: 0,
+                        transition: 'transform 0.2s, box-shadow 0.2s'
+                    }}
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = 'scale(1.08)';
+                            e.currentTarget.style.boxShadow = '0 2px 8px rgba(45,90,61,0.2)';
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = 'scale(1)';
+                            e.currentTarget.style.boxShadow = 'none';
+                        }}
+                    >
                         {userName
                             .split(' ')
                             .map((p) => p[0])
@@ -258,14 +327,18 @@ export function AppSidebar({ role }: AppSidebarProps) {
                             .slice(0, 2)
                             .toUpperCase()}
                     </div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>
+                    <div className="sidebar-text" style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>
                         {userName}
                     </div>
                 </div>
                 <button
                     onClick={logout}
-                    className="btn btn--ghost btn--sm"
-                    style={{ width: '100%' }}
+                    className="btn btn--ghost btn--sm sidebar-text"
+                    style={{
+                        width: '100%',
+                        justifyContent: 'flex-start',
+                        padding: '6px 12px'
+                    }}
                 >
                     Sign out
                 </button>

@@ -101,7 +101,7 @@ export default function LoginPage() {
             }
             // store demo user locally so header/profile shows signed-in state
             try {
-                localStorage.setItem('saathi_user', JSON.stringify({ name: match.name, role: match.role, email: match.email, isDemo: true }))
+                localStorage.setItem('saathi_user', JSON.stringify({ name: match.name, role: match.role, email: match.email, isDemo: true, ...('patientName' in match && { patientName: match.patientName }) }))
                 localStorage.setItem('saathi_token', 'demo-token')
             } catch { }
             router.push(ROLE_REDIRECTS[role])

@@ -160,7 +160,7 @@
     align-items: center;
     gap: var(--space-3);
     background: var(--color-success-bg);
-    border-radius: 10px;
+    border-radius: var(--radius-button);
     padding: var(--space-3) var(--space-4);
     margin-bottom: var(--space-4);
 }
@@ -241,7 +241,7 @@
 .dotActive {
     background: var(--color-primary);
     width: 28px;
-    border-radius: 5px;
+    border-radius: var(--radius-button);
     box-shadow: 0 2px 8px rgba(45, 90, 61, 0.25);
 }
 

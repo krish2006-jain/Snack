@@ -19,13 +19,21 @@
 }
 
 .statCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
     padding: var(--space-4) var(--space-5);
     display: flex;
     flex-direction: column;
     gap: 4px;
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    cursor: default;
+}
+
+.statCard:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elevated);
+    border-color: var(--border-medium);
 }
 
 .statNum {
@@ -162,7 +170,7 @@
 
 /* Upload panel */
 .uploadPanel {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-6);
@@ -288,7 +296,7 @@
 }
 
 .memCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     overflow: hidden;

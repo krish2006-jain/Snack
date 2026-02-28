@@ -1,15 +1,17 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
     Phone, MessageCircle, MapPin, AlertTriangle, ShieldAlert,
     Droplet, Pill, HeartPulse, ExternalLink, User, Camera,
-    Send, Bot, Users, Stethoscope, CheckCircle2, Image, ChevronRight
+    Send, Bot, Users, Stethoscope, CheckCircle2, Image, ChevronRight,
+    Mic, MicOff
 } from 'lucide-react'
 import type { QRProfile } from '@/types'
+import SaathiAvatar from '@/components/avatar/SaathiAvatar'
 import styles from './scan.module.css'
 
-type TabId = 'card' | 'info' | 'chat'
+type TabId = 'card' | 'info' | 'chat' | 'talk'
 type ChatChannel = 'ai' | 'guardian' | 'caretaker'
 
 interface ChatMsg {
@@ -31,6 +33,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
     { id: 'card', label: 'Patient ID', icon: <ShieldAlert size={16} /> },
     { id: 'info', label: 'Your Info', icon: <User size={16} /> },
     { id: 'chat', label: 'Chat', icon: <MessageCircle size={16} /> },
+    { id: 'talk', label: 'Talk to Saathi', icon: <Bot size={16} /> },
 ]
 
 const CHANNELS: { id: ChatChannel; label: string; icon: React.ReactNode; name: string; desc: string }[] = [
@@ -82,6 +85,100 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
     const [chatSending, setChatSending] = useState(false)
     const chatBottomRef = useRef<HTMLDivElement>(null)
     const chatInputRef = useRef<HTMLInputElement>(null)
+    const [latestAiResponse, setLatestAiResponse] = useState('')
+
+    // ── Talk tab state ──
+    interface TalkEntry { role: 'user' | 'ai'; text: string }
+    const [talkHistory, setTalkHistory] = useState<TalkEntry[]>([])
+    const [talkListening, setTalkListening] = useState(false)
+    const [talkSending, setTalkSending] = useState(false)
+    const [talkSpeaking, setTalkSpeaking] = useState(false)
+    const [talkLatestResponse, setTalkLatestResponse] = useState('')
+    const talkResponseCounter = useRef(0)
+    const talkScrollRef = useRef<HTMLDivElement>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const talkRecRef = useRef<any>(null)
+    // Chat history for LLM context (separate from the text chat)
+    const talkLlmHistory = useRef<{ role: string; content: string }[]>([])
+
+    // Scroll talk transcript to bottom
+    useEffect(() => {
+        talkScrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [talkHistory])
+
+    // ── Talk: send voice transcript to LLM and get avatar to speak the reply ──
+    const sendTalkMessage = useCallback(async (text: string) => {
+        if (!text.trim() || talkSending) return
+        setTalkSending(true)
+        setTalkHistory(prev => [...prev, { role: 'user', text: text.trim() }])
+
+        try {
+            const res = await fetch(`/api/scan/${token}/chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    channel: 'ai',
+                    message: text.trim(),
+                    history: talkLlmHistory.current,
+                }),
+            })
+            const data = await res.json()
+            const reply = data.reply || 'I could not respond. Please try again.'
+
+            talkLlmHistory.current.push({ role: 'user', content: text.trim() })
+            talkLlmHistory.current.push({ role: 'assistant', content: reply })
+
+            setTalkHistory(prev => [...prev, { role: 'ai', text: reply }])
+            // Force SaathiAvatar to re-trigger speech even if reply text is identical
+            talkResponseCounter.current += 1
+            setTalkLatestResponse(reply + '\u200B'.repeat(talkResponseCounter.current % 3))
+        } catch {
+            setTalkHistory(prev => [...prev, { role: 'ai', text: 'Sorry, something went wrong. Please try again.' }])
+        } finally {
+            setTalkSending(false)
+        }
+    }, [talkSending, token])
+
+    // ── Talk: speech recognition ──
+    const toggleTalkListening = useCallback(() => {
+        // Unlock Safari/Chrome TTS autoplay context
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window && !talkListening) {
+            const unlockUtterance = new SpeechSynthesisUtterance('');
+            unlockUtterance.volume = 0;
+            window.speechSynthesis.speak(unlockUtterance);
+        }
+
+        if (talkListening && talkRecRef.current) {
+            talkRecRef.current.stop()
+            setTalkListening(false)
+            return
+        }
+        if (typeof window === 'undefined') return
+        type SRCtor = new () => {
+            lang: string; start: () => void; stop: () => void;
+            onresult: ((e: { results: { [k: number]: { [k: number]: { transcript: string } } } }) => void) | null;
+            onend: (() => void) | null;
+            onerror: ((e: { error: string }) => void) | null;
+        }
+        const win = window as unknown as { SpeechRecognition?: SRCtor; webkitSpeechRecognition?: SRCtor }
+        const Ctor = win.SpeechRecognition || win.webkitSpeechRecognition
+        if (!Ctor) return
+        const rec = new Ctor()
+        talkRecRef.current = rec
+        rec.lang = 'en-IN'
+        rec.onresult = (e) => {
+            const transcript = e.results[0][0].transcript
+            if (transcript) sendTalkMessage(transcript)
+            setTalkListening(false)
+        }
+        rec.onend = () => setTalkListening(false)
+        rec.onerror = () => setTalkListening(false)
+        rec.start()
+        setTalkListening(true)
+    }, [talkListening, sendTalkMessage])
+
+    const talkStatus = talkListening ? 'Listening…' : talkSending ? 'Thinking…' : talkSpeaking ? 'Speaking…' : 'Tap the mic to talk'
+    const talkDotClass = talkListening ? styles.listening : talkSending ? styles.thinking : talkSpeaking ? styles.speaking : ''
 
     useEffect(() => {
         chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -211,6 +308,9 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
                     ...prev,
                     [chatChannel]: [...prev[chatChannel], replyMsg],
                 }))
+                if (chatChannel === 'ai') {
+                    setLatestAiResponse(data.reply)
+                }
             }
         } catch {
             const errorMsg: ChatMsg = {
@@ -738,6 +838,72 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
                                     <Send size={18} aria-hidden="true" />
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* ══════════ SECTION 4: TALK TO SAATHI ══════════ */}
+                {activeTab === 'talk' && (
+                    <div className={styles.talkPanel} role="tabpanel" aria-labelledby="tab-talk">
+                        {/* Status bar */}
+                        <div className={styles.talkStatusRow}>
+                            <span className={`${styles.talkStatusDot} ${talkDotClass}`} />
+                            <span className={styles.talkStatusLabel}>{talkStatus}</span>
+                        </div>
+
+                        {/* 3D Avatar — fullscreen mode */}
+                        <div className={styles.talkAvatarContainer}>
+                            <SaathiAvatar
+                                isTyping={talkSending}
+                                latestResponse={talkLatestResponse}
+                                voiceEnabled={true}
+                                fullscreen={true}
+                                onSpeakingChange={setTalkSpeaking}
+                            />
+                        </div>
+
+                        {/* Conversation transcript */}
+                        {talkHistory.length > 0 && (
+                            <div className={styles.talkTranscript}>
+                                {talkHistory.map((entry, i) => (
+                                    <div
+                                        key={i}
+                                        className={`${styles.talkBubble} ${entry.role === 'user' ? styles.talkBubbleUser : styles.talkBubbleAi}`}
+                                    >
+                                        <span className={styles.talkBubbleTag}>
+                                            {entry.role === 'user' ? 'You' : 'Saathi'}
+                                        </span>
+                                        <span className={styles.talkBubbleText}>{entry.text}</span>
+                                    </div>
+                                ))}
+                                <div ref={talkScrollRef} />
+                            </div>
+                        )}
+
+                        {talkHistory.length === 0 && (
+                            <div className={styles.talkIntro}>
+                                <p className={styles.talkIntroText}>
+                                    Saathi AI has access to {patient.name}&apos;s medical records.
+                                    Tap the mic and ask anything — allergies, medications, how to help.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Mic button */}
+                        <div className={styles.talkControls}>
+                            <button
+                                type="button"
+                                className={`${styles.talkMicBtn} ${talkListening ? styles.recording : ''}`}
+                                onClick={toggleTalkListening}
+                                disabled={talkSending || talkSpeaking}
+                                aria-label={talkListening ? 'Stop listening' : 'Start talking'}
+                                id="talk-mic-btn"
+                            >
+                                {talkListening ? <MicOff size={28} /> : <Mic size={28} />}
+                            </button>
+                            <span className={styles.talkHint}>
+                                {talkListening ? 'Listening… tap to stop' : talkSpeaking ? 'Saathi is responding…' : 'Tap to speak'}
+                            </span>
                         </div>
                     </div>
                 )}

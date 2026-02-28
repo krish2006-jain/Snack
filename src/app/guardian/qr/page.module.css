@@ -28,7 +28,7 @@
 }
 
 .qrCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-6);
@@ -36,7 +36,12 @@
     flex-direction: column;
     align-items: center;
     gap: var(--space-5);
-    transition: opacity 300ms ease;
+    transition: opacity 300ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.qrCard:hover {
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border-medium);
 }
 
 .qrInactive {
@@ -202,7 +207,7 @@
 
 /* Scan log */
 .scanLog {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-5);
@@ -230,6 +235,16 @@
 .scanItem {
     padding-bottom: var(--space-4);
     border-bottom: 1px solid var(--border-subtle);
+    transition: background 200ms ease, transform 200ms ease;
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+    border-radius: var(--radius-button);
+    cursor: default;
+}
+
+.scanItem:hover {
+    background: var(--bg-surface-soft);
+    transform: translateX(3px);
 }
 
 .scanItem:last-child {
@@ -274,7 +289,7 @@
 
 /* Privacy */
 .privacySection {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-6);
@@ -306,6 +321,13 @@
     gap: var(--space-4);
     padding: var(--space-3) 0;
     border-bottom: 1px solid var(--border-subtle);
+    transition: background 200ms ease;
+    border-radius: var(--radius-button);
+    cursor: default;
+}
+
+.toggleRow:hover {
+    background: var(--bg-surface-soft);
 }
 
 .toggleRow:last-child {

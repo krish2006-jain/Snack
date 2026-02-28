@@ -231,7 +231,7 @@
     align-items: flex-start;
     gap: var(--space-4);
     padding: var(--space-4) var(--space-5);
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
     transition: transform 150ms ease, box-shadow 150ms ease;

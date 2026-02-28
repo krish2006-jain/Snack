@@ -671,8 +671,6 @@
     align-items: center;
 }
 
-.channelLabel {}
-
 .channelBadge {
     display: flex;
     align-items: center;
@@ -758,6 +756,11 @@
     flex-direction: column;
     gap: var(--space-3);
     scroll-behavior: smooth;
+}
+
+.avatarRow {
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
 }
 
 .chatIntro {
@@ -1077,6 +1080,235 @@
     }
 }
 
+/* ── SECTION 4: TALK TO SAATHI ── */
+
+.talkPanel {
+    display: flex;
+    flex-direction: column;
+    height: 580px;
+    max-height: 75vh;
+    animation: fadeIn 0.3s ease both;
+    background: linear-gradient(180deg,
+            rgba(45, 90, 61, 0.03) 0%,
+            var(--bg-surface) 50%,
+            var(--bg-surface-soft) 100%);
+}
+
+.talkAvatarContainer {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.talkStatusRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(45, 90, 61, 0.08);
+}
+
+.talkStatusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: background 300ms ease;
+}
+
+.talkStatusDot.listening {
+    background: var(--color-danger);
+    animation: breatheStatus 1.5s ease-in-out infinite;
+}
+
+.talkStatusDot.speaking {
+    background: var(--color-primary);
+    animation: breatheStatus 1.5s ease-in-out infinite;
+}
+
+.talkStatusDot.thinking {
+    background: var(--color-warning);
+    animation: breatheStatus 1s ease-in-out infinite;
+}
+
+@keyframes breatheStatus {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scale(1.4);
+        opacity: 1;
+    }
+}
+
+.talkStatusLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    transition: color 200ms ease;
+}
+
+.talkTranscript {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    max-height: 160px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    border-top: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.talkBubble {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    animation: fadeIn 0.25s ease;
+}
+
+.talkBubbleUser {
+    justify-content: flex-end;
+}
+
+.talkBubbleAi {
+    justify-content: flex-start;
+}
+
+.talkBubbleTag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    padding-top: 4px;
+}
+
+.talkBubbleText {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-body);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: var(--space-3) var(--space-4);
+    max-width: 85%;
+    word-break: break-word;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.talkBubbleUser .talkBubbleText {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: transparent;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 6px rgba(45, 90, 61, 0.2);
+}
+
+.talkBubbleAi .talkBubbleText {
+    border-bottom-left-radius: 4px;
+}
+
+.talkControls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-6);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(45, 90, 61, 0.06);
+}
+
+.talkMicBtn {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    border: 2.5px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 250ms ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.talkMicBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-muted);
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(45, 90, 61, 0.15);
+}
+
+.talkMicBtn.recording {
+    background: var(--color-danger);
+    color: #fff;
+    border-color: var(--color-danger);
+    animation: micPulse 1.5s ease-in-out infinite;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+
+.talkMicBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+@keyframes micPulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
+    }
+}
+
+.talkHint {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.4;
+    font-weight: 500;
+}
+
+.talkIntro {
+    text-align: center;
+    padding: var(--space-4) var(--space-6);
+}
+
+.talkIntroText {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    padding: var(--space-2) var(--space-5);
+    display: inline-block;
+}
+
+
 /* ── Mobile ── */
 @media (max-width: 520px) {
     .page {
@@ -1093,5 +1325,11 @@
     .chatArea {
         min-height: 250px;
         max-height: 50vh;
+    }
+
+    .talkPanel {
+        height: auto;
+        max-height: none;
+        min-height: calc(100vh - 140px);
     }
 }

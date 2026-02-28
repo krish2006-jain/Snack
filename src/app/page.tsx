@@ -87,9 +87,9 @@ export default function LandingPage() {
             <div className={styles.heroLeft}>
                 <h1 id="hero-heading" className={`${styles.heroHeading} reveal`}>
                 <span className={styles.heroLine1}>When Ravi forgets</span>
-                <span className={styles.heroLine1}>the way home—</span>
+                <span className={styles.heroLine1}>the way home</span>
                 <span className={styles.heroLine2}>
-                  anyone with a phone can help.
+                  anyone with a phone <br/>can help.
                 </span>
               </h1>
               <p className={`${styles.heroLead} reveal animate-delay-1`}>
@@ -140,7 +140,7 @@ export default function LandingPage() {
                 <div className={`${styles.miniStat} animate-slide-up animate-delay-3`}>
                   <MapPin size={16} className={styles.miniStatIcon} aria-hidden="true" />
                   <div>
-                    <div className={styles.miniStatValue}>48hr</div>
+                    <div className={styles.miniStatValue}>1hr</div>
                     <div className={styles.miniStatLabel}>Setup time</div>
                   </div>
                 </div>

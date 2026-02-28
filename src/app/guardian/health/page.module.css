@@ -80,13 +80,21 @@
 }
 
 .medCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
     padding: var(--space-4) var(--space-5);
     display: flex;
     align-items: center;
     gap: var(--space-4);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    cursor: default;
+}
+
+.medCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border-medium);
 }
 
 .medIcon {
@@ -118,7 +126,7 @@
 }
 
 .recordCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
     padding: var(--space-4) var(--space-5);
@@ -216,7 +224,7 @@
     padding: var(--space-10);
     text-align: center;
     color: var(--text-muted);
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border-radius: var(--radius-card);
     border: 1px dashed var(--border-subtle);
 }

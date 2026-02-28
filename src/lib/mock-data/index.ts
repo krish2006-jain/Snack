@@ -96,8 +96,8 @@ export const mockChatMessages = [
 // ── Demo accounts ─────────────────────────────────────────── //
 export const demoAccounts = [
     { email: 'ravi@saathi.care', password: 'demo123', role: 'patient' as const, name: 'Ravi Sharma' },
-    { email: 'priya@saathi.care', password: 'demo123', role: 'guardian' as const, name: 'Priya Sharma' },
-    { email: 'anita@saathi.care', password: 'demo123', role: 'caretaker' as const, name: 'Nurse Anita' },
+    { email: 'priya@saathi.care', password: 'demo123', role: 'guardian' as const, name: 'Priya Sharma', patientName: 'Ravi Sharma' },
+    { email: 'anita@saathi.care', password: 'demo123', role: 'caretaker' as const, name: 'Nurse Anita', patientName: 'Ravi Sharma' },
 ]
 
 // ── Guardian-specific mock data ───────────────────────────── //

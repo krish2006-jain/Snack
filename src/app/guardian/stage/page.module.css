@@ -25,13 +25,19 @@
 }
 
 .stageHero {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-8);
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+    transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.stageHero:hover {
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border-medium);
 }
 
 .stageLabel {
@@ -80,6 +86,12 @@
     gap: var(--space-2);
     z-index: 1;
     flex: 1;
+    transition: transform 200ms ease;
+    cursor: default;
+}
+
+.timelineNode:hover {
+    transform: translateY(-3px);
 }
 
 .nodeCircle {
@@ -142,6 +154,13 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+    cursor: default;
+}
+
+.capCard:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
 }
 
 .capHeader {
@@ -185,10 +204,17 @@
 }
 
 .guideCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--color-primary-muted);
     border-radius: var(--radius-card);
     padding: var(--space-5);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.guideCard:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elevated);
+    border-color: var(--color-primary);
 }
 
 .guideTitle {
@@ -224,13 +250,20 @@
 }
 
 .resourceCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-5);
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.resourceCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border-medium);
 }
 
 .resourceTitle {

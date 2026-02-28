@@ -20,13 +20,21 @@
 }
 
 .kpiCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
     padding: var(--space-4) var(--space-5);
     display: flex;
     flex-direction: column;
     gap: 4px;
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    cursor: default;
+}
+
+.kpiCard:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elevated);
+    border-color: var(--border-medium);
 }
 
 .kpiValue {
@@ -61,7 +69,7 @@
 }
 
 .chartCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-6);
@@ -155,12 +163,23 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    transition: transform 200ms ease;
+    cursor: default;
+}
+
+.heatCell:hover {
+    transform: scale(1.12);
+}
+
+.heatCell:hover .heatBlock {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .heatBlock {
     width: 100%;
     aspect-ratio: 1;
     border-radius: 6px;
+    transition: box-shadow 200ms ease, transform 200ms ease;
 }
 
 .heatDay {
@@ -200,6 +219,15 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-button);
+    transition: background 200ms ease, transform 200ms ease;
+    cursor: default;
+}
+
+.gameBarRow:hover {
+    background: var(--bg-surface-soft);
+    transform: translateX(3px);
 }
 
 .gameBarLabel {
@@ -244,6 +272,15 @@
     background: var(--bg-surface-soft);
     border-radius: var(--radius-card-sm);
     border: 1px solid var(--border-subtle);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
+    cursor: default;
+}
+
+.recognitionItem:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border-medium);
+    background: var(--bg-surface);
 }
 
 .recogAvatar {
@@ -336,6 +373,14 @@
     padding: var(--space-2) var(--space-3);
     background: var(--bg-surface-soft);
     border-radius: 8px;
+    transition: background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+    cursor: default;
+}
+
+.adherenceItem:hover {
+    background: var(--bg-surface);
+    transform: translateX(3px);
+    box-shadow: var(--shadow-soft);
 }
 
 .aLabel {
@@ -363,6 +408,15 @@
     background: var(--bg-surface-soft);
     border-radius: var(--radius-card-sm);
     border: 1px solid var(--border-subtle);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
+    cursor: default;
+}
+
+.riskItem:hover {
+    transform: translateX(3px);
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border-medium);
+    background: var(--bg-surface);
 }
 
 .riskDot {
@@ -397,9 +451,16 @@
     align-items: center;
     justify-content: space-between;
     padding: var(--space-4) var(--space-5);
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.exportRow:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border-medium);
 }
 
 .exportNote {

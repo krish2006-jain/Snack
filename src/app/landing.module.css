@@ -201,7 +201,8 @@
 .statCard {
     width: 100%;
     max-width: 340px;
-    background: rgba(255, 255, 255, 0.6);  /* lighter opacity */
+    background: rgba(255, 255, 255, 0.6);
+    /* lighter opacity */
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: var(--radius-card);
@@ -290,8 +291,7 @@
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.miniStatRight {
-}
+.miniStatRight {}
 
 .miniStatIcon {
     color: var(--color-primary);
@@ -403,7 +403,7 @@
 .featureCardFeatured {
     padding: var(--space-8);
     border-radius: var(--radius-card);
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     display: flex;
     flex-direction: column;
@@ -456,7 +456,7 @@
 
 /* ── STATS PANEL ── */
 .statsPanel {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-10);
@@ -548,7 +548,7 @@
 }
 
 .roleCard {
-    background: var(--bg-surface);
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card);
     padding: var(--space-8);

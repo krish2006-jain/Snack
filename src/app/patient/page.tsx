@@ -13,12 +13,26 @@ import {
     ChevronRight,
     Gamepad2,
     Home,
+    Mic,
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { useSession } from '@/lib/useSession';
 import { apiFetch } from '@/lib/api';
 import styles from './home.module.css';
-import { mockSchedule } from '@/lib/mock-data/patient';
+import { mockSchedule, type ScheduleTask } from '@/lib/mock-data/patient';
+
+/* Category visual config for the upcoming section */
+const CATEGORY_CONFIG: Record<string, { color: string; bg: string }> = {
+    Medicine: { color: '#B91C1C', bg: '#FEF2F2' },
+    Medication: { color: '#B91C1C', bg: '#FEF2F2' },
+    Meal: { color: '#B45309', bg: '#FFFBEB' },
+    Game: { color: '#6D28D9', bg: '#F5F3FF' },
+    Chore: { color: '#0369A1', bg: '#F0F9FF' },
+    Therapy: { color: '#065F46', bg: '#ECFDF5' },
+    Exercise: { color: '#14532D', bg: '#F0FDF4' },
+    Rest: { color: '#1E3A5F', bg: '#EFF6FF' },
+    Social: { color: '#9D174D', bg: '#FDF2F8' },
+};
 
 function SkeletonDash() {
     return (
@@ -87,8 +101,8 @@ export default function PatientHome() {
             .catch(() => { /* fallback to mock */ });
     }, []);
 
-    // Use API data if available, mock data as fallback
-    const hasApiData = apiTasks.length > 0;
+    // Use API data if available and not demo, mock data as fallback
+    const hasApiData = apiTasks.length > 0 && !isDemo;
     const pendingTasks = hasApiData
         ? apiTasks.filter(t => !t.is_completed).length
         : mockSchedule.filter((t) => t.status !== 'done').length;
@@ -143,12 +157,26 @@ export default function PatientHome() {
                                 <p className={styles.quickSub}><AnimatedNumber value={hasApiData ? 0 : 6} /> people who love you</p>
                             </Link>
 
-                            {/* Talk to Saathi */}
-                            <Link href="/patient/companion" className={`${styles.quickCard} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '300ms' }}>
-                                <MessageCircle size={44} color="var(--color-primary)" aria-hidden="true" />
-                                <h2 className={styles.quickTitle}>Talk to Saathi</h2>
-                                <p className={styles.quickSub}>Your AI companion is here</p>
-                            </Link>
+                            {/* Saathi Dual Action Block */}
+                            <div className={styles.splitCardRow}>
+                                {/* Talk to Saathi (Voice) */}
+                                <Link href="/patient/companion" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '300ms' }}>
+                                    <Mic size={32} color="var(--color-primary)" aria-hidden="true" />
+                                    <div>
+                                        <h2 className={styles.quickTitleSmall}>Talk to Saathi</h2>
+                                        <p className={styles.quickSub}>Voice</p>
+                                    </div>
+                                </Link>
+
+                                {/* Chat with Saathi (Text) */}
+                                <Link href="/patient/chat" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '350ms' }}>
+                                    <MessageCircle size={32} color="var(--color-primary)" aria-hidden="true" />
+                                    <div>
+                                        <h2 className={styles.quickTitleSmall}>Chat with Saathi</h2>
+                                        <p className={styles.quickSub}>Text</p>
+                                    </div>
+                                </Link>
+                            </div>
 
                             {/* Memory Room */}
                             <Link href="/patient/memory-room" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '400ms' }}>
@@ -210,24 +238,46 @@ export default function PatientHome() {
                     )}
 
                     {/* Today at a glance */}
-                    <section className={styles.section}>
-                        <h2 className={styles.sectionTitle}>Coming up today</h2>
-                        <div className={styles.upcomingList}>
-                            {upcomingTasks
-                                .map((task) => (
-                                    <div key={task.id} className={styles.upcomingItem}>
-                                        <div className={styles.upcomingDot} data-status={task.status} />
-                                        <div className={styles.upcomingInfo}>
-                                            <span className={styles.upcomingTitle}>{task.title}</span>
-                                            <span className={styles.upcomingTime}>{task.time}</span>
-                                        </div>
+                    <section className={styles.scheduleSection}>
+                        <div className={styles.scheduleCard}>
+                            <div className={styles.scheduleSectionHeader}>
+                                <h2 className={styles.sectionTitle}>Coming up today</h2>
+                                <div className={styles.progressBar} role="progressbar" aria-valuenow={completedTasks} aria-valuemax={totalTasks} aria-label={`${completedTasks} of ${totalTasks} tasks done`}>
+                                    <div className={styles.progressFill} style={{ width: `${totalTasks ? (completedTasks / totalTasks) * 100 : 0}%` }} />
+                                </div>
+                                <span className={styles.progressLabel}>
+                                    <AnimatedNumber value={completedTasks} />/{totalTasks} done
+                                </span>
+                            </div>
+                            <div className={styles.upcomingList}>
+                                {upcomingTasks.length === 0 && (
+                                    <div className={styles.upcomingEmpty}>
+                                        <CheckCircle size={28} color="var(--color-success)" />
+                                        <p>All caught up! No upcoming tasks.</p>
                                     </div>
-                                ))}
+                                )}
+                                {(upcomingTasks as ScheduleTask[])
+                                    .map((task) => {
+                                        const cat = CATEGORY_CONFIG[task.category] || { color: '#374151', bg: '#F9FAFB' };
+                                        return (
+                                            <div key={task.id} className={styles.upcomingItem}>
+                                                <div className={styles.upcomingIconBadge} style={{ background: cat.color }} />
+                                                <div className={styles.upcomingInfo}>
+                                                    <span className={styles.upcomingTitle}>{task.title}</span>
+                                                    <span className={styles.upcomingTime}>{task.time}</span>
+                                                </div>
+                                                <span className={styles.upcomingCatLabel} style={{ color: cat.color, background: cat.bg }}>
+                                                    {task.category}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+                            </div>
+                            <Link href="/patient/schedule" className={`btn btn--ghost ${styles.viewAllBtn}`}>
+                                See full schedule
+                                <ChevronRight size={16} />
+                            </Link>
                         </div>
-                        <Link href="/patient/schedule" className={`btn btn--ghost ${styles.viewAllBtn}`}>
-                            See full schedule
-                            <ChevronRight size={16} />
-                        </Link>
                     </section>
                 </>
             )}

@@ -151,12 +151,12 @@
     gap: var(--space-2);
     padding: var(--space-3);
     background: var(--color-warning-bg);
-    border-radius: 10px;
+    border-radius: var(--radius-button);
 }
 
 .tip {
     font-size: 15px;
-    color: #92400E;
+    color: var(--color-warning);
     line-height: 1.5;
 }
 

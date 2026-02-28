@@ -1,3 +1,7 @@
+/* ======================================================
+   GuardianSidebar — Collapsible + Hover-Expand
+   ====================================================== */
+
 .sidebar {
     width: var(--sidebar-width);
     height: 100vh;
@@ -10,14 +14,58 @@
     flex-shrink: 0;
     overflow-y: auto;
     overflow-x: hidden;
+    transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 350ms cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 50;
 }
 
+/* --- COLLAPSED STATE --- */
+.sidebarCollapsed {
+    width: 68px;
+}
+
+/* When collapsed AND hovered → expand with elevation */
+.sidebarCollapsed:hover {
+    width: var(--sidebar-width);
+    box-shadow: var(--shadow-elevated);
+    z-index: 100;
+}
+
+/* --- Collapse toggle button --- */
+.collapseBtn {
+    position: absolute;
+    top: 20px;
+    right: -14px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    z-index: 60;
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.collapseBtn:hover {
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* --- LOGO AREA --- */
 .logoArea {
     display: flex;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-6) var(--space-5);
     border-bottom: 1px solid var(--border-subtle);
+    min-height: 72px;
 }
 
 .logoIcon {
@@ -30,6 +78,36 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: background 200ms ease, transform 200ms ease;
+}
+
+.logoIcon:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: scale(1.08);
+}
+
+.logoContent {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 250ms ease 80ms, max-width 350ms cubic-bezier(0.22, 1, 0.36, 1);
+    max-width: 200px;
+}
+
+/* Hide text in collapsed state */
+.sidebarCollapsed .logoContent {
+    opacity: 0;
+    max-width: 0;
+    transition: opacity 150ms ease, max-width 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sidebarCollapsed:hover .logoContent {
+    opacity: 1;
+    max-width: 200px;
+    transition: opacity 250ms ease 120ms, max-width 350ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .logoText {
@@ -50,6 +128,7 @@
     text-transform: uppercase;
 }
 
+/* --- PATIENT CHIP --- */
 .patientChip {
     display: flex;
     align-items: center;
@@ -59,13 +138,14 @@
     background: var(--color-primary-muted);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
+    transition: background 200ms ease, border-color 200ms ease, transform 200ms ease;
+    overflow: hidden;
 }
 
-/* Keep patient chip visible when sidebar scrolls */
-.patientChip {
-    position: sticky;
-    top: calc(var(--space-6) + 8px);
-    z-index: 20;
+.patientChip:hover {
+    background: rgba(45, 90, 61, 0.15);
+    border-color: var(--color-primary);
+    transform: translateX(2px);
 }
 
 .patientAvatar {
@@ -80,12 +160,32 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.patientChip:hover .patientAvatar {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(45, 90, 61, 0.2);
 }
 
 .patientInfo {
     display: flex;
     flex-direction: column;
     min-width: 0;
+    opacity: 1;
+    transition: opacity 250ms ease 80ms;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebarCollapsed .patientInfo {
+    opacity: 0;
+    transition: opacity 150ms ease;
+}
+
+.sidebarCollapsed:hover .patientInfo {
+    opacity: 1;
+    transition: opacity 250ms ease 120ms;
 }
 
 .patientName {
@@ -144,10 +244,12 @@
     text-transform: uppercase;
     cursor: pointer;
     border-radius: var(--radius-button);
-    transition: color var(--transition-fast), background var(--transition-fast);
+    transition: color 200ms ease, background 200ms ease;
     background: none;
     border: none;
     text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .groupHeader:hover {
@@ -159,14 +261,39 @@
     color: var(--color-primary);
 }
 
+/* Hide group header text + chevron in collapsed state */
+.sidebarCollapsed .groupHeader {
+    opacity: 0;
+    max-height: 0;
+    padding: 0;
+    margin: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease, max-height 250ms ease, padding 250ms ease, margin 250ms ease;
+}
+
+.sidebarCollapsed:hover .groupHeader {
+    opacity: 1;
+    max-height: 40px;
+    padding: 8px var(--space-3);
+    margin-top: var(--space-2);
+    margin-bottom: 2px;
+    pointer-events: auto;
+    transition: opacity 250ms ease 120ms, max-height 350ms ease, padding 350ms ease, margin 350ms ease;
+}
+
 .groupChevron {
-    transition: transform var(--transition-base);
+    transition: transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
     transform: rotate(-90deg);
     flex-shrink: 0;
 }
 
 .groupChevronOpen {
     transform: rotate(0deg);
+}
+
+.groupLabel {
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 /* Nav list — collapsible */
@@ -197,15 +324,17 @@
     font-size: 13.5px;
     font-weight: 500;
     color: var(--text-body);
-    transition: background var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+    transition: background 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
     position: relative;
     white-space: nowrap;
+    overflow: hidden;
 }
 
 .navItem:hover {
     background: var(--bg-surface-soft);
     color: var(--text-heading);
     transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .navItemActive {
@@ -218,6 +347,39 @@
     background: var(--color-primary-muted);
     color: var(--color-primary);
     transform: none;
+    box-shadow: none;
+}
+
+/* Icon wrapper */
+.navItemIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    transition: transform 200ms ease;
+}
+
+.navItem:hover .navItemIcon {
+    transform: scale(1.12);
+}
+
+/* Label — hide/show with transition for collapsed state */
+.navItemLabel {
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 250ms ease 80ms;
+}
+
+.sidebarCollapsed .navItemLabel {
+    opacity: 0;
+    transition: opacity 150ms ease;
+}
+
+.sidebarCollapsed:hover .navItemLabel {
+    opacity: 1;
+    transition: opacity 250ms ease 120ms;
 }
 
 .badge {
@@ -233,6 +395,30 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: transform 200ms ease;
+    flex-shrink: 0;
+}
+
+.navItem:hover .badge {
+    transform: scale(1.1);
+}
+
+.sidebarCollapsed .badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 16px;
+    height: 16px;
+    font-size: 9px;
+    padding: 0 4px;
+}
+
+.sidebarCollapsed:hover .badge {
+    position: static;
+    min-width: 20px;
+    height: 20px;
+    font-size: 11px;
+    padding: 0 6px;
 }
 
 /* === FOOTER === */
@@ -242,6 +428,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    overflow: hidden;
 }
 
 .guardianChip {
@@ -249,13 +436,18 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-2) 0;
+    transition: transform 200ms ease;
+}
+
+.guardianChip:hover {
+    transform: translateX(2px);
 }
 
 .guardianAvatar {
     width: 30px;
     height: 30px;
     border-radius: var(--radius-pill);
-    background: linear-gradient(135deg, #9333EA, #7C3AED);
+    background: linear-gradient(135deg, #2D5A3D, #4A7C5C);
     color: white;
     font-size: 11px;
     font-weight: 700;
@@ -263,6 +455,31 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.guardianChip:hover .guardianAvatar {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(45, 90, 61, 0.2);
+}
+
+.guardianInfo {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 250ms ease 80ms;
+}
+
+.sidebarCollapsed .guardianInfo {
+    opacity: 0;
+    transition: opacity 150ms ease;
+}
+
+.sidebarCollapsed:hover .guardianInfo {
+    opacity: 1;
+    transition: opacity 250ms ease 120ms;
 }
 
 .guardianName {
@@ -288,18 +505,62 @@
     font-size: 13px;
     font-weight: 500;
     color: var(--text-muted);
-    transition: background var(--transition-fast), color var(--transition-fast);
+    transition: background 200ms ease, color 200ms ease, transform 200ms ease;
     width: 100%;
     text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .logoutBtn:hover {
     background: var(--color-danger-bg);
     color: var(--color-danger);
+    transform: translateX(2px);
+}
+
+.logoutLabel {
+    overflow: hidden;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity 250ms ease 80ms;
+}
+
+.sidebarCollapsed .logoutLabel {
+    opacity: 0;
+    transition: opacity 150ms ease;
+}
+
+.sidebarCollapsed:hover .logoutLabel {
+    opacity: 1;
+    transition: opacity 250ms ease 120ms;
 }
 
 @media (max-width: 768px) {
     .sidebar {
         display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar {
+        transition: none;
+    }
+
+    .logoContent,
+    .patientInfo,
+    .guardianInfo,
+    .navItemLabel,
+    .logoutLabel,
+    .groupHeader {
+        transition: none;
+    }
+
+    .navItem,
+    .patientChip,
+    .guardianChip,
+    .logoutBtn,
+    .logoIcon,
+    .collapseBtn {
+        transition: none;
     }
 }

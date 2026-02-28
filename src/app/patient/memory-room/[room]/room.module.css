@@ -233,7 +233,7 @@
     width: 280px;
     height: 280px;
     border-radius: 50%;
-    background: rgba(196, 132, 252, 0.18);
+    background: rgba(45, 90, 61, 0.15);
     filter: blur(80px);
     pointer-events: none;
 }
@@ -245,7 +245,7 @@
     width: 320px;
     height: 320px;
     border-radius: 50%;
-    background: rgba(147, 51, 234, 0.12);
+    background: rgba(45, 90, 61, 0.10);
     filter: blur(100px);
     pointer-events: none;
 }
@@ -589,7 +589,8 @@
 }
 
 .rememberBtn:hover {
-    background: #16A34A;
+    background: var(--color-success);
+    filter: brightness(1.1);
     transform: translateY(-2px);
 }
 
@@ -643,7 +644,7 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .sceneWrap {
         min-height: 240px;
     }

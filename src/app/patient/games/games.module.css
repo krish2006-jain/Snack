@@ -1,7 +1,7 @@
 /* Games Menu Page */
 
 .page {
-    padding: var(--space-8) var(--space-6) var(--space-16);
+    padding: var(--space-8) var(--space-8) var(--space-16);
     max-width: 800px;
     margin: 0 auto;
 }
@@ -124,7 +124,7 @@
 .gameCard:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-elevated);
-    border-color: rgba(45, 90, 61, 0.3);
+    border-color: var(--color-primary-muted);
 }
 
 .gameCard:active {
@@ -267,7 +267,7 @@
 }
 
 /* Mobile */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .gameGrid {
         grid-template-columns: 1fr;
     }

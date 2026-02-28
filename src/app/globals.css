@@ -160,7 +160,7 @@ ol {
   --sidebar-width: 260px;
 
   /* TRANSITIONS — intentionally slow for smooth, premium feel */
-  --transition-fast: 250ms ease;
+  --transition-fast: 200ms ease;
   --transition-base: 400ms ease;
   --transition-slow: 600ms ease;
 
@@ -921,7 +921,41 @@ h6 {
   top: var(--header-height);
   height: calc(100vh - var(--header-height));
   overflow-y: auto;
+  overflow-x: hidden;
   flex-shrink: 0;
+  transition: width 350ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 50;
+}
+
+.app-sidebar--collapsed {
+  width: 68px;
+}
+
+.app-sidebar--collapsed:hover {
+  width: var(--sidebar-width);
+  box-shadow: var(--shadow-elevated);
+  z-index: 100;
+}
+
+/* Helper classes to hide text in collapsed state */
+.sidebar-text {
+  opacity: 1;
+  transition: opacity 250ms ease 80ms;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.app-sidebar--collapsed .sidebar-text {
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
+}
+
+.app-sidebar--collapsed:hover .sidebar-text {
+  opacity: 1;
+  transition: opacity 250ms ease 120ms;
+  pointer-events: auto;
 }
 
 @media (max-width: 768px) {

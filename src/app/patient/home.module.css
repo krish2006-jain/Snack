@@ -66,8 +66,8 @@
 }
 
 .quickCard {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
+    background: var(--bg-canvas);
+    border: 1px solid var(--color-primary-muted);
     border-radius: var(--radius-card);
     padding: var(--space-6);
     text-decoration: none;
@@ -89,10 +89,8 @@
     transform: scale(0.97);
 }
 
-/* Featured card — schedule — spans full row */
+/* Featured card — schedule — slightly larger visual weight */
 .quickCardFeatured {
-    background: var(--bg-canvas);
-    border: 1px solid var(--color-primary-muted);
     grid-row: span 1;
 }
 
@@ -183,9 +181,34 @@
     transform: translateX(4px);
 }
 
-/* Companion card subtle variant */
+/* Saathi cards — subtle warm gradient */
 .quickCardCompanion {
-    background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface-soft) 100%);
+    background: linear-gradient(135deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
+}
+
+.splitCardRow {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.quickCardSplit {
+    flex: 1;
+    min-height: auto;
+    padding: var(--space-4) var(--space-5);
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.quickTitleSmall {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+    margin-top: 0;
+    margin-bottom: 2px;
 }
 
 /* === MEDICATION CARD === */
@@ -259,7 +282,54 @@
     margin-top: 4px;
 }
 
-/* === UPCOMING LIST === */
+/* === UPCOMING SCHEDULE SECTION === */
+.scheduleSection {
+    padding: var(--space-6) var(--space-8) var(--space-8);
+}
+
+.scheduleCard {
+    background: var(--bg-canvas);
+    border: 1px solid var(--color-primary-muted);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+}
+
+.scheduleSectionHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.scheduleSectionHeader .sectionTitle {
+    margin-bottom: 0;
+}
+
+.progressBar {
+    flex: 1;
+    min-width: 80px;
+    height: 6px;
+    background: var(--bg-surface-soft);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+    border-radius: var(--radius-pill);
+    transition: width 600ms ease;
+}
+
+.progressLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
 .upcomingList {
     display: flex;
     flex-direction: column;
@@ -272,30 +342,22 @@
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-4) var(--space-5);
-    background: var(--bg-surface);
+    background: var(--bg-surface-soft);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-card-sm);
-    transition: transform var(--transition-fast);
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
 .upcomingItem:hover {
     transform: translateX(4px);
-    border-color: var(--border-medium);
+    border-color: var(--color-primary-muted);
 }
 
-.upcomingDot {
-    width: 12px;
-    height: 12px;
+.upcomingIconBadge {
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
-}
-
-.upcomingDot[data-status="upcoming"] {
-    background: var(--color-warning);
-}
-
-.upcomingDot[data-status="missed"] {
-    background: var(--color-danger);
 }
 
 .upcomingInfo {
@@ -303,17 +365,46 @@
     align-items: center;
     justify-content: space-between;
     flex: 1;
+    min-width: 0;
 }
 
 .upcomingTitle {
     font-size: 20px;
     font-weight: 500;
     color: var(--text-heading);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .upcomingTime {
     font-size: 17px;
     color: var(--text-muted);
+    flex-shrink: 0;
+    margin-left: var(--space-2);
+}
+
+.upcomingCatLabel {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.upcomingEmpty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: var(--color-success-bg);
+    border-radius: var(--radius-card-sm);
+    border: 1px solid rgba(34, 197, 94, 0.15);
+    color: var(--color-success);
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .viewAllBtn {

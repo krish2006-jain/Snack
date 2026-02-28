@@ -96,13 +96,13 @@
 
 .roleCard:hover {
     border-color: var(--color-primary);
-    background: rgba(124, 58, 237, 0.04);
+    background: rgba(45, 90, 61, 0.04);
 }
 
 .roleCardActive {
     border-color: var(--color-primary) !important;
-    background: rgba(124, 58, 237, 0.07) !important;
-    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    background: rgba(45, 90, 61, 0.07) !important;
+    box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
 }
 
 .roleIcon {
@@ -114,7 +114,7 @@
     align-items: center;
     justify-content: center;
     background: var(--color-primary-muted);
-    border-radius: 10px;
+    border-radius: var(--radius-button);
 }
 
 .roleInfo {
@@ -185,7 +185,7 @@
     background: var(--color-danger-bg);
     border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: var(--radius-card-sm);
-    color: #B91C1C;
+    color: var(--color-danger);
     font-size: 13px;
     font-weight: 500;
 }
@@ -253,7 +253,7 @@
 }
 
 .demoAccount:hover {
-    background: rgba(124, 58, 237, 0.06);
+    background: rgba(45, 90, 61, 0.06);
     border-color: var(--border-subtle);
 }
 
@@ -282,7 +282,7 @@
 
 .demoPassword code {
     font-size: 12px;
-    background: rgba(124, 58, 237, 0.08);
+    background: var(--color-primary-muted);
     color: var(--color-primary);
     padding: 2px 6px;
     border-radius: 4px;

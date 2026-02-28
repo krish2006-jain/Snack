@@ -8,6 +8,7 @@ import {
     LayoutDashboard, Calendar, Brain, Users, Home,
     Gamepad2, FileText, QrCode, Bell, BarChart3,
     Layers, ClipboardList, LogOut, Heart, ChevronDown,
+    ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
 import styles from './GuardianSidebar.module.css';
@@ -59,6 +60,7 @@ const navGroups: NavGroup[] = [
 export default function GuardianSidebar() {
     const pathname = usePathname();
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const { user, logout } = useSession();
 
     const guardianName = user?.name || 'Guardian';
@@ -80,12 +82,26 @@ export default function GuardianSidebar() {
         group.items.some((item) => isItemActive(item));
 
     return (
-        <aside className={styles.sidebar} role="navigation" aria-label="Guardian navigation">
+        <aside
+            className={`${styles.sidebar} ${sidebarCollapsed ? styles.sidebarCollapsed : ''}`}
+            role="navigation"
+            aria-label="Guardian navigation"
+        >
+            {/* Collapse toggle button */}
+            <button
+                className={styles.collapseBtn}
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+                {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
+
             <div className={styles.logoArea}>
                 <div className={styles.logoIcon}>
                     <Heart size={20} />
                 </div>
-                <div>
+                <div className={styles.logoContent}>
                     <span className={styles.logoText}>SaathiCare</span>
                     <span className={styles.logoSub}>Guardian View</span>
                 </div>
@@ -141,9 +157,10 @@ export default function GuardianSidebar() {
                                                 href={item.href}
                                                 className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
                                                 aria-current={active ? 'page' : undefined}
+                                                title={item.label}
                                             >
-                                                {item.icon}
-                                                <span>{item.label}</span>
+                                                <span className={styles.navItemIcon}>{item.icon}</span>
+                                                <span className={styles.navItemLabel}>{item.label}</span>
                                                 {item.badge ? (
                                                     <span className={styles.badge} aria-label={`${item.badge} unread`}>
                                                         {item.badge}
@@ -162,14 +179,14 @@ export default function GuardianSidebar() {
             <div className={styles.sidebarFooter}>
                 <div className={styles.guardianChip}>
                     <div className={styles.guardianAvatar}>{guardianInitials}</div>
-                    <div>
+                    <div className={styles.guardianInfo}>
                         <span className={styles.guardianName}>{guardianName}</span>
                         <span className={styles.guardianRole}>{guardianRole}</span>
                     </div>
                 </div>
                 <button className={styles.logoutBtn} aria-label="Sign out" onClick={logout}>
                     <LogOut size={16} aria-hidden="true" />
-                    <span>Sign out</span>
+                    <span className={styles.logoutLabel}>Sign out</span>
                 </button>
             </div>
         </aside>
