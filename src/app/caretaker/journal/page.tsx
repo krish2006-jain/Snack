@@ -181,7 +181,9 @@ export default function CaretakerJournalPage() {
                     <div className="card" style={{ padding: '24px', marginBottom: 28, background: 'var(--bg-surface)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24 }}>
                             <BookOpen size={18} color="var(--color-primary)" />
-                            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-heading)' }}>Saturday, 28 February 2026</h2>
+                            <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-heading)' }}>
+                                {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                            </h2>
                         </div>
 
                         {/* Mood selector */}

@@ -11,6 +11,7 @@ interface AppHeaderProps {
     userName?: string;
     alertCount?: number;
     onSOS?: () => void;
+    onSignOut?: () => void;
 }
 
 export function AppHeader({
@@ -18,6 +19,7 @@ export function AppHeader({
     userName = 'Priya Sharma',
     alertCount = 3,
     onSOS,
+    onSignOut,
 }: AppHeaderProps) {
     const [scrolled, setScrolled] = useState(false);
 
@@ -51,19 +53,31 @@ export function AppHeader({
 
     if (variant === 'patient') {
         return (
-            <header className="app-header">
+            <header className="app-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Link href="/patient" style={{ display: 'flex', alignItems: 'center' }}>
                     <Logo compact />
                 </Link>
-                <button
-                    onClick={onSOS}
-                    className="btn btn--danger btn--pill"
-                    style={{ padding: '10px 20px', minHeight: 40, gap: 6 }}
-                    aria-label="SOS Emergency"
-                >
-                    <AlertTriangle size={18} />
-                    <span style={{ fontWeight: 700, fontSize: 14 }}>SOS</span>
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    {userName && onSignOut && (
+                        <button
+                            onClick={onSignOut}
+                            className="btn--icon"
+                            aria-label="Sign out"
+                            style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                        >
+                            <User size={20} color="var(--text-body)" />
+                        </button>
+                    )}
+                    <button
+                        onClick={onSOS}
+                        className="btn btn--danger btn--pill"
+                        style={{ padding: '10px 20px', minHeight: 40, gap: 6 }}
+                        aria-label="SOS Emergency"
+                    >
+                        <AlertTriangle size={18} />
+                        <span style={{ fontWeight: 700, fontSize: 14 }}>SOS</span>
+                    </button>
+                </div>
             </header>
         );
     }

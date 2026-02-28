@@ -5,7 +5,7 @@ export default function PrayerRoomSVG({ className }: { className?: string }) {
             viewBox="0 0 1000 600"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="xMidYMid slice"
+            preserveAspectRatio="xMidYMid meet"
             style={{ width: '100%', height: '100%', display: 'block' }}
         >
             {/* === WALL === */}

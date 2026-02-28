@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Volume2, CheckCircle, Plus, AlertTriangle, X } from 'lucide-react';
+import { ArrowLeft, Volume2, CheckCircle, Plus, AlertTriangle, X, Trophy, Star, Clock, Lightbulb, Sparkles, RotateCcw } from 'lucide-react';
 import { KitchenRoomSVG, BedroomRoomSVG, LivingRoomSVG, GardenRoomSVG, PrayerRoomSVG } from '@/components/rooms';
 import styles from './room.module.css';
 
 interface HotspotData {
     id: string;
     label: string;
-    x: number; // % position
+    x: number;
     y: number;
     flashcard: {
         title: string;
@@ -276,6 +276,17 @@ const ROOMS: Record<string, RoomDefinition> = {
     },
 };
 
+/* ── Score helpers ── */
+const POINTS_PER_OBJECT = 100;
+const HINT_PENALTY = 30;
+const TIME_BONUS_THRESHOLD = 120; // seconds — bonus if completed within this
+
+function formatTimer(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
 export default function RoomScenePage() {
     const params = useParams();
     const router = useRouter();
@@ -285,6 +296,46 @@ export default function RoomScenePage() {
 
     const [activeHotspot, setActiveHotspot] = useState<HotspotData | null>(null);
     const [remembered, setRemembered] = useState<Set<string>>(new Set());
+    const [score, setScore] = useState(0);
+    const [hintsUsed, setHintsUsed] = useState(0);
+    const [showHint, setShowHint] = useState(false);
+    const [hintTarget, setHintTarget] = useState<HotspotData | null>(null);
+    const [timer, setTimer] = useState(0);
+    const [isComplete, setIsComplete] = useState(false);
+    const [streak, setStreak] = useState(0);
+    const [bestScore, setBestScore] = useState(0);
+
+    // Load best score from localStorage
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem(`saathi_room_best_${roomSlug}`);
+            if (saved) setBestScore(parseInt(saved, 10));
+        } catch { }
+    }, [roomSlug]);
+
+    // Timer
+    useEffect(() => {
+        if (isComplete) return;
+        const interval = setInterval(() => setTimer((t) => t + 1), 1000);
+        return () => clearInterval(interval);
+    }, [isComplete]);
+
+    // Check completion
+    useEffect(() => {
+        if (remembered.size === room.hotspots.length && room.hotspots.length > 0 && !isComplete) {
+            const timeBonus = timer <= TIME_BONUS_THRESHOLD ? Math.max(0, (TIME_BONUS_THRESHOLD - timer) * 2) : 0;
+            const finalScore = score + timeBonus;
+            setScore(finalScore);
+            setIsComplete(true);
+            // Save best
+            if (finalScore > bestScore) {
+                setBestScore(finalScore);
+                try {
+                    localStorage.setItem(`saathi_room_best_${roomSlug}`, finalScore.toString());
+                } catch { }
+            }
+        }
+    }, [remembered, room.hotspots.length, isComplete, score, timer, bestScore, roomSlug]);
 
     const speak = (text: string) => {
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -296,12 +347,46 @@ export default function RoomScenePage() {
         }
     };
 
-    // Close on ESC
+    const handleRemember = useCallback((hotspot: HotspotData) => {
+        if (remembered.has(hotspot.id)) return;
+        const newRemembered = new Set([...remembered, hotspot.id]);
+        setRemembered(newRemembered);
+        setStreak((s) => s + 1);
+        setScore((prev) => prev + POINTS_PER_OBJECT + (streak >= 2 ? 25 : 0)); // streak bonus
+        setActiveHotspot(null);
+    }, [remembered, streak]);
+
+    const handleHint = () => {
+        const unrevealed = room.hotspots.filter((hs) => !remembered.has(hs.id));
+        if (unrevealed.length === 0) return;
+        const target = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+        setHintTarget(target);
+        setShowHint(true);
+        setHintsUsed((h) => h + 1);
+        setScore((prev) => Math.max(0, prev - HINT_PENALTY));
+        setTimeout(() => setShowHint(false), 3000);
+    };
+
+    const handleRestart = () => {
+        setRemembered(new Set());
+        setScore(0);
+        setHintsUsed(0);
+        setTimer(0);
+        setStreak(0);
+        setIsComplete(false);
+        setActiveHotspot(null);
+        setShowHint(false);
+        setHintTarget(null);
+    };
+
+    // ESC to close
     useEffect(() => {
         const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setActiveHotspot(null); };
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
     }, []);
+
+    const remaining = room.hotspots.length - remembered.size;
 
     return (
         <div className={styles.page}>
@@ -320,8 +405,48 @@ export default function RoomScenePage() {
                 </div>
             </div>
 
+            {/* Game Stats Bar */}
+            <div className={styles.gameBar}>
+                <div className={styles.gameStat}>
+                    <Star size={16} color="var(--color-warning)" />
+                    <span className={styles.gameStatValue}>{score}</span>
+                    <span className={styles.gameStatLabel}>Points</span>
+                </div>
+                <div className={styles.gameStat}>
+                    <Clock size={16} color="var(--color-primary)" />
+                    <span className={styles.gameStatValue}>{formatTimer(timer)}</span>
+                    <span className={styles.gameStatLabel}>Time</span>
+                </div>
+                <div className={styles.gameStat}>
+                    <Sparkles size={16} color="var(--color-success)" />
+                    <span className={styles.gameStatValue}>{streak}x</span>
+                    <span className={styles.gameStatLabel}>Streak</span>
+                </div>
+                <div className={styles.gameStat}>
+                    <CheckCircle size={16} color="var(--color-success)" />
+                    <span className={styles.gameStatValue}>{remembered.size}/{room.hotspots.length}</span>
+                    <span className={styles.gameStatLabel}>Found</span>
+                </div>
+                {bestScore > 0 && (
+                    <div className={styles.gameStat}>
+                        <Trophy size={16} color="var(--color-warning)" />
+                        <span className={styles.gameStatValue}>{bestScore}</span>
+                        <span className={styles.gameStatLabel}>Best</span>
+                    </div>
+                )}
+                <button
+                    className={styles.hintBtn}
+                    onClick={handleHint}
+                    disabled={remaining === 0}
+                    aria-label="Get a hint"
+                >
+                    <Lightbulb size={16} />
+                    Hint {hintsUsed > 0 && <span>({hintsUsed})</span>}
+                </button>
+            </div>
+
             {/* Room scene */}
-            <div className={`${styles.sceneWrap}`}>
+            <div className={styles.sceneWrap}>
                 <div className={`${styles.scene} ${styles[room.bgClass]}`} aria-label={`${room.name} scene with interactive objects`}>
                     {/* SVG Room Illustration */}
                     <RoomSVG className={styles.roomSvg} />
@@ -330,13 +455,16 @@ export default function RoomScenePage() {
                     {room.hotspots.map((hs) => (
                         <button
                             key={hs.id}
-                            className={`${styles.hotspot} ${remembered.has(hs.id) ? styles.hotspotRemembered : ''} ${hs.flashcard.isSafety ? styles.hotspotSafety : ''}`}
+                            className={`${styles.hotspot} ${remembered.has(hs.id) ? styles.hotspotRemembered : ''} ${hs.flashcard.isSafety ? styles.hotspotSafety : ''} ${showHint && hintTarget?.id === hs.id ? styles.hotspotHinted : ''}`}
                             style={{ left: `${hs.x}%`, top: `${hs.y}%` }}
                             onClick={() => setActiveHotspot(hs)}
                             aria-label={`Explore ${hs.label}`}
                         >
                             <span className={styles.hotspotRing} aria-hidden="true" />
                             <span className={styles.hotspotLabel}>{hs.label}</span>
+                            {remembered.has(hs.id) && (
+                                <CheckCircle size={20} color="white" style={{ position: 'absolute' }} />
+                            )}
                         </button>
                     ))}
                 </div>
@@ -354,10 +482,86 @@ export default function RoomScenePage() {
                 <span className={styles.progressText}>
                     {remembered.size} of {room.hotspots.length} remembered
                 </span>
+                <button
+                    className={styles.restartBtn}
+                    onClick={handleRestart}
+                    aria-label="Restart room"
+                    title="Restart room exploration"
+                >
+                    <RotateCcw size={16} />
+                </button>
             </div>
 
+            {/* Completion celebration */}
+            {isComplete && (
+                <div className={styles.overlay} onClick={() => setIsComplete(false)} role="dialog" aria-modal="true" aria-label="Room completed!">
+                    <div className={styles.flashcard} onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+                        <button className={styles.closeBtn} onClick={() => setIsComplete(false)} aria-label="Close">
+                            <X size={20} />
+                        </button>
+                        <div style={{ fontSize: 64, marginBottom: 8 }}>🎉</div>
+                        <h2 className={styles.cardTitle} style={{ paddingRight: 0, textAlign: 'center' }}>
+                            Room Complete!
+                        </h2>
+                        <p className={styles.cardSubtitle}>
+                            You remembered all {room.hotspots.length} objects in {room.name}
+                        </p>
+
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(3, 1fr)',
+                            gap: '16px',
+                            margin: '24px 0',
+                            padding: '20px',
+                            background: 'var(--bg-surface-soft)',
+                            borderRadius: 'var(--radius-card-sm)',
+                        }}>
+                            <div>
+                                <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--color-warning)' }}>{score}</div>
+                                <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>Total Score</div>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--color-primary)' }}>{formatTimer(timer)}</div>
+                                <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>Time Taken</div>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--color-success)' }}>{hintsUsed}</div>
+                                <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600 }}>Hints Used</div>
+                            </div>
+                        </div>
+
+                        {timer <= TIME_BONUS_THRESHOLD && (
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                justifyContent: 'center',
+                                color: 'var(--color-success)',
+                                fontWeight: 600,
+                                fontSize: 14,
+                                marginBottom: 16,
+                            }}>
+                                <Sparkles size={16} />
+                                Speed bonus earned! +{Math.max(0, (TIME_BONUS_THRESHOLD - timer) * 2)} points
+                            </div>
+                        )}
+
+                        <div className={styles.cardActions} style={{ justifyContent: 'center' }}>
+                            <button className={styles.rememberBtn} onClick={handleRestart}>
+                                <RotateCcw size={18} />
+                                Play Again
+                            </button>
+                            <button className={styles.moreBtn} onClick={() => router.push('/patient/memory-room')}>
+                                <ArrowLeft size={18} />
+                                Other Rooms
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Flashcard overlay */}
-            {activeHotspot && (
+            {activeHotspot && !isComplete && (
                 <div className={styles.overlay} onClick={() => setActiveHotspot(null)} role="dialog" aria-modal="true" aria-label={`Flashcard for ${activeHotspot.label}`}>
                     <div className={styles.flashcard} onClick={(e) => e.stopPropagation()}>
                         {/* Close */}
@@ -381,6 +585,30 @@ export default function RoomScenePage() {
                             <p className={styles.tipText}>{activeHotspot.flashcard.tip}</p>
                         </div>
 
+                        {/* Points preview */}
+                        {!remembered.has(activeHotspot.id) && (
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 8,
+                                marginBottom: 16,
+                                padding: '8px 12px',
+                                background: 'var(--bg-surface-soft)',
+                                borderRadius: 'var(--radius-button)',
+                                fontSize: 13,
+                                fontWeight: 600,
+                                color: 'var(--text-muted)',
+                            }}>
+                                <Star size={14} color="var(--color-warning)" />
+                                +{POINTS_PER_OBJECT + (streak >= 2 ? 25 : 0)} points
+                                {streak >= 2 && (
+                                    <span style={{ color: 'var(--color-success)', marginLeft: 4 }}>
+                                        (includes {streak}x streak bonus!)
+                                    </span>
+                                )}
+                            </div>
+                        )}
+
                         <div className={styles.cardActions}>
                             <button
                                 className={styles.readAloudBtn}
@@ -390,17 +618,29 @@ export default function RoomScenePage() {
                                 <Volume2 size={18} />
                                 Read Aloud
                             </button>
-                            <button
-                                className={styles.rememberBtn}
-                                onClick={() => {
-                                    setRemembered((prev) => new Set([...prev, activeHotspot.id]));
-                                    setActiveHotspot(null);
-                                }}
-                                aria-label="I remember this"
-                            >
-                                <CheckCircle size={18} />
-                                I Remember
-                            </button>
+                            {!remembered.has(activeHotspot.id) ? (
+                                <button
+                                    className={styles.rememberBtn}
+                                    onClick={() => handleRemember(activeHotspot)}
+                                    aria-label="I remember this"
+                                >
+                                    <CheckCircle size={18} />
+                                    I Remember
+                                </button>
+                            ) : (
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    padding: '12px 20px',
+                                    color: 'var(--color-success)',
+                                    fontWeight: 700,
+                                    fontSize: 15,
+                                }}>
+                                    <CheckCircle size={18} />
+                                    Already Remembered
+                                </div>
+                            )}
                             <button
                                 className={styles.moreBtn}
                                 onClick={() => speak(`Tell me more about: ${activeHotspot.flashcard.detail}`)}

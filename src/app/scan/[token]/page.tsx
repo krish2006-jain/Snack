@@ -1,13 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useParams, useSearchParams } from 'next/navigation'
 import ScanClient from './ScanClient'
 import type { QRProfile } from '@/types'
-import { useParams } from 'next/navigation'
+
+type TabId = 'card' | 'info' | 'chat'
 
 export default function ScanPage() {
     const params = useParams()
+    const searchParams = useSearchParams()
     const token = params.token as string
+    const tabParam = searchParams.get('tab') as TabId | null
+    const defaultTab: TabId = (tabParam === 'info' || tabParam === 'chat') ? tabParam : 'card'
+
     const [profile, setProfile] = useState<QRProfile | null>(null)
     const [loading, setLoading] = useState(true)
 
@@ -78,5 +84,5 @@ export default function ScanPage() {
         )
     }
 
-    return <ScanClient profile={profile} token={token} />
+    return <ScanClient profile={profile} token={token} defaultTab={defaultTab} />
 }

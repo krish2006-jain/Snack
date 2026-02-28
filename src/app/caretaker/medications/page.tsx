@@ -169,7 +169,7 @@ export default function CaretakerMedicationsPage() {
                         Medications
                     </h1>
                     <p style={{ marginTop: 4, color: 'var(--text-muted)', fontSize: 15 }}>
-                        Ravi Sharma · Saturday, 28 February 2026
+                        Ravi Sharma · {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                 </div>
 

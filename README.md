@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SaathiCare
 
-## Getting Started
+**Comprehensive Alzheimer's care management platform** built for patients, guardians, and caretakers.
 
-First, run the development server:
+SaathiCare provides a unified ecosystem that adapts content and interaction complexity based on the patient's cognitive stage (early / moderate / severe). It includes AI-powered companion chat, cognitive games, memory-room therapy, daily scheduling, medication tracking, and a QR-based Good Samaritan system for patient safety.
+
+---
+
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # fill in optional GEMINI_API_KEY
+npm run dev                   # → http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Login with any demo account (password: `demo123`):
+- **Patient**: `ravi@saathi.care`
+- **Guardian**: `priya@saathi.care`
+- **Caretaker**: `anita@saathi.care`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
 
-## Learn More
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Database | SQLite via `better-sqlite3` |
+| Auth | JWT (jose + bcryptjs) |
+| AI | Google Gemini 1.5 Flash (with warm fallbacks) |
+| State | Zustand |
+| UI Icons | Lucide React |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 🏠 **Role-based dashboards** — Patient, Guardian, Caretaker
+- 🧠 **Cognitive games** — Card Match, Word Recall, Pattern Tap
+- 💬 **AI Companion** — Context-aware chat with patient history
+- 🎵 **Music Therapy** — Mood logging and calming playlists
+- 🖼 **Memory Room** — Interactive room-based memory exercises
+- 📋 **Daily Schedule** — Visual task tracking with completion
+- 💊 **Medication Management** — Tracking and administration logs
+- 📓 **Caretaker Journal** — Daily care documentation
+- 📊 **Analytics Dashboard** — Cognitive trends, mood, game streaks
+- 🔔 **Alert System** — Medication misses, mood changes, geofence
+- 📱 **QR Good Samaritan** — Public safety page via QR scan
+- 🗂 **Health Records** — Medical docs, prescriptions, lab reports
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Documentation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for full deployment instructions, API reference, database schema, and troubleshooting.

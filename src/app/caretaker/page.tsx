@@ -54,7 +54,17 @@ const MoodIcon = ({ score }: { score: number }) => {
 
 export default function CaretakerDashboard() {
     const [loaded, setLoaded] = useState(false);
-    useEffect(() => { const t = setTimeout(() => setLoaded(true), 700); return () => clearTimeout(t); }, []);
+    const [userName, setUserName] = useState('Anita');
+
+    useEffect(() => {
+        const t = setTimeout(() => setLoaded(true), 700);
+        return () => clearTimeout(t);
+    }, []);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('saathi_user');
+        if (stored) setUserName(stored.split(' ')[0]);
+    }, []);
 
     const completedTasks = todaysTasks.filter(t => t.status === 'completed').length;
     const overdueTasks = todaysTasks.filter(t => t.status === 'overdue');
@@ -70,14 +80,14 @@ export default function CaretakerDashboard() {
     const recentTasks = todaysTasks.slice(0, 4);
 
     return (
-        <AppLayout role="caretaker" userName="Anita Desai" alertCount={1}>
+        <AppLayout role="caretaker" userName={userName} alertCount={1}>
             <div className={styles.page}>
 
                 {/* ── Greeting ────────────────────────────────────────── */}
                 <div className={styles.greetingRow}>
                     <div>
                         <h1 className={styles.greetingTitle}>
-                            {getGreeting()}, Anita
+                            {getGreeting()}, {userName}
                         </h1>
                         <p className={styles.shiftInfo}>
                             <Clock size={16} />

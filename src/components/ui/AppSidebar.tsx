@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
     LayoutDashboard, Calendar, Image, Users, Brain, Gamepad2,
     FileText, QrCode, Bell, BarChart3, Activity, ScrollText,
@@ -45,7 +45,7 @@ const guardianGroups: NavGroup[] = [
         items: [
             { label: 'Games', href: '/guardian/games', icon: <Gamepad2 size={18} /> },
             { label: 'Analytics', href: '/guardian/analytics', icon: <BarChart3 size={18} /> },
-            { label: 'Care Stage', href: '/guardian/care-stage', icon: <Activity size={18} /> },
+            { label: 'Care Stage', href: '/guardian/stage', icon: <Activity size={18} /> },
         ],
     },
     {
@@ -93,8 +93,28 @@ interface AppSidebarProps {
 
 export function AppSidebar({ role }: AppSidebarProps) {
     const pathname = usePathname();
+    const router = useRouter();
     const groups = role === 'guardian' ? guardianGroups : caretakerGroups;
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+    const [userName, setUserName] = useState('');
+
+    useEffect(() => {
+        // read whichever identity the app has stored (guardian or caretaker)
+        const stored = localStorage.getItem('saathi_user');
+        let name = '';
+        if (stored) {
+            try {
+                const u = JSON.parse(stored);
+                name = u.name || u || '';
+            } catch {
+                name = stored;
+            }
+        }
+        if (!name) {
+            name = role === 'caretaker' ? 'Caregiver' : 'Guardian';
+        }
+        setUserName(name);
+    }, [role]);
 
     const toggleGroup = (label: string) => {
         setCollapsed((prev) => ({ ...prev, [label]: !prev[label] }));
@@ -232,6 +252,46 @@ export function AppSidebar({ role }: AppSidebarProps) {
                     );
                 })}
             </nav>
+
+            {/* footer with profile + sign-out for both roles */}
+            <div style={{ marginTop: 'auto', padding: '16px 20px', borderTop: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                    <div style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        background: 'var(--color-primary-muted)',
+                        color: '#fff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                        fontWeight: 700,
+                    }}>
+                        {userName
+                            .split(' ')
+                            .map((p) => p[0])
+                            .join('')
+                            .slice(0, 2)
+                            .toUpperCase()}
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-heading)' }}>
+                        {userName}
+                    </div>
+                </div>
+                <button
+                    onClick={() => {
+                        localStorage.removeItem('saathi_token');
+                        localStorage.removeItem('saathi_user');
+                        localStorage.removeItem('demoUser');
+                        router.push('/login');
+                    }}
+                    className="btn btn--ghost btn--sm"
+                    style={{ width: '100%' }}
+                >
+                    Sign out
+                </button>
+            </div>
         </aside>
     );
 }

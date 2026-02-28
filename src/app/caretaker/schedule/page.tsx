@@ -166,7 +166,7 @@ export default function CaretakerSchedulePage() {
                         Today's Tasks
                     </h1>
                     <p style={{ marginTop: 4, color: 'var(--text-muted)', fontSize: 15 }}>
-                        Saturday, 28 February 2026 · Shift: 8 AM–4 PM
+                        {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · Shift: 8 AM–4 PM
                     </p>
                 </div>
 

@@ -59,6 +59,17 @@ export default function PatientHome() {
     const [time, setTime] = useState(formatTime());
     const [medTaken, setMedTaken] = useState(false);
     const [loaded, setLoaded] = useState(false);
+    const [userName, setUserName] = useState('Ravi');
+
+    useEffect(() => {
+        const raw = localStorage.getItem('saathi_user');
+        if (raw) {
+            try {
+                const u = JSON.parse(raw);
+                if (u.name) setUserName(u.name.split(' ')[0]);
+            } catch {}
+        }
+    }, []);
 
     useEffect(() => { const t = setTimeout(() => setLoaded(true), 700); return () => clearTimeout(t); }, []);
 
@@ -77,7 +88,7 @@ export default function PatientHome() {
                 <div className={styles.heroContent}>
                     <p className={styles.dateLabel}>{todayDate}</p>
                     <h1 className={styles.greeting}>
-                        {getGreeting()}, Ravi
+                        {getGreeting()}, {userName}
                     </h1>
                     <p className={styles.timeLabel}>{time}</p>
                 </div>

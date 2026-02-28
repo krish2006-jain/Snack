@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         const today = new Date().toISOString().split('T')[0];
         const tasks = db.prepare(
             'SELECT title, scheduled_time, is_completed FROM schedule_tasks WHERE patient_id = ? AND date = ? ORDER BY scheduled_time'
-        ).all(pid) as { title: string; scheduled_time: string; is_completed: number }[];
+        ).all(pid, today) as { title: string; scheduled_time: string; is_completed: number }[];
 
         const scheduleStr = tasks.length > 0
             ? tasks.map(t => `${t.scheduled_time} — ${t.title} (${t.is_completed ? 'done' : 'pending'})`).join(', ')
