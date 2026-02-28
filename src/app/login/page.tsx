@@ -64,20 +64,43 @@ export default function LoginPage() {
         setLoading(true)
         setError('')
 
-        // Simulate fetch delay to feel like real data
-        await new Promise((r) => setTimeout(r, 2500))
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, role }),
+            })
 
-        const match = demoAccounts.find(
-            (a) => a.email === email && a.password === password && a.role === role
-        )
+            const data = await res.json()
 
-        if (!match) {
-            setError('Incorrect email, password, or role. Try a demo account below.')
-            setLoading(false)
-            return
+            if (!res.ok) {
+                setError(data.error || 'Login failed. Try a demo account below.')
+                setLoading(false)
+                return
+            }
+
+            // Store JWT token
+            localStorage.setItem('saathi_token', data.token)
+            localStorage.setItem('saathi_user', JSON.stringify(data.user))
+
+            router.push(ROLE_REDIRECTS[role])
+        } catch {
+            // Fallback: if API unreachable, try demo accounts
+            const match = demoAccounts.find(
+                (a) => a.email === email && a.password === password && a.role === role
+            )
+            if (!match) {
+                setError('Incorrect email, password, or role. Try a demo account below.')
+                setLoading(false)
+                return
+            }
+            // store demo user locally so header/profile shows signed-in state
+            try {
+                localStorage.setItem('saathi_user', JSON.stringify({ name: match.name, role: match.role, email: match.email }))
+                localStorage.setItem('saathi_token', 'demo-token')
+            } catch {}
+            router.push(ROLE_REDIRECTS[role])
         }
-
-        router.push(ROLE_REDIRECTS[role])
     }
 
     if (loading && !error) {

@@ -39,12 +39,22 @@ export interface Caretaker {
     shiftEnd: string;
 }
 
+export type TaskCategory =
+    | 'Medicine'
+    | 'Meal'
+    | 'Game'
+    | 'Chore'
+    | 'Therapy'
+    | 'Exercise'
+    | 'Rest'
+    | 'Social';
+
 export interface ScheduleTask {
     id: string;
     title: string;
     time: string;
     status: 'done' | 'upcoming' | 'missed';
-    category: string;
+    category: TaskCategory | string;
     description: string;
     photo?: string;
 }
@@ -106,7 +116,7 @@ export const mockCaretaker: Caretaker = {
     shiftEnd: '4:00 PM',
 };
 
-// TODAY'S SCHEDULE — 7 tasks
+// TODAY'S SCHEDULE — 9 tasks across all categories
 export const mockSchedule: ScheduleTask[] = [
     {
         id: 'task-1',
@@ -119,59 +129,96 @@ export const mockSchedule: ScheduleTask[] = [
     },
     {
         id: 'task-2',
-        title: 'Breakfast & Donepezil',
+        title: 'Morning Medicine',
         time: '8:30 AM',
         status: 'done',
-        category: 'Medication',
-        description: 'Idli sabzi + one Donepezil 10mg tablet with water',
+        category: 'Medicine',
+        description: 'Donepezil 10mg tablet with a glass of water after breakfast',
         photo: '',
     },
     {
         id: 'task-3',
-        title: 'Memory Flashcards',
-        time: '10:00 AM',
+        title: 'Breakfast',
+        time: '8:00 AM',
         status: 'done',
-        category: 'Therapy',
-        description: 'Family photo recall — 12 cards, 15 minutes',
+        category: 'Meal',
+        description: 'Idli sabzi + warm milk — no spicy food today',
         photo: '',
     },
     {
         id: 'task-4',
-        title: 'Lunch',
-        time: '1:00 PM',
-        status: 'upcoming',
-        category: 'Meal',
-        description: 'Dal chawal + seasonal sabzi (no spicy)',
+        title: 'Card Match Game',
+        time: '10:00 AM',
+        status: 'done',
+        category: 'Game',
+        description: 'Play the memory card match game for 15 minutes with Anita',
         photo: '',
     },
     {
         id: 'task-5',
-        title: 'Afternoon Rest',
-        time: '2:30 PM',
+        title: 'Tidy Bedroom',
+        time: '11:30 AM',
         status: 'upcoming',
-        category: 'Rest',
-        description: 'Rest in bed — keep blinds half-closed',
+        category: 'Chore',
+        description: 'Fold the blanket, arrange the bedside table, open the curtains',
         photo: '',
     },
     {
         id: 'task-6',
-        title: 'Video Call with Priya',
-        time: '5:00 PM',
+        title: 'Lunch',
+        time: '1:00 PM',
         status: 'upcoming',
-        category: 'Social',
-        description: 'Weekly call with daughter Priya on tablet',
+        category: 'Meal',
+        description: 'Dal chawal + seasonal sabzi — no spicy food',
         photo: '',
     },
     {
         id: 'task-7',
-        title: 'Evening Medication',
+        title: 'Afternoon Rest',
+        time: '2:30 PM',
+        status: 'upcoming',
+        category: 'Rest',
+        description: 'Rest in bed — keep blinds half-closed, no screen time',
+        photo: '',
+    },
+    {
+        id: 'task-8',
+        title: 'Word Recall Game',
+        time: '4:00 PM',
+        status: 'upcoming',
+        category: 'Game',
+        description: 'Play the word recall game for 10 minutes — good for memory!',
+        photo: '',
+    },
+    {
+        id: 'task-9',
+        title: 'Water the Plants',
+        time: '5:30 PM',
+        status: 'upcoming',
+        category: 'Chore',
+        description: 'Water the balcony plants — tulsi, marigold, and the money plant',
+        photo: '',
+    },
+    {
+        id: 'task-10',
+        title: 'Video Call with Priya',
+        time: '6:00 PM',
+        status: 'upcoming',
+        category: 'Social',
+        description: 'Weekly video call with daughter Priya on the tablet',
+        photo: '',
+    },
+    {
+        id: 'task-11',
+        title: 'Evening Medicine',
         time: '8:00 PM',
         status: 'upcoming',
-        category: 'Medication',
-        description: 'Memantine 20mg + Vitamin D3 with dinner',
+        category: 'Medicine',
+        description: 'Memantine 20mg + Vitamin D3 capsule with dinner',
         photo: '',
     },
 ];
+
 
 // FLASHCARDS — 14 cards
 export const mockFlashcards: Flashcard[] = [

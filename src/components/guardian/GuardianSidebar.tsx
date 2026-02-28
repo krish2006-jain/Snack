@@ -1,31 +1,98 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
     LayoutDashboard, Calendar, Brain, Users, Home,
     Gamepad2, FileText, QrCode, Bell, BarChart3,
-    Layers, ClipboardList, LogOut, Heart
+    Layers, ClipboardList, LogOut, Heart, ChevronDown,
 } from 'lucide-react';
 import styles from './GuardianSidebar.module.css';
 
-const navItems = [
-    { href: '/guardian', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-    { href: '/guardian/schedule', label: 'Schedule', icon: Calendar },
-    { href: '/guardian/memories', label: 'Memories', icon: Brain },
-    { href: '/guardian/people', label: 'People Wallet', icon: Users },
-    { href: '/guardian/memory-room', label: 'Memory Room', icon: Home },
-    { href: '/guardian/games', label: 'Games', icon: Gamepad2 },
-    { href: '/guardian/health', label: 'Health Records', icon: FileText },
-    { href: '/guardian/qr', label: 'QR Code', icon: QrCode },
-    { href: '/guardian/alerts', label: 'Alerts', icon: Bell, badge: 2 },
-    { href: '/guardian/analytics', label: 'Analytics', icon: BarChart3 },
-    { href: '/guardian/stage', label: 'Care Stage', icon: Layers },
-    { href: '/guardian/reports', label: 'Reports', icon: ClipboardList },
+interface NavGroup {
+    label: string;
+    items: {
+        href: string;
+        label: string;
+        icon: React.ReactNode;
+        exact?: boolean;
+        badge?: number;
+    }[];
+}
+
+const navGroups: NavGroup[] = [
+    {
+        label: 'Overview',
+        items: [
+            { href: '/guardian', label: 'Dashboard', icon: <LayoutDashboard size={18} />, exact: true },
+        ],
+    },
+    {
+        label: 'Care & Content',
+        items: [
+            { href: '/guardian/schedule', label: 'Schedule', icon: <Calendar size={18} /> },
+            { href: '/guardian/memories', label: 'Memories', icon: <Brain size={18} /> },
+            { href: '/guardian/people', label: 'People Wallet', icon: <Users size={18} /> },
+        ],
+    },
+    {
+        label: 'Engagement',
+        items: [
+            { href: '/guardian/analytics', label: 'Analytics', icon: <BarChart3 size={18} /> },
+            { href: '/guardian/stage', label: 'Care Stage', icon: <Layers size={18} /> },
+        ],
+    },
+    {
+        label: 'Administration',
+        items: [
+            { href: '/guardian/health', label: 'Health Records', icon: <FileText size={18} /> },
+            { href: '/guardian/qr', label: 'QR Code', icon: <QrCode size={18} /> },
+            { href: '/guardian/alerts', label: 'Alerts', icon: <Bell size={18} />, badge: 2 },
+            { href: '/guardian/reports', label: 'Reports', icon: <ClipboardList size={18} /> },
+        ],
+    },
 ];
 
 export default function GuardianSidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+    const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+    const [guardianName, setGuardianName] = useState('Priya Sharma');
+    const [guardianRole, setGuardianRole] = useState('Guardian • Daughter');
+    const [guardianInitials, setGuardianInitials] = useState('PS');
+
+    useEffect(() => {
+        const raw = localStorage.getItem('saathi_user') || localStorage.getItem('demoUser');
+        if (raw) {
+            try {
+                const u = JSON.parse(raw);
+                if (u.name) setGuardianName(u.name);
+                if (u.role) setGuardianRole(`${u.role.charAt(0).toUpperCase()}${u.role.slice(1)}`);
+                const initials = (u.name || 'Priya Sharma').split(' ').map((n: any) => n[0]).join('').slice(0, 2).toUpperCase();
+                setGuardianInitials(initials);
+            } catch {}
+        }
+    }, []);
+
+    const handleSignOut = () => {
+        try { localStorage.removeItem('saathi_user'); localStorage.removeItem('saathi_token'); localStorage.removeItem('demoUser'); } catch {}
+        router.push('/login');
+    };
+
+    const toggleGroup = (label: string) => {
+        setCollapsed((prev) => ({ ...prev, [label]: !prev[label] }));
+    };
+
+    const isItemActive = (item: NavGroup['items'][0]) => {
+        if (item.exact) return pathname === item.href;
+        return pathname.startsWith(item.href);
+    };
+
+    // Check if any item in a group is active
+    const isGroupActive = (group: NavGroup) =>
+        group.items.some((item) => isItemActive(item));
 
     return (
         <aside className={styles.sidebar} role="navigation" aria-label="Guardian navigation">
@@ -48,41 +115,74 @@ export default function GuardianSidebar() {
             </div>
 
             <nav className={styles.nav}>
-                <ul className={styles.navList}>
-                    {navItems.map((item) => {
-                        const isActive = item.exact
-                            ? pathname === item.href
-                            : pathname.startsWith(item.href);
-                        return (
-                            <li key={item.href}>
-                                <Link
-                                    href={item.href}
-                                    className={`${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
-                                    aria-current={isActive ? 'page' : undefined}
+                {navGroups.map((group, groupIdx) => {
+                    const isOpen = !collapsed[group.label];
+                    const groupActive = isGroupActive(group);
+
+                    return (
+                        <div
+                            key={group.label}
+                            className={styles.navGroup}
+                            style={{ animationDelay: `${groupIdx * 80}ms` }}
+                        >
+                            {/* Group header — Overview has no toggle */}
+                            {group.label !== 'Overview' ? (
+                                <button
+                                    className={`${styles.groupHeader} ${groupActive ? styles.groupHeaderActive : ''}`}
+                                    onClick={() => toggleGroup(group.label)}
+                                    aria-expanded={isOpen}
                                 >
-                                    <item.icon size={18} aria-hidden="true" />
-                                    <span>{item.label}</span>
-                                    {item.badge ? (
-                                        <span className={styles.badge} aria-label={`${item.badge} unread`}>
-                                            {item.badge}
-                                        </span>
-                                    ) : null}
-                                </Link>
-                            </li>
-                        );
-                    })}
-                </ul>
+                                    <span className={styles.groupLabel}>{group.label}</span>
+                                    <ChevronDown
+                                        size={14}
+                                        className={`${styles.groupChevron} ${isOpen ? styles.groupChevronOpen : ''}`}
+                                    />
+                                </button>
+                            ) : null}
+
+                            {/* Nav items — always show Overview, toggle others */}
+                            <ul
+                                className={`${styles.navList} ${group.label !== 'Overview' && !isOpen ? styles.navListCollapsed : ''
+                                    }`}
+                            >
+                                {group.items.map((item, itemIdx) => {
+                                    const active = isItemActive(item);
+                                    return (
+                                        <li
+                                            key={item.href}
+                                            style={{ animationDelay: `${(groupIdx * 80) + (itemIdx * 40)}ms` }}
+                                        >
+                                            <Link
+                                                href={item.href}
+                                                className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
+                                                aria-current={active ? 'page' : undefined}
+                                            >
+                                                {item.icon}
+                                                <span>{item.label}</span>
+                                                {item.badge ? (
+                                                    <span className={styles.badge} aria-label={`${item.badge} unread`}>
+                                                        {item.badge}
+                                                    </span>
+                                                ) : null}
+                                            </Link>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    );
+                })}
             </nav>
 
             <div className={styles.sidebarFooter}>
                 <div className={styles.guardianChip}>
-                    <div className={styles.guardianAvatar}>PS</div>
+                    <div className={styles.guardianAvatar}>{guardianInitials}</div>
                     <div>
-                        <span className={styles.guardianName}>Priya Sharma</span>
-                        <span className={styles.guardianRole}>Guardian • Daughter</span>
+                        <span className={styles.guardianName}>{guardianName}</span>
+                        <span className={styles.guardianRole}>{guardianRole}</span>
                     </div>
                 </div>
-                <button className={styles.logoutBtn} aria-label="Sign out">
+                <button className={styles.logoutBtn} aria-label="Sign out" onClick={handleSignOut}>
                     <LogOut size={16} aria-hidden="true" />
                     <span>Sign out</span>
                 </button>

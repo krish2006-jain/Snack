@@ -83,6 +83,16 @@
     overflow: hidden;
 }
 
+/* SVG room illustration fills the scene */
+.roomSvg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
 /* Room background themes */
 .kitchen {
     background: linear-gradient(180deg, hsl(35, 45%, 88%) 0%, hsl(35, 40%, 80%) 60%, hsl(35, 35%, 72%) 100%);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/ui/AppLayout';
 import { journalEntries, JournalEntry } from '@/lib/mock-data/caretaker';
 import { BookOpen, Save, ChevronDown, ChevronUp } from 'lucide-react';
@@ -96,7 +96,6 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 export default function CaretakerJournalPage() {
-    // keep entries in component state so they update when a new entry is saved
     const [entries, setEntries] = useState<JournalEntry[]>(journalEntries);
 
     const [mood, setMood] = useState<number>(3);
@@ -106,15 +105,35 @@ export default function CaretakerJournalPage() {
     const [notes, setNotes] = useState('');
     const [saved, setSaved] = useState(false);
 
+    useEffect(() => {
+        fetch('/api/journal')
+            .then(r => r.json())
+            .then(data => {
+                if (data.entries && data.entries.length > 0) {
+                    const mapped: JournalEntry[] = data.entries.map((e: { id: string; mood_score: number; appetite: string; sleep_quality: string; incidents: string; notes: string; date: string }) => ({
+                        id: e.id,
+                        date: e.date,
+                        mood: (e.mood_score || 3) as 1 | 2 | 3 | 4 | 5,
+                        appetite: (e.appetite || 'fair') as 'poor' | 'fair' | 'good' | 'excellent',
+                        sleep: (e.sleep_quality || 'fair') as 'poor' | 'fair' | 'good' | 'excellent',
+                        incidents: e.incidents || '',
+                        notes: e.notes || '',
+                        caretakerId: 'ct-001',
+                    }));
+                    setEntries(mapped);
+                }
+            })
+            .catch(() => { });
+    }, []);
+
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
-        // construct a new entry using current form state
         const newEntry: JournalEntry = {
             id: `j-${Date.now()}`,
             date: new Date().toISOString(),
-            mood,
-            appetite,
-            sleep,
+            mood: mood as 1 | 2 | 3 | 4 | 5,
+            appetite: appetite as 'poor' | 'fair' | 'good' | 'excellent',
+            sleep: sleep as 'poor' | 'fair' | 'good' | 'excellent',
             incidents,
             notes,
             caretakerId: 'ct-001',
@@ -124,7 +143,19 @@ export default function CaretakerJournalPage() {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
 
-        // reset form fields if desired
+        fetch('/api/journal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                moodScore: mood,
+                moodLabel: ['Very low', 'Low', 'Fair', 'Good', 'Great'][mood - 1],
+                appetite,
+                sleepQuality: sleep,
+                incidents: incidents || null,
+                notes,
+            }),
+        }).catch(() => { });
+
         setMood(3);
         setAppetite('good');
         setSleep('good');

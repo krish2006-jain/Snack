@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Volume2, CheckCircle, Plus, AlertTriangle, X } from 'lucide-react';
+import { KitchenRoomSVG, BedroomRoomSVG, LivingRoomSVG, GardenRoomSVG, PrayerRoomSVG } from '@/components/rooms';
 import styles from './room.module.css';
 
 interface HotspotData {
@@ -25,6 +26,7 @@ interface RoomDefinition {
     description: string;
     bgClass: string;
     hotspots: HotspotData[];
+    SvgComponent: React.ComponentType<{ className?: string }>;
 }
 
 const ROOMS: Record<string, RoomDefinition> = {
@@ -32,11 +34,12 @@ const ROOMS: Record<string, RoomDefinition> = {
         name: 'Kitchen',
         description: 'Your favourite chai starts here',
         bgClass: 'kitchen',
+        SvgComponent: KitchenRoomSVG,
         hotspots: [
             {
                 id: 'tea-cup',
                 label: 'Tea Cup',
-                x: 28, y: 58,
+                x: 38, y: 46,
                 flashcard: {
                     title: 'Your Chai Cup',
                     subtitle: 'The brown ceramic mug from Priya',
@@ -47,7 +50,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'spice-box',
                 label: 'Spice Box',
-                x: 58, y: 62,
+                x: 62, y: 48,
                 flashcard: {
                     title: 'Masala Dabba',
                     subtitle: 'Silver box with 7 compartments',
@@ -58,7 +61,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'stove',
                 label: 'Gas Stove',
-                x: 48, y: 52,
+                x: 58, y: 46,
                 flashcard: {
                     title: 'Gas Stove — Safety',
                     subtitle: 'Always ask Sunita or Nurse Anita before using',
@@ -71,7 +74,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'fridge',
                 label: 'Refrigerator',
-                x: 78, y: 50,
+                x: 89, y: 42,
                 flashcard: {
                     title: 'The LG Fridge',
                     subtitle: 'Medicines on top shelf — labelled by Priya',
@@ -82,7 +85,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'clock',
                 label: 'Wall Clock',
-                x: 18, y: 28,
+                x: 46, y: 14,
                 flashcard: {
                     title: 'Kitchen Clock',
                     subtitle: 'Round white clock above the window',
@@ -93,7 +96,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'medicine-box',
                 label: 'Medicine Box',
-                x: 88, y: 35,
+                x: 78, y: 22,
                 flashcard: {
                     title: 'Medicine Box — Important',
                     subtitle: 'Only take medicine when Nurse Anita confirms',
@@ -109,11 +112,12 @@ const ROOMS: Record<string, RoomDefinition> = {
         name: 'Bedroom',
         description: 'Where each day begins and ends',
         bgClass: 'bedroom',
+        SvgComponent: BedroomRoomSVG,
         hotspots: [
             {
                 id: 'bed',
                 label: 'Your Bed',
-                x: 48, y: 60,
+                x: 45, y: 58,
                 flashcard: {
                     title: 'The Rosewood Bed',
                     subtitle: 'You sleep on the right side',
@@ -124,7 +128,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'medicine-cabinet',
                 label: 'Medicine Cabinet',
-                x: 72, y: 45,
+                x: 78, y: 30,
                 flashcard: {
                     title: 'Medicine Cabinet — Safety',
                     subtitle: 'Everything labelled — only take as told',
@@ -137,7 +141,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'almirah',
                 label: 'Almirah',
-                x: 18, y: 48,
+                x: 10, y: 46,
                 flashcard: {
                     title: 'Steel Almirah',
                     subtitle: 'Clothes left door, documents right door',
@@ -148,7 +152,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'wall-clock',
                 label: 'Ajanta Clock',
-                x: 50, y: 18,
+                x: 45, y: 14,
                 flashcard: {
                     title: 'Ajanta Wall Clock',
                     subtitle: 'Gifted by Priya on your 65th birthday',
@@ -162,11 +166,12 @@ const ROOMS: Record<string, RoomDefinition> = {
         name: 'Living Room',
         description: 'Family evenings on the recliner',
         bgClass: 'living',
+        SvgComponent: LivingRoomSVG,
         hotspots: [
             {
                 id: 'recliner',
                 label: 'Recliner Chair',
-                x: 22, y: 62,
+                x: 14, y: 58,
                 flashcard: {
                     title: 'Your Recliner',
                     subtitle: 'Brown leather — your favourite spot',
@@ -177,7 +182,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'tv',
                 label: 'Television',
-                x: 68, y: 42,
+                x: 82, y: 42,
                 flashcard: {
                     title: 'Samsung Television',
                     subtitle: '43 inch — Doordarshan News at 9 PM',
@@ -188,7 +193,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'photos',
                 label: 'Photo Wall',
-                x: 48, y: 26,
+                x: 50, y: 16,
                 flashcard: {
                     title: 'Family Photo Wall',
                     subtitle: '12 framed photos from 1980 to 2019',
@@ -199,7 +204,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'prayer-corner',
                 label: 'Prayer Corner',
-                x: 16, y: 36,
+                x: 10, y: 26,
                 flashcard: {
                     title: 'Prayer Corner',
                     subtitle: 'Ram, Ganesh, and Durga idols',
@@ -213,11 +218,12 @@ const ROOMS: Record<string, RoomDefinition> = {
         name: 'Garden',
         description: 'Morning sunlight and marigolds',
         bgClass: 'garden',
+        SvgComponent: GardenRoomSVG,
         hotspots: [
             {
                 id: 'bench',
                 label: 'Morning Bench',
-                x: 30, y: 65,
+                x: 33, y: 62,
                 flashcard: {
                     title: 'Your Morning Bench',
                     subtitle: 'Sunlight, chai, and newspaper by 8 AM',
@@ -228,7 +234,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'marigolds',
                 label: 'Marigolds',
-                x: 62, y: 72,
+                x: 68, y: 62,
                 flashcard: {
                     title: 'Marigold Patch',
                     subtitle: 'You planted these in October 2023',
@@ -242,11 +248,12 @@ const ROOMS: Record<string, RoomDefinition> = {
         name: 'Prayer Room',
         description: 'Agarbatti and daily peace',
         bgClass: 'prayer',
+        SvgComponent: PrayerRoomSVG,
         hotspots: [
             {
                 id: 'mandir',
                 label: 'Mandir',
-                x: 50, y: 40,
+                x: 50, y: 35,
                 flashcard: {
                     title: 'Your Home Mandir',
                     subtitle: 'Ram, Ganesh, Durga — pooja at 7 AM',
@@ -257,7 +264,7 @@ const ROOMS: Record<string, RoomDefinition> = {
             {
                 id: 'bhajan-book',
                 label: 'Bhajan Book',
-                x: 28, y: 65,
+                x: 40, y: 78,
                 flashcard: {
                     title: 'Bhajan Sangrah',
                     subtitle: 'Tulsidas Ramcharitmanas + personal notes',
@@ -274,6 +281,7 @@ export default function RoomScenePage() {
     const router = useRouter();
     const roomSlug = params?.room as string ?? 'kitchen';
     const room = ROOMS[roomSlug] ?? ROOMS.kitchen;
+    const RoomSVG = room.SvgComponent;
 
     const [activeHotspot, setActiveHotspot] = useState<HotspotData | null>(null);
     const [remembered, setRemembered] = useState<Set<string>>(new Set());
@@ -315,21 +323,8 @@ export default function RoomScenePage() {
             {/* Room scene */}
             <div className={`${styles.sceneWrap}`}>
                 <div className={`${styles.scene} ${styles[room.bgClass]}`} aria-label={`${room.name} scene with interactive objects`}>
-                    {/* Ambient orbs for depth */}
-                    <div className={styles.orbA} aria-hidden="true" />
-                    <div className={styles.orbB} aria-hidden="true" />
-
-                    {/* CSS-drawn room surfaces */}
-                    <div className={styles.floor} aria-hidden="true" />
-                    <div className={styles.wall} aria-hidden="true" />
-                    <div className={styles.wallPanel} aria-hidden="true" />
-
-                    {/* Room-specific furniture silhouettes */}
-                    {room.bgClass === 'kitchen' && <KitchenFurniture />}
-                    {room.bgClass === 'bedroom' && <BedroomFurniture />}
-                    {room.bgClass === 'living' && <LivingFurniture />}
-                    {room.bgClass === 'garden' && <GardenFurniture />}
-                    {room.bgClass === 'prayer' && <PrayerFurniture />}
+                    {/* SVG Room Illustration */}
+                    <RoomSVG className={styles.roomSvg} />
 
                     {/* Hotspots */}
                     {room.hotspots.map((hs) => (
@@ -419,111 +414,5 @@ export default function RoomScenePage() {
                 </div>
             )}
         </div>
-    );
-}
-
-/* ── CSS-drawn furniture for each room ── */
-
-function KitchenFurniture() {
-    return (
-        <>
-            {/* Counter */}
-            <div style={{ position: 'absolute', bottom: '22%', left: '10%', width: '80%', height: '8%', background: 'linear-gradient(180deg,#E8D5B7,#D4B896)', borderRadius: '8px 8px 0 0', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }} />
-            {/* Stove top */}
-            <div style={{ position: 'absolute', bottom: '30%', left: '38%', width: '20%', height: '6%', background: '#8B7355', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '4px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '3px solid #666', background: '#555' }} />
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', border: '3px solid #666', background: '#555' }} />
-            </div>
-            {/* Fridge */}
-            <div style={{ position: 'absolute', bottom: '22%', right: '12%', width: '12%', height: '38%', background: 'linear-gradient(180deg,#F0F0F0,#E0E0E0)', borderRadius: '8px', boxShadow: '2px 0 8px rgba(0,0,0,0.1)', border: '1px solid #d0d0d0' }} />
-            {/* Window */}
-            <div style={{ position: 'absolute', top: '12%', left: '12%', width: '18%', height: '22%', background: 'linear-gradient(135deg,rgba(135,206,235,0.5),rgba(200,230,255,0.4))', border: '3px solid #C9B48E', borderRadius: '4px' }}>
-                <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '2px', background: '#C9B48E' }} />
-                <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '2px', background: '#C9B48E' }} />
-            </div>
-        </>
-    );
-}
-
-function BedroomFurniture() {
-    return (
-        <>
-            {/* Bed base */}
-            <div style={{ position: 'absolute', bottom: '18%', left: '20%', width: '55%', height: '32%', background: 'linear-gradient(180deg,#8B4513,#6B3310)', borderRadius: '12px 12px 0 0', boxShadow: '0 6px 20px rgba(0,0,0,0.2)' }} />
-            {/* Mattress */}
-            <div style={{ position: 'absolute', bottom: '30%', left: '21%', width: '53%', height: '20%', background: 'linear-gradient(180deg,#F5F5F5,#E8E8E8)', borderRadius: '8px', border: '1px solid #ddd' }} />
-            {/* Pillows */}
-            <div style={{ position: 'absolute', bottom: '42%', left: '24%', width: '18%', height: '10%', background: 'white', borderRadius: '8px', border: '1px solid #E8E8E8', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
-            <div style={{ position: 'absolute', bottom: '42%', left: '46%', width: '18%', height: '10%', background: 'white', borderRadius: '8px', border: '1px solid #E8E8E8', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }} />
-            {/* Bedside table */}
-            <div style={{ position: 'absolute', bottom: '18%', right: '11%', width: '8%', height: '20%', background: 'linear-gradient(180deg,#8B7355,#6B5335)', borderRadius: '4px' }} />
-            {/* Almirah */}
-            <div style={{ position: 'absolute', bottom: '18%', left: '5%', width: '11%', height: '52%', background: 'linear-gradient(180deg,#C0C0C0,#A8A8A8)', borderRadius: '4px', border: '1px solid #999', display: 'flex', flexDirection: 'column', padding: '4px', gap: '2px' }}>
-                <div style={{ flex: 1, background: '#B0B0B0', borderRadius: '2px' }} />
-                <div style={{ flex: 1, background: '#B0B0B0', borderRadius: '2px' }} />
-                <div style={{ flex: 1, background: '#B0B0B0', borderRadius: '2px' }} />
-            </div>
-        </>
-    );
-}
-
-function LivingFurniture() {
-    return (
-        <>
-            {/* Sofa */}
-            <div style={{ position: 'absolute', bottom: '20%', left: '28%', width: '42%', height: '22%', background: 'linear-gradient(180deg,#8B7355,#6B5335)', borderRadius: '12px 12px 0 0', boxShadow: '0 6px 16px rgba(0,0,0,0.2)' }} />
-            <div style={{ position: 'absolute', bottom: '32%', left: '29%', width: '40%', height: '12%', background: 'linear-gradient(180deg,#A0896A,#8B7355)', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)' }} />
-            {/* Recliner */}
-            <div style={{ position: 'absolute', bottom: '20%', left: '6%', width: '18%', height: '32%', background: 'linear-gradient(180deg,#7B5E3A,#5C4225)', borderRadius: '12px 12px 0 0', boxShadow: '0 6px 16px rgba(0,0,0,0.2)' }} />
-            {/* TV stand */}
-            <div style={{ position: 'absolute', bottom: '22%', right: '8%', width: '22%', height: '6%', background: '#3A3A3A', borderRadius: '4px' }} />
-            {/* TV screen */}
-            <div style={{ position: 'absolute', bottom: '28%', right: '9%', width: '20%', height: '22%', background: 'linear-gradient(135deg,#1a1a2e,#16213e)', borderRadius: '6px', border: '3px solid #222', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }} />
-            {/* Photo wall patches */}
-            {[...Array(6)].map((_, i) => (
-                <div key={i} style={{ position: 'absolute', top: `${14 + Math.floor(i / 3) * 14}%`, left: `${30 + (i % 3) * 12}%`, width: '9%', height: '10%', background: `hsl(${280 + i * 20},30%,88%)`, borderRadius: '3px', border: '2px solid #C9B48E', boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }} />
-            ))}
-        </>
-    );
-}
-
-function GardenFurniture() {
-    return (
-        <>
-            {/* Ground */}
-            <div style={{ position: 'absolute', bottom: '20%', left: 0, right: 0, height: '12%', background: 'linear-gradient(180deg,#90C080,#6A9955)', borderRadius: '0' }} />
-            {/* Bench */}
-            <div style={{ position: 'absolute', bottom: '32%', left: '18%', width: '28%', height: '8%', background: 'linear-gradient(180deg,#8B7355,#6B5335)', borderRadius: '6px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }} />
-            {/* Bench legs */}
-            <div style={{ position: 'absolute', bottom: '20%', left: '20%', width: '3%', height: '12%', background: '#6B5335', borderRadius: '3px' }} />
-            <div style={{ position: 'absolute', bottom: '20%', left: '43%', width: '3%', height: '12%', background: '#6B5335', borderRadius: '3px' }} />
-            {/* Marigolds */}
-            {[...Array(6)].map((_, i) => (
-                <div key={i} style={{ position: 'absolute', bottom: '28%', left: `${55 + i * 5}%`, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: i % 2 === 0 ? '#F59E0B' : '#EF4444', boxShadow: `0 0 10px ${i % 2 === 0 ? '#F59E0B' : '#EF4444'}44` }} />
-                    <div style={{ width: '3px', height: '24px', background: '#4A7C4A', borderRadius: '2px' }} />
-                </div>
-            ))}
-            {/* Tree */}
-            <div style={{ position: 'absolute', bottom: '55%', left: '8%', width: '0', height: '0', borderLeft: '30px solid transparent', borderRight: '30px solid transparent', borderBottom: '60px solid #2D6A2D' }} />
-            <div style={{ position: 'absolute', bottom: '32%', left: '14%', width: '8%', height: '24%', background: '#5C3A1E', borderRadius: '4px' }} />
-        </>
-    );
-}
-
-function PrayerFurniture() {
-    return (
-        <>
-            {/* Mandir structure */}
-            <div style={{ position: 'absolute', bottom: '22%', left: '30%', width: '40%', height: '50%', background: 'linear-gradient(180deg,#D4A855,#B8902A)', borderRadius: '16px 16px 4px 4px', boxShadow: '0 8px 24px rgba(0,0,0,0.2)' }} />
-            {/* Arch */}
-            <div style={{ position: 'absolute', bottom: '44%', left: '36%', width: '28%', height: '24%', background: 'linear-gradient(180deg,#F5E6C0,#E8D49C)', borderRadius: '50% 50% 0 0', border: '3px solid #C9A840' }} />
-            {/* Idols area (simplified) */}
-            <div style={{ position: 'absolute', bottom: '46%', left: '44%', width: '12%', height: '16%', background: '#FFD700', borderRadius: '50% 50% 0 0', opacity: 0.7 }} />
-            {/* Diya flame */}
-            <div style={{ position: 'absolute', bottom: '40%', left: '47%', width: '6%', height: '8%', background: '#F59E0B', borderRadius: '50% 50% 30% 30%', boxShadow: '0 0 15px #F59E0B88, 0 0 30px #F59E0B44', animation: 'flickerFlame 2s ease infinite' }} />
-            {/* Mat */}
-            <div style={{ position: 'absolute', bottom: '18%', left: '28%', width: '44%', height: '6%', background: 'linear-gradient(90deg,#DC2626,#B91C1C)', borderRadius: '6px', border: '2px solid #991B1B' }} />
-        </>
     );
 }

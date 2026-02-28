@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
+import Link from 'next/link';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
-import { mockMemoryRooms, MemoryRoom, MemoryObject } from '@/lib/mock-data';
-import { Plus, Pencil, Trash2, Sparkles, ChevronRight, ChevronDown } from 'lucide-react';
 import MemoryRoomSVG from '@/components/ui/MemoryRoomSVG';
+import { mockMemoryRooms, MemoryRoom, MemoryObject } from '@/lib/mock-data';
+import { Plus, Pencil, Trash2, Sparkles, ChevronRight, ChevronDown, Eye } from 'lucide-react';
 import styles from './page.module.css';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -115,6 +116,14 @@ export default function MemoryRoomPage() {
                                 >
                                     <Plus size={13} aria-hidden="true" /> Add Object
                                 </button>
+                                <Link
+                                    href={`/patient/memory-room/${room.name.toLowerCase().replace(/ room$/i, '').replace(/\s+/g, '')}`}
+                                    className={styles.viewRoomBtn}
+                                    onClick={e => e.stopPropagation()}
+                                    aria-label={`View ${room.name} as patient`}
+                                >
+                                    <Eye size={13} aria-hidden="true" /> View Patient Room
+                                </Link>
                                 {expandedRoom === room.id ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
                             </div>
                         </button>

@@ -6,23 +6,51 @@ import { todaysTasks, CaretakerTask } from '@/lib/mock-data/caretaker';
 import { CheckCircle2, Circle, Clock, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 const catColors: Record<string, string> = {
-    medication: 'badge--info',
-    meal: 'badge--success',
-    activity: 'badge--purple',
-    therapy: 'badge--warning',
+    medication: 'badge--danger',
+    medicine: 'badge--danger',
+    meal: 'badge--warning',
+    activity: 'badge--success',
+    exercise: 'badge--success',
+    game: 'badge--purple',
+    chore: 'badge--info',
+    therapy: 'badge--success',
     hygiene: 'badge--info',
     check: 'badge--danger',
-    rest: 'badge--success',
+    rest: 'badge--info',
+    social: 'badge--purple',
 };
+
+// Border-left accent colors per category
+const catAccent: Record<string, string> = {
+    medication: '#EF4444',
+    medicine: '#EF4444',
+    meal: '#F59E0B',
+    activity: '#22C55E',
+    exercise: '#22C55E',
+    game: '#8B5CF6',
+    chore: '#0EA5E9',
+    therapy: '#10B981',
+    hygiene: '#0EA5E9',
+    check: '#EF4444',
+    rest: '#3B82F6',
+    social: '#EC4899',
+};
+
 const catLabel: Record<string, string> = {
-    medication: 'Medication',
-    meal: 'Meal',
-    activity: 'Activity',
-    therapy: 'Therapy',
-    hygiene: 'Hygiene',
-    check: 'Check',
-    rest: 'Rest',
+    medication: '💊 Medicine',
+    medicine: '💊 Medicine',
+    meal: '🍽️ Meal',
+    activity: '🏃 Exercise',
+    exercise: '🏃 Exercise',
+    game: '🎮 Game',
+    chore: '✨ Chore',
+    therapy: '🧠 Therapy',
+    hygiene: '🚿 Hygiene',
+    check: '🩺 Check',
+    rest: '😴 Rest',
+    social: '📞 Social',
 };
+
 
 function TaskRow({ task, onToggle }: { task: CaretakerTask; onToggle: (id: string) => void }) {
     const [open, setOpen] = useState(false);
@@ -30,6 +58,7 @@ function TaskRow({ task, onToggle }: { task: CaretakerTask; onToggle: (id: strin
     const isDone = task.status === 'completed';
     const isOverdue = task.status === 'overdue';
 
+    const accent = catAccent[task.category] ?? (isDone ? 'var(--color-success)' : isOverdue ? 'var(--color-danger)' : 'var(--border-subtle)');
     const borderColor = isDone ? 'var(--color-success)' : isOverdue ? 'var(--color-danger)' : 'var(--border-subtle)';
     const bg = isDone ? 'var(--color-success-bg)' : isOverdue ? 'var(--color-danger-bg)' : 'var(--bg-surface)';
 
@@ -38,7 +67,8 @@ function TaskRow({ task, onToggle }: { task: CaretakerTask; onToggle: (id: strin
             style={{
                 background: bg,
                 border: `1px solid ${borderColor}`,
-                borderLeft: `4px solid ${borderColor}`,
+                borderLeft: `4px solid ${accent}`,
+
                 borderRadius: 14,
                 overflow: 'hidden',
                 transition: 'all 0.2s ease',

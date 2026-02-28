@@ -78,8 +78,14 @@ export default function PatternTapGame() {
             clearTO();
             timeoutRef.current = setTimeout(() => {
                 setWrongIdx(null);
-                setStars(calcStars(level));
+                const finalStars = calcStars(level);
+                setStars(finalStars);
                 setState('won');
+                fetch('/api/games', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ gameType: 'pattern_tap', score: Math.min(level * 15, 100), stars: finalStars, durationSeconds: 0 }),
+                }).catch(() => { });
             }, 1200);
             return;
         }

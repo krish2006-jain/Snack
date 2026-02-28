@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle, HelpCircle, ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
 import styles from './memories.module.css';
 import { mockFlashcards, type Flashcard } from '@/lib/mock-data/patient';
@@ -22,16 +22,42 @@ const categoryEmoji: Record<string, string> = {
     objects: '📦',
 };
 
+const categoryMap: Record<string, string> = {
+    home: 'places',
+    events: 'memories',
+    general: 'objects',
+};
+
 export default function MemoriesPage() {
+    const [allCards, setAllCards] = useState<Flashcard[]>(mockFlashcards);
     const [activeCategory, setActiveCategory] = useState<Category>('all');
     const [currentIndex, setCurrentIndex] = useState(0);
     const [revealed, setRevealed] = useState(false);
     const [remembered, setRemembered] = useState<Record<string, boolean | null>>({});
 
+    useEffect(() => {
+        fetch('/api/memories')
+            .then(r => r.json())
+            .then(data => {
+                if (data.cards && data.cards.length > 0) {
+                    const mapped: Flashcard[] = data.cards.map((c: { id: string; question: string; answer: string; description: string; category: string }) => ({
+                        id: c.id,
+                        question: c.question,
+                        answer: c.answer,
+                        description: c.description || '',
+                        category: (categoryMap[c.category] || c.category) as Flashcard['category'],
+                        tip: 'Try to recall associated feelings and sensory details.',
+                    }));
+                    setAllCards(mapped);
+                }
+            })
+            .catch(() => { /* keep mock data */ });
+    }, []);
+
     const filtered =
         activeCategory === 'all'
-            ? mockFlashcards
-            : mockFlashcards.filter((f) => f.category === activeCategory);
+            ? allCards
+            : allCards.filter((f) => f.category === activeCategory);
 
     const card: Flashcard = filtered[currentIndex];
     const total = filtered.length;
@@ -48,11 +74,21 @@ export default function MemoriesPage() {
 
     const handleRemember = () => {
         setRemembered((r) => ({ ...r, [card.id]: true }));
+        fetch('/api/memories', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cardId: card.id, recalled: true }),
+        }).catch(() => { });
         setTimeout(goNext, 600);
     };
 
     const handleHelp = () => {
         setRemembered((r) => ({ ...r, [card.id]: false }));
+        fetch('/api/memories', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cardId: card.id, recalled: false }),
+        }).catch(() => { });
         setRevealed(true);
     };
 

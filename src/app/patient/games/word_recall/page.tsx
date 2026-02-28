@@ -64,10 +64,16 @@ export default function WordRecallGame() {
 
     const handleSubmit = () => {
         const res = words.map((w) => ({ word: w, correct: selected.includes(w) }));
-        const s = calcStars(res.filter((r) => r.correct).length, words.length);
+        const correctCount = res.filter((r) => r.correct).length;
+        const s = calcStars(correctCount, words.length);
         setResults(res);
         setStars(s);
         setPhase('result');
+        fetch('/api/games', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameType: 'word_recall', score: Math.round((correctCount / words.length) * 100), stars: s, durationSeconds: 10 }),
+        }).catch(() => { });
     };
 
     const restart = () => {

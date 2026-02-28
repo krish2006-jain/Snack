@@ -16,14 +16,14 @@ export const caretakerProfile = {
     certifications: ['Dementia Care Specialist', 'First Aid', 'Medication Management'],
 };
 
-export type TaskCategory = 'medication' | 'meal' | 'activity' | 'hygiene' | 'therapy' | 'check' | 'rest';
+export type CaretakerTaskCategory = 'medication' | 'meal' | 'activity' | 'hygiene' | 'therapy' | 'check' | 'rest' | 'game' | 'chore' | 'social' | 'exercise';
 export type TaskStatus = 'completed' | 'pending' | 'overdue' | 'skipped';
 
 export interface CaretakerTask {
     id: string;
     title: string;
     time: string; // HH:MM
-    category: TaskCategory;
+    category: CaretakerTaskCategory;
     status: TaskStatus;
     notes?: string;
     completedAt?: string;

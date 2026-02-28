@@ -54,7 +54,7 @@ export default function CompanionPage() {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages, isTyping]);
 
-    const sendMessage = (text: string = input.trim()) => {
+    const sendMessage = async (text: string = input.trim()) => {
         if (!text) return;
 
         const userMsg: Message = {
@@ -67,9 +67,26 @@ export default function CompanionPage() {
         setInput('');
         setIsTyping(true);
 
-        // Simulate AI response
-        setTimeout(() => {
-            const aiText = warmResponses[Math.floor(Math.random() * warmResponses.length)];
+        try {
+            // Build history for API
+            const history = messages.map(m => ({
+                role: m.role === 'user' ? 'user' : 'assistant',
+                content: m.text,
+            }));
+
+            const res = await fetch('/api/companion/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patientId: 'patient-ravi-001',
+                    message: text,
+                    history,
+                }),
+            });
+
+            const data = await res.json();
+            const aiText = data.reply || warmResponses[Math.floor(Math.random() * warmResponses.length)];
+
             const aiMsg: Message = {
                 id: `m${Date.now() + 1}`,
                 role: 'ai',
@@ -85,7 +102,18 @@ export default function CompanionPage() {
                 utterance.rate = 0.85;
                 window.speechSynthesis.speak(utterance);
             }
-        }, 1200);
+        } catch {
+            // Fallback to local responses if API unreachable
+            const aiText = warmResponses[Math.floor(Math.random() * warmResponses.length)];
+            const aiMsg: Message = {
+                id: `m${Date.now() + 1}`,
+                role: 'ai',
+                text: aiText,
+                time: formatTime(),
+            };
+            setMessages((prev) => [...prev, aiMsg]);
+            setIsTyping(false);
+        }
     };
 
     const handleVoiceInput = () => {

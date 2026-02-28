@@ -11,6 +11,8 @@ import {
     Clock,
     Pill,
     ChevronRight,
+    Gamepad2,
+    Home,
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import styles from './home.module.css';
@@ -69,9 +71,9 @@ export default function PatientHome() {
     const todayDate = formatDate();
 
     return (
-        <div className={styles.page}>
+        <div className={`${styles.page} patient-page-enter`}>
             {/* Gradient header area */}
-            <div className={`${styles.heroArea} page-enter`}>
+            <div className={styles.heroArea}>
                 <div className={styles.heroContent}>
                     <p className={styles.dateLabel}>{todayDate}</p>
                     <h1 className={styles.greeting}>
@@ -87,35 +89,49 @@ export default function PatientHome() {
                     <section className={styles.section}>
                         <div className={styles.quickGrid}>
                             {/* Featured — Schedule */}
-                            <Link href="/patient/schedule" className={`${styles.quickCard} ${styles.quickCardFeatured}`}>
+                            <Link href="/patient/schedule" className={`${styles.quickCard} ${styles.quickCardFeatured} card-enter`} style={{ animationDelay: '0ms' }}>
                                 <div className={styles.quickCardTop}>
-                                    <Calendar size={32} color="var(--color-primary)" aria-hidden="true" />
+                                    <Calendar size={44} color="var(--color-primary)" aria-hidden="true" />
                                     <span className={styles.quickBadge}><AnimatedNumber value={pendingTasks} /> left</span>
                                 </div>
                                 <h2 className={styles.quickTitle}>Today&apos;s Schedule</h2>
                                 <p className={styles.quickSub}><AnimatedNumber value={mockSchedule.filter(t => t.status === 'done').length} /> of {mockSchedule.length} tasks done</p>
-                                <ChevronRight size={20} className={styles.chevron} />
+                                <ChevronRight size={22} className={styles.chevron} />
                             </Link>
 
                             {/* Memory Time */}
-                            <Link href="/patient/memories" className={styles.quickCard}>
-                                <Brain size={32} color="var(--color-primary)" aria-hidden="true" />
+                            <Link href="/patient/memories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '100ms' }}>
+                                <Brain size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Memory Time</h2>
                                 <p className={styles.quickSub}><AnimatedNumber value={14} /> flashcards waiting</p>
                             </Link>
 
                             {/* My People */}
-                            <Link href="/patient/people" className={styles.quickCard}>
-                                <Users size={32} color="var(--color-primary)" aria-hidden="true" />
+                            <Link href="/patient/people" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '200ms' }}>
+                                <Users size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>My People</h2>
                                 <p className={styles.quickSub}><AnimatedNumber value={6} /> people who love you</p>
                             </Link>
 
                             {/* Talk to Saathi */}
-                            <Link href="/patient/companion" className={`${styles.quickCard} ${styles.quickCardCompanion}`}>
-                                <MessageCircle size={32} color="var(--color-primary)" aria-hidden="true" />
+                            <Link href="/patient/companion" className={`${styles.quickCard} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '300ms' }}>
+                                <MessageCircle size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Talk to Saathi</h2>
                                 <p className={styles.quickSub}>Your AI companion is here</p>
+                            </Link>
+
+                            {/* Memory Room */}
+                            <Link href="/patient/memory-room" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '400ms' }}>
+                                <Home size={44} color="var(--color-primary)" aria-hidden="true" />
+                                <h2 className={styles.quickTitle}>Memory Room</h2>
+                                <p className={styles.quickSub}>Explore familiar rooms</p>
+                            </Link>
+
+                            {/* Brain Games */}
+                            <Link href="/patient/games" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '500ms' }}>
+                                <Gamepad2 size={44} color="var(--color-primary)" aria-hidden="true" />
+                                <h2 className={styles.quickTitle}>Brain Games</h2>
+                                <p className={styles.quickSub}>Keep your mind active</p>
                             </Link>
                         </div>
                     </section>

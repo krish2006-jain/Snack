@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, Users, MessageCircle, AlertTriangle, Gamepad2, DoorOpen } from 'lucide-react';
+import { Home, Calendar, Users, MessageCircle, AlertTriangle, Gamepad2, Brain } from 'lucide-react';
 import styles from './patient.module.css';
 
 const tabs = [
     { href: '/patient', label: 'Home', icon: Home, exact: true },
     { href: '/patient/schedule', label: 'Schedule', icon: Calendar, exact: false },
-    { href: '/patient/memory-room', label: 'Rooms', icon: DoorOpen, exact: false },
+    { href: '/patient/memories', label: 'Memories', icon: Brain, exact: false },
     { href: '/patient/games', label: 'Games', icon: Gamepad2, exact: false },
     { href: '/patient/companion', label: 'Saathi', icon: MessageCircle, exact: false },
     { href: '/patient/people', label: 'People', icon: Users, exact: false },
@@ -35,7 +35,7 @@ export default function PatientLayout({
                     <span className={styles.logoCare}>Care</span>
                 </div>
                 <Link href="/patient/sos" className={styles.headerSos} aria-label="SOS Emergency">
-                    <AlertTriangle size={22} />
+                    <AlertTriangle size={24} />
                     <span>SOS</span>
                 </Link>
             </header>
@@ -45,7 +45,7 @@ export default function PatientLayout({
                 {children}
             </main>
 
-            {/* Bottom tab bar — mobile only */}
+            {/* Bottom tab bar */}
             <nav className="bottom-tab-bar" aria-label="Patient navigation">
                 {tabs.map((tab) => {
                     const Icon = tab.icon;
@@ -57,21 +57,21 @@ export default function PatientLayout({
                             className={`tab-item${active ? ' tab-item--active' : ''}`}
                             aria-current={active ? 'page' : undefined}
                         >
-                            <Icon size={22} />
+                            <Icon size={30} strokeWidth={active ? 2.5 : 1.8} />
                             <span>{tab.label}</span>
                         </Link>
                     );
                 })}
             </nav>
 
-            {/* Floating SOS — always visible on desktop */}
+            {/* Floating SOS — always visible */}
             <Link
                 href="/patient/sos"
                 className="sos-fab"
                 aria-label="SOS Emergency — tap for help"
                 style={{ display: 'flex' }}
             >
-                <AlertTriangle size={28} strokeWidth={2.5} />
+                <AlertTriangle size={32} strokeWidth={2.5} />
             </Link>
         </div>
     );

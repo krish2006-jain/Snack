@@ -159,10 +159,10 @@ ol {
   --header-height: 68px;
   --sidebar-width: 260px;
 
-  /* TRANSITIONS */
-  --transition-fast: 150ms ease;
-  --transition-base: 220ms ease;
-  --transition-slow: 350ms ease;
+  /* TRANSITIONS — intentionally slow for smooth, premium feel */
+  --transition-fast: 250ms ease;
+  --transition-base: 400ms ease;
+  --transition-slow: 600ms ease;
 
   /* TYPOGRAPHY SCALE */
   --text-display-xl: 52px;
@@ -224,7 +224,7 @@ h6 {
       rgba(0, 0, 0, 0.08) 50%,
       rgba(0, 0, 0, 0.04) 100%);
   background-size: 200% 100%;
-  animation: skeleton-shimmer 1.8s ease infinite;
+  animation: skeleton-shimmer 2.5s ease infinite;
   border-radius: 8px;
 }
 
@@ -325,7 +325,7 @@ h6 {
 .reveal {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
 
 .reveal.revealed {
@@ -336,7 +336,7 @@ h6 {
 .reveal-left {
   opacity: 0;
   transform: translateX(-30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
 
 .reveal-left.revealed {
@@ -347,7 +347,7 @@ h6 {
 .reveal-right {
   opacity: 0;
   transform: translateX(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
 
 .reveal-right.revealed {
@@ -358,7 +358,7 @@ h6 {
 .reveal-scale {
   opacity: 0;
   transform: scale(0.95);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.9s ease, transform 0.9s ease;
 }
 
 .reveal-scale.revealed {
@@ -372,54 +372,62 @@ h6 {
 }
 
 .stagger-2 {
-  transition-delay: 100ms;
+  transition-delay: 120ms;
 }
 
 .stagger-3 {
-  transition-delay: 200ms;
+  transition-delay: 240ms;
 }
 
 .stagger-4 {
-  transition-delay: 300ms;
+  transition-delay: 360ms;
 }
 
 .stagger-5 {
-  transition-delay: 400ms;
+  transition-delay: 480ms;
+}
+
+.stagger-6 {
+  transition-delay: 600ms;
 }
 
 .animate-fade-up {
-  animation: fadeUp 0.6s ease forwards;
+  animation: fadeUp 0.9s ease forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease forwards;
+  animation: fadeIn 0.8s ease forwards;
 }
 
 .animate-slide-up {
-  animation: slideUp 0.55s ease forwards;
+  animation: slideUp 0.85s ease forwards;
 }
 
 .animate-delay-1 {
-  animation-delay: 100ms;
+  animation-delay: 120ms;
 }
 
 .animate-delay-2 {
-  animation-delay: 200ms;
+  animation-delay: 240ms;
 }
 
 .animate-delay-3 {
-  animation-delay: 300ms;
+  animation-delay: 360ms;
 }
 
 .animate-delay-4 {
-  animation-delay: 400ms;
+  animation-delay: 480ms;
+}
+
+.animate-delay-5 {
+  animation-delay: 600ms;
 }
 
 /* ── Page Transition Loading ───────────────────────────────── */
 @keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
 
   to {
@@ -429,7 +437,41 @@ h6 {
 }
 
 .page-enter {
-  animation: pageEnter 0.4s ease forwards;
+  animation: pageEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Patient-specific page entrance ───────────────────────── */
+@keyframes patientEnter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.patient-page-enter {
+  animation: patientEnter 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Card stagger entrance ────────────────────────────────── */
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-enter {
+  animation: cardEnter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* ── Scrollbar ─────────────────────────────────────────────── */
@@ -899,8 +941,8 @@ h6 {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--border-subtle);
-  padding: var(--space-2) 0;
-  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  padding: var(--space-3) 0;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
   z-index: 200;
 }
 
@@ -917,26 +959,39 @@ h6 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-height: 56px;
+  gap: 5px;
+  min-height: 72px;
   color: var(--text-muted);
-  font-size: 11px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
 .tab-item--active {
   color: var(--color-primary);
+  transform: scale(1.05);
 }
 
 /* ── SOS Floating Button ────────────────────────────────────── */
+@keyframes sosPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 4px 20px rgba(192, 57, 43, 0.35);
+  }
+
+  50% {
+    box-shadow: 0 4px 32px rgba(192, 57, 43, 0.6), 0 0 0 8px rgba(192, 57, 43, 0.12);
+  }
+}
+
 .sos-fab {
   position: fixed;
   bottom: var(--space-8);
   right: var(--space-8);
-  width: 64px;
-  height: 64px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   background: var(--color-danger);
   color: #fff;
@@ -946,20 +1001,23 @@ h6 {
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: sosPulse 3s ease-in-out infinite;
 }
 
 .sos-fab:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 28px rgba(192, 57, 43, 0.45);
+  transform: scale(1.1);
+  box-shadow: 0 6px 32px rgba(192, 57, 43, 0.5);
+  animation: none;
 }
 
 .sos-fab:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
+  animation: none;
 }
 
 @media (max-width: 768px) {
   .sos-fab {
-    bottom: 80px;
+    bottom: 90px;
   }
 }
 

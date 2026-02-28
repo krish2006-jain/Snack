@@ -3,6 +3,7 @@
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockAnalytics, mockGameScores, mockPeople } from '@/lib/mock-data';
 import { Download, TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import styles from './page.module.css';
 
 function LineChart({
@@ -97,15 +98,17 @@ export default function AnalyticsPage() {
                 {/* Top KPIs */}
                 <div className={styles.kpiRow}>
                     {[
-                        { label: 'Current Cognitive Score', value: '72/100', delta: `+${trend} pts (30 days)`, up: trend >= 0 },
-                        { label: 'Medication Adherence', value: `${mockAnalytics.medicationAdherence}%`, delta: 'Good compliance', up: true },
-                        { label: 'Average Memory Recall', value: `${mockAnalytics.averageRecall}%`, delta: '78% this month', up: true },
-                        { label: 'Game Streak', value: `${mockAnalytics.gameStreak} days`, delta: '🔥 Ongoing streak', up: true },
-                        { label: 'Wandering Incidents', value: `${mockAnalytics.wanderingIncidents}`, delta: 'Last 30 days', up: false },
-                        { label: 'QR Scans', value: `${mockAnalytics.qrScansLast30}`, delta: 'Good Samaritans helped', up: true },
+                        { label: 'Current Cognitive Score', num: 72, suffix: '/100', delta: `+${trend} pts (30 days)`, up: trend >= 0 },
+                        { label: 'Medication Adherence', num: mockAnalytics.medicationAdherence, suffix: '%', delta: 'Good compliance', up: true },
+                        { label: 'Average Memory Recall', num: mockAnalytics.averageRecall, suffix: '%', delta: '78% this month', up: true },
+                        { label: 'Game Streak', num: mockAnalytics.gameStreak, suffix: 'd', delta: '🔥 Ongoing streak', up: true },
+                        { label: 'Wandering Incidents', num: mockAnalytics.wanderingIncidents, suffix: '', delta: 'Last 30 days', up: false },
+                        { label: 'QR Scans', num: mockAnalytics.qrScansLast30, suffix: '', delta: 'Good Samaritans helped', up: true },
                     ].map((kpi, i) => (
                         <div key={i} className={styles.kpiCard}>
-                            <span className={styles.kpiValue}>{kpi.value}</span>
+                            <span className={styles.kpiValue}>
+                                <AnimatedNumber value={kpi.num} />{kpi.suffix}
+                            </span>
                             <span className={styles.kpiLabel}>{kpi.label}</span>
                             <span className={styles.kpiDelta} style={{ color: kpi.up ? 'var(--color-success)' : 'var(--color-danger)' }}>
                                 {kpi.up ? <TrendingUp size={11} /> : <TrendingDown size={11} />} {kpi.delta}

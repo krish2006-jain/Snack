@@ -7,18 +7,22 @@ import { Plus, Trash2, CheckCircle2, Circle, Clock, Pill, Dumbbell, Brain, Utens
 import styles from './page.module.css';
 
 const CATEGORY_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-    medication: { label: 'Medication', color: 'var(--color-danger)', icon: <Pill size={13} /> },
-    exercise: { label: 'Exercise', color: 'var(--color-success)', icon: <Dumbbell size={13} /> },
-    therapy: { label: 'Therapy', color: 'var(--color-primary)', icon: <Brain size={13} /> },
-    meal: { label: 'Meal', color: 'var(--color-warning)', icon: <UtensilsCrossed size={13} /> },
-    hygiene: { label: 'Hygiene', color: 'var(--color-info)', icon: <Bath size={13} /> },
-    social: { label: 'Social', color: '#EC4899', icon: <Users size={13} /> },
+    medication: { label: '💊 Medicine', color: '#B91C1C', icon: <Pill size={13} /> },
+    medicine: { label: '💊 Medicine', color: '#B91C1C', icon: <Pill size={13} /> },
+    exercise: { label: '🏃 Exercise', color: '#15803D', icon: <Dumbbell size={13} /> },
+    game: { label: '🎮 Game', color: '#6D28D9', icon: <Brain size={13} /> },
+    chore: { label: '✨ Chore', color: '#0369A1', icon: <Bath size={13} /> },
+    therapy: { label: '🧠 Therapy', color: '#065F46', icon: <Brain size={13} /> },
+    meal: { label: '🍽️ Meal', color: '#B45309', icon: <UtensilsCrossed size={13} /> },
+    hygiene: { label: '🚿 Hygiene', color: '#0369A1', icon: <Bath size={13} /> },
+    social: { label: '📞 Social', color: '#9D174D', icon: <Users size={13} /> },
+    rest: { label: '😴 Rest', color: '#1E3A5F', icon: <Users size={13} /> },
 };
 
 type Category = ScheduleTask['category'];
 
 const EMPTY_TASK: Omit<ScheduleTask, 'id'> = {
-    time: '09:00', title: '', description: '', completed: false, day: 'Mon', category: 'therapy',
+    time: '09:00', title: '', description: '', completed: false, day: 'Mon', category: 'medication',
 };
 
 export default function SchedulePage() {

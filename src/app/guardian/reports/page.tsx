@@ -67,7 +67,7 @@ export default function ReportsPage() {
                         <div className={styles.reportList}>
                             {mockReports.map(rep => (
                                 <div key={rep.id} className={styles.reportCard}>
-                                    <div className={styles.reportIcon}>{rep.icon}</div>
+                                    <div className={styles.reportIcon}><FileText size={18} /></div>
                                     <div className={styles.reportInfo}>
                                         <h3 className={styles.reportTitle}>{rep.title}</h3>
                                         <span className={styles.reportMeta}>{rep.type} • Generated <Calendar size={11} /> {rep.date}</span>

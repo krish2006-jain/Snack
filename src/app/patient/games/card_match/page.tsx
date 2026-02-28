@@ -86,7 +86,13 @@ export default function CardMatchGame() {
                             if (allMatched) {
                                 setRunning(false);
                                 setWon(true);
-                                setStars(calcStars(flips + 1, seconds));
+                                const s = calcStars(flips + 1, seconds);
+                                setStars(s);
+                                fetch('/api/games', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ gameType: 'card_match', score: Math.max(100 - (flips + 1) * 5, 10), stars: s, durationSeconds: seconds }),
+                                }).catch(() => { });
                             }
                             return prev;
                         });

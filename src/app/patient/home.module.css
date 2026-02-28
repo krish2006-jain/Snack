@@ -29,7 +29,7 @@
 
 .greeting {
     font-family: var(--font-heading);
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 700;
     color: #FFFFFF;
     letter-spacing: -0.02em;
@@ -38,7 +38,7 @@
 }
 
 .timeLabel {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.9);
 }
@@ -50,7 +50,7 @@
 
 .sectionTitle {
     font-family: var(--font-heading);
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 600;
     color: var(--text-heading);
     margin-bottom: var(--space-4);
@@ -60,8 +60,8 @@
 /* === QUICK ACTION GRID — Asymmetric === */
 .quickGrid {
     display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
     gap: var(--space-4);
 }
 
@@ -114,7 +114,7 @@
 
 .quickTitle {
     font-family: var(--font-heading);
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 600;
     color: var(--text-heading);
     letter-spacing: -0.01em;
@@ -123,7 +123,7 @@
 }
 
 .quickSub {
-    font-size: 15px;
+    font-size: 17px;
     color: var(--text-muted);
     line-height: 1.4;
 }
@@ -264,13 +264,13 @@
 }
 
 .upcomingTitle {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
     color: var(--text-heading);
 }
 
 .upcomingTime {
-    font-size: 16px;
+    font-size: 17px;
     color: var(--text-muted);
 }
 
@@ -305,20 +305,20 @@
     }
 
     .quickTitle {
-        font-size: 20px;
+        font-size: 22px;
     }
 
     .medTitle {
-        font-size: 22px;
+        font-size: 24px;
     }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 480px) {
     .quickGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 
     .greeting {
-        font-size: 32px;
+        font-size: 36px;
     }
 }

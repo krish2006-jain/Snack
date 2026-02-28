@@ -1,16 +1,18 @@
-/* Schedule Page */
+/* ================================================================
+   Schedule Page — category-differentiated layout
+   ================================================================ */
 
 .page {
     padding: var(--space-8);
-    max-width: 760px;
+    max-width: 800px;
 }
 
-/* PAGE HEADER */
+/* ── PAGE HEADER ─────────────────────────────────────────────── */
 .pageHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6);
 }
 
 .pageTitle {
@@ -28,7 +30,7 @@
     margin-top: var(--space-1);
 }
 
-/* PROGRESS RING */
+/* ── PROGRESS RING ───────────────────────────────────────────── */
 .progressRing {
     position: relative;
     width: 64px;
@@ -39,7 +41,6 @@
 .ringSvg {
     width: 64px;
     height: 64px;
-    transform: rotate(0deg);
 }
 
 .ringPct {
@@ -53,71 +54,187 @@
     color: var(--color-primary);
 }
 
-/* TASK LIST */
+/* ── LEGEND ROW ──────────────────────────────────────────────── */
+.legendRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+}
+
+.legendPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px 4px 8px;
+    border-radius: 999px;
+    border: 1.5px solid;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* ── FILTER TABS ─────────────────────────────────────────────── */
+.filterRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-7);
+}
+
+.filterTab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 180ms ease;
+}
+
+.filterTab:hover {
+    border-color: var(--border-medium);
+    background: var(--bg-surface-soft);
+}
+
+.filterTabActive {
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.filterTabIcon {
+    font-size: 16px;
+}
+
+/* ── GROUPED SECTION ─────────────────────────────────────────── */
+.groupedList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.categorySection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.sectionHeading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-left: 12px;
+    border-left: 4px solid;
+    margin-bottom: var(--space-1);
+}
+
+.sectionTitle {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.sectionCount {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    background: var(--bg-surface-soft);
+    padding: 2px 10px;
+    border-radius: 999px;
+}
+
+/* ── TASK LIST ───────────────────────────────────────────────── */
 .taskList {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-3);
 }
 
+/* ── TASK CARD ───────────────────────────────────────────────── */
 .taskCard {
-    padding: 0;
     display: flex;
     align-items: stretch;
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: 16px;
     overflow: hidden;
-    min-height: 120px;
-
-    /* Override global card hover for list */
+    min-height: 110px;
     transition: all 200ms ease;
+    position: relative;
 }
 
 .taskCard:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-elevated);
-    border-color: var(--border-medium);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
+    border-color: var(--cat-accent, var(--border-medium));
 }
 
-/* Icon column on left */
-.taskIconBlock {
+.taskDone {
+    opacity: 0.72;
+}
+
+.taskMissed {
+    border-color: #FCA5A5;
+}
+
+/* Left accent stripe */
+.accentBar {
+    width: 5px;
+    flex-shrink: 0;
+    border-radius: 0;
+}
+
+/* Icon column */
+.iconBlock {
     width: 80px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
-    padding: var(--space-4) var(--space-3);
+    gap: 6px;
+    padding: var(--space-3);
     border-right: 1px solid var(--border-subtle);
 }
 
-.taskCategoryLabel {
-    font-size: 11px;
-    font-weight: 600;
+.iconLabel {
+    font-size: 10px;
+    font-weight: 700;
     text-align: center;
-    line-height: 1.2;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1.1;
 }
 
-/* Task info */
-.taskInfo {
+/* Main content area */
+.taskContent {
     flex: 1;
-    padding: var(--space-5) var(--space-6);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
 }
 
 .taskMeta {
     flex: 1;
+    min-width: 0;
 }
 
-.taskTimeRow {
+.timeRow {
     display: flex;
     align-items: center;
     gap: var(--space-2);
     margin-bottom: var(--space-2);
+    flex-wrap: wrap;
 }
 
 .taskTime {
@@ -126,42 +243,88 @@
     font-weight: 500;
 }
 
+.statusBadge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+    border: 1.5px solid;
+    letter-spacing: 0.01em;
+}
+
 .taskTitle {
     font-family: var(--font-heading);
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
     color: var(--text-heading);
     letter-spacing: -0.01em;
     line-height: 1.2;
-    margin-bottom: var(--space-1);
+    margin-bottom: 4px;
+}
+
+.taskTitleDone {
+    text-decoration: line-through;
+    color: var(--text-muted);
 }
 
 .taskDesc {
-    font-size: 15px;
+    font-size: 14px;
     color: var(--text-body);
-    line-height: 1.5;
+    line-height: 1.45;
 }
 
-/* DONE BUTTON */
+/* ── DONE BUTTON ─────────────────────────────────────────────── */
 .doneBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     flex-shrink: 0;
-    min-width: 110px;
-    font-size: 17px !important;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 180ms ease;
+    white-space: nowrap;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* DONE INDICATOR */
+.doneBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.28);
+    filter: brightness(1.1);
+}
+
+.doneBtn:active {
+    transform: translateY(0);
+}
+
+/* ── DONE INDICATOR ──────────────────────────────────────────── */
 .doneIndicator {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    color: var(--color-success);
-    font-size: 15px;
-    font-weight: 600;
+    gap: 8px;
     flex-shrink: 0;
+    color: #16a34a;
+    font-size: 15px;
+    font-weight: 700;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
+/* ── EMPTY STATE ─────────────────────────────────────────────── */
+.emptyState {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 16px;
+    padding: var(--space-8);
+    background: var(--bg-surface);
+    border: 1.5px dashed var(--border-subtle);
+    border-radius: 16px;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
     .page {
         padding: var(--space-5);
     }
@@ -171,34 +334,44 @@
     }
 
     .taskCard {
-        flex-direction: column;
-    }
-
-    .taskIconBlock {
-        width: 100%;
         flex-direction: row;
-        height: 48px;
-        border-right: none;
-        border-bottom: 1px solid var(--border-subtle);
-        padding: var(--space-3) var(--space-5);
-        justify-content: flex-start;
+        min-height: unset;
     }
 
-    .taskInfo {
+    .iconBlock {
+        width: 66px;
+    }
+
+    .taskContent {
         flex-direction: column;
         align-items: flex-start;
-        padding: var(--space-4) var(--space-5);
+        padding: var(--space-3) var(--space-4);
+        gap: var(--space-3);
+    }
+
+    .taskTitle {
+        font-size: 18px;
     }
 
     .doneBtn {
         width: 100%;
-        min-height: 64px;
-        font-size: 18px !important;
+        justify-content: center;
+        min-height: 52px;
+        font-size: 16px;
     }
 
     .doneIndicator {
         width: 100%;
         justify-content: center;
-        padding: var(--space-3) 0;
+        padding: var(--space-2) 0;
+    }
+
+    .filterRow {
+        gap: var(--space-1);
+    }
+
+    .filterTab {
+        padding: 6px 12px;
+        font-size: 13px;
     }
 }

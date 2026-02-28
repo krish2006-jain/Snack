@@ -110,7 +110,16 @@ export default function MusicPage() {
                                 <button
                                     key={mood.id}
                                     className={styles.moodCard}
-                                    onClick={() => { setSelectedMood(mood.id); setCurrentTrack(0); setIsPlaying(true); }}
+                                    onClick={() => {
+                                        setSelectedMood(mood.id);
+                                        setCurrentTrack(0);
+                                        setIsPlaying(true);
+                                        fetch('/api/mood', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ mood: mood.id, source: 'music_therapy' }),
+                                        }).catch(() => { });
+                                    }}
                                     style={{ '--mood-color': mood.color } as React.CSSProperties}
                                     aria-label={`I feel ${mood.label}`}
                                 >

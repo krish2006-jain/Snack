@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Phone, Calendar, Play, Volume2 } from 'lucide-react';
 import styles from './people.module.css';
-import { mockPeople } from '@/lib/mock-data/patient';
+import { mockPeople, type PersonCard } from '@/lib/mock-data/patient';
 
 const personColors = [
     { bg: 'linear-gradient(135deg, #F0EBE3 0%, #E8E0D4 100%)', text: '#2D5A3D' },
@@ -24,12 +24,33 @@ const personInitials = (name: string) => {
 };
 
 export default function PeoplePage() {
+    const [allPeople, setAllPeople] = useState<PersonCard[]>(mockPeople);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [playing, setPlaying] = useState(false);
 
-    const person = mockPeople[currentIndex];
+    useEffect(() => {
+        fetch('/api/people')
+            .then(r => r.json())
+            .then(data => {
+                if (data.people && data.people.length > 0) {
+                    const mapped: PersonCard[] = data.people.map((p: { id: string; name: string; relationship: string; bio: string; photo_url: string; last_visited: string; phone: string }) => ({
+                        id: p.id,
+                        name: p.name,
+                        relationship: p.relationship,
+                        photo: p.photo_url || '',
+                        bio: p.bio || '',
+                        lastVisited: p.last_visited || '',
+                        phone: p.phone || '',
+                    }));
+                    setAllPeople(mapped);
+                }
+            })
+            .catch(() => { /* keep mock data */ });
+    }, []);
+
+    const person = allPeople[currentIndex];
     const color = personColors[currentIndex % personColors.length];
-    const total = mockPeople.length;
+    const total = allPeople.length;
 
     const goNext = () => {
         setCurrentIndex((i) => (i + 1) % total);
@@ -126,7 +147,7 @@ export default function PeoplePage() {
 
             {/* Dot indicators */}
             <div className={styles.dotRow} role="tablist" aria-label="People navigation">
-                {mockPeople.map((p, i) => (
+                {allPeople.map((p, i) => (
                     <button
                         key={p.id}
                         role="tab"

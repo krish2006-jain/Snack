@@ -300,7 +300,7 @@ export const mockSchedule: ScheduleTask[] = [
     // MON
     { id: 'gs-m1', day: 'Mon', time: '08:00', category: 'medication', title: 'Morning medication', description: 'Donepezil 10mg with warm water', completed: true },
     { id: 'gs-m2', day: 'Mon', time: '09:00', category: 'exercise', title: 'Morning walk', description: '20 minutes in the garden', completed: true },
-    { id: 'gs-m3', day: 'Mon', time: '10:30', category: 'therapy', title: 'Memory flashcards', description: 'Family photo recall session', completed: false },
+    { id: 'gs-m3', day: 'Mon', time: '10:30', category: 'game', title: 'Memory Flashcards Game', description: 'Family photo recall session', completed: false },
     { id: 'gs-m4', day: 'Mon', time: '13:00', category: 'meal', title: 'Lunch', description: 'Dal chawal + seasonal sabzi', completed: false },
     { id: 'gs-m5', day: 'Mon', time: '15:00', category: 'medication', title: 'Evening medication', description: 'Memantine 10mg', completed: false },
     // TUE
@@ -314,11 +314,14 @@ export const mockSchedule: ScheduleTask[] = [
     { id: 'gs-w3', day: 'Wed', time: '13:00', category: 'meal', title: 'Lunch', description: 'Light soup + roti', completed: false },
     // THU–SUN: minimal tasks
     { id: 'gs-th1', day: 'Thu', time: '08:00', category: 'medication', title: 'Morning medication', description: 'Donepezil 10mg', completed: false },
-    { id: 'gs-th2', day: 'Thu', time: '10:30', category: 'therapy', title: 'Memory game', description: 'Card matching on tablet', completed: false },
+    { id: 'gs-th2', day: 'Thu', time: '10:30', category: 'game', title: 'Card Match Game', description: 'Card matching on tablet', completed: false },
+    { id: 'gs-th3', day: 'Thu', time: '11:30', category: 'chore', title: 'Organise bookshelf', description: 'Arrange books and personal items on the shelf', completed: false },
     { id: 'gs-f1', day: 'Fri', time: '08:00', category: 'medication', title: 'Morning medication', description: 'Donepezil 10mg', completed: false },
     { id: 'gs-f2', day: 'Fri', time: '15:00', category: 'social', title: 'Rajesh calls', description: 'Weekly call from son-in-law', completed: false },
     { id: 'gs-sa1', day: 'Sat', time: '08:00', category: 'medication', title: 'Morning medication', description: 'Donepezil 10mg', completed: false },
     { id: 'gs-sa2', day: 'Sat', time: '11:00', category: 'exercise', title: 'Outdoor walk', description: 'Sector 15 park with Anita', completed: false },
+    { id: 'gs-sa3', day: 'Sat', time: '15:00', category: 'game', title: 'Word Recall Game', description: 'Word recall brain exercise on tablet', completed: false },
+    { id: 'gs-sa4', day: 'Sat', time: '16:00', category: 'chore', title: 'Water the Plants', description: 'Water balcony plants — tulsi, marigold, money plant', completed: false },
     { id: 'gs-su1', day: 'Sun', time: '08:00', category: 'medication', title: 'Morning medication', description: 'Donepezil 10mg', completed: false },
     { id: 'gs-su2', day: 'Sun', time: '17:00', category: 'social', title: 'Priya visits', description: 'Weekly family visit', completed: false },
 ]
