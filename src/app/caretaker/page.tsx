@@ -63,7 +63,19 @@ export default function CaretakerDashboard() {
 
     useEffect(() => {
         const stored = localStorage.getItem('saathi_user');
-        if (stored) setUserName(stored.split(' ')[0]);
+        if (stored) {
+            try {
+                const u = JSON.parse(stored);
+                const fullName = u.name || u;
+                setUserName(fullName.split(' ')[0]);
+            } catch {
+                // if parse fails, use caretaker profile default
+                setUserName(caretakerProfile.firstName);
+            }
+        } else {
+            // if no localStorage, use caretaker profile default
+            setUserName(caretakerProfile.firstName);
+        }
     }, []);
 
     const completedTasks = todaysTasks.filter(t => t.status === 'completed').length;
