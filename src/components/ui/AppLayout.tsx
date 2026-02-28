@@ -42,12 +42,15 @@ export function AppLayout({ role, children, userName, alertCount }: AppLayoutPro
             />
             <div style={{ display: 'flex', maxWidth: '100%' }}>
                 <AppSidebar role={role as 'guardian' | 'caretaker'} />
+                {/* make the right side its own scroll container so only it scrolls */}
                 <main
                     id="main-content"
                     style={{
                         flex: 1,
                         minWidth: 0,
                         background: 'var(--bg-surface-soft)',
+                        overflowY: 'auto',
+                        height: 'calc(100vh - var(--header-height))',
                     }}
                 >
                     {children}

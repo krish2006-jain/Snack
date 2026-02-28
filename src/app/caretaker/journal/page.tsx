@@ -96,6 +96,9 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 export default function CaretakerJournalPage() {
+    // keep entries in component state so they update when a new entry is saved
+    const [entries, setEntries] = useState<JournalEntry[]>(journalEntries);
+
     const [mood, setMood] = useState<number>(3);
     const [appetite, setAppetite] = useState('good');
     const [sleep, setSleep] = useState('good');
@@ -105,8 +108,28 @@ export default function CaretakerJournalPage() {
 
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
+        // construct a new entry using current form state
+        const newEntry: JournalEntry = {
+            id: `j-${Date.now()}`,
+            date: new Date().toISOString(),
+            mood,
+            appetite,
+            sleep,
+            incidents,
+            notes,
+            caretakerId: 'ct-001',
+        };
+
+        setEntries(prev => [newEntry, ...prev]);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
+
+        // reset form fields if desired
+        setMood(3);
+        setAppetite('good');
+        setSleep('good');
+        setIncidents('');
+        setNotes('');
     };
 
     return (
@@ -226,7 +249,7 @@ export default function CaretakerJournalPage() {
                         Previous entries
                     </h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        {journalEntries.map((entry, i) => (
+                        {entries.map((entry, i) => (
                             <JournalEntryCard key={entry.id} entry={entry} index={i} />
                         ))}
                     </div>
