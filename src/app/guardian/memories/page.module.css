@@ -309,6 +309,12 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    overflow: hidden;
+}
+
+.thumbImage {
+    object-fit: cover;
+    object-position: center;
 }
 
 .memEmoji {

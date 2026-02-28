@@ -221,6 +221,13 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatarImage {
+    object-fit: cover;
+    object-position: center;
 }
 
 .personBody {

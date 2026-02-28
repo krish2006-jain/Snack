@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockPeople, Person } from '@/lib/mock-data';
 import { Plus, Pencil, Trash2, Phone, Mic, X, Check } from 'lucide-react';
@@ -112,8 +113,12 @@ export default function PeoplePage() {
                         return (
                             <article key={person.id} className={`${styles.personCard} ${isEditing ? styles.cardEditing : ''}`}>
                                 {/* Avatar */}
-                                <div className={styles.avatar} style={{ background: color + '20', color }} aria-hidden="true">
-                                    {getInitials(person.name)}
+                                <div className={styles.avatar} style={{ background: person.image ? 'transparent' : color + '20', color }} aria-hidden="true">
+                                    {person.image ? (
+                                        <Image src={person.image} alt={person.name} fill className={styles.avatarImage} />
+                                    ) : (
+                                        getInitials(person.name)
+                                    )}
                                 </div>
 
                                 {isEditing ? (

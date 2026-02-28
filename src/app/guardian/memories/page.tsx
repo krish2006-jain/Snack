@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockMemories, Memory } from '@/lib/mock-data';
 import { Upload, Search, Filter, ImageIcon, Mic, Video, Star, SortAsc } from 'lucide-react';
@@ -158,7 +159,11 @@ export default function MemoriesPage() {
                     {filtered.map(memory => (
                         <article key={memory.id} className={styles.memCard}>
                             <div className={styles.memThumb}>
-                                <span className={styles.memEmoji} role="img" aria-label={memory.emotion}>{emotionEmoji[memory.emotion]}</span>
+                                {memory.image ? (
+                                    <Image src={memory.image} alt={memory.title} fill className={styles.thumbImage} />
+                                ) : (
+                                    <span className={styles.memEmoji} role="img" aria-label={memory.emotion}>{emotionEmoji[memory.emotion]}</span>
+                                )}
                                 <span
                                     className={styles.memTypeBadge}
                                     style={{ background: typeColor[memory.type] + '18', color: typeColor[memory.type] }}
