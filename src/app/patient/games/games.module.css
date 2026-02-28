@@ -1,0 +1,294 @@
+/* Games Menu Page */
+
+.page {
+    padding: var(--space-8) var(--space-6) var(--space-16);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* PAGE HEADER */
+.pageHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.headerText {
+    flex: 1;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-2);
+}
+
+.subtitle {
+    font-size: 17px;
+    color: var(--text-body);
+    line-height: 1.45;
+}
+
+/* SCORE CARD */
+.scoreCard {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-4) var(--space-5);
+    flex-shrink: 0;
+}
+
+.scoreInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.scoreLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.streakRow {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.streakText {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-warning);
+}
+
+/* STATS ROW */
+.statsRow {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+
+.statChip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    font-size: 14px;
+    color: var(--text-body);
+}
+
+.statChip strong {
+    color: var(--text-heading);
+    font-weight: 700;
+}
+
+/* GAME GRID */
+.gameGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+/* Featured card spans full width */
+.gameCardFeatured {
+    grid-column: 1 / -1;
+}
+
+/* GAME CARD */
+.gameCard {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    position: relative;
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.gameCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+    border-color: rgba(45, 90, 61, 0.3);
+}
+
+/* Featured card — side-by-side layout */
+.gameCardFeatured {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8);
+}
+
+.gameCardFeatured .cardMid {
+    flex: 1;
+}
+
+.gameCardFeatured .cardBottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+}
+
+.featuredPill {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+}
+
+/* CARD TOP */
+.cardTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.gameIcon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.gameCardFeatured .gameIcon {
+    width: 76px;
+    height: 76px;
+    border-radius: 20px;
+}
+
+.gameCardFeatured .gameIcon svg {
+    width: 36px;
+    height: 36px;
+}
+
+.gameStreak {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-warning);
+}
+
+
+.gameName {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-2);
+}
+
+.gameCardFeatured .gameName {
+    font-size: 26px;
+}
+
+.gameDesc {
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.5;
+}
+
+.gameCardFeatured .gameDesc {
+    font-size: 16px;
+}
+
+/* CARD BOTTOM */
+.cardBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.starsRow {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.difficulty {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-left: var(--space-2);
+}
+
+.playBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    border-radius: var(--radius-button);
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 200ms ease;
+    min-height: 48px;
+    flex-shrink: 0;
+    letter-spacing: -0.01em;
+}
+
+.playBtn:hover {
+    transform: translateY(-2px);
+}
+
+.playBtn:active {
+    transform: scale(0.97);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .gameGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .gameCardFeatured {
+        grid-column: 1;
+        flex-direction: column;
+        padding: var(--space-6);
+    }
+
+    .pageHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .title {
+        font-size: 26px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gameCard {
+        transition: none;
+    }
+
+    .playBtn {
+        transition: none;
+    }
+}

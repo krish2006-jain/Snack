@@ -1,0 +1,433 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    position: relative;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: var(--space-8);
+    align-items: start;
+}
+
+/* QR section */
+.qrSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.qrCard {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    transition: opacity 300ms ease;
+}
+
+.qrInactive {
+    opacity: 0.6;
+}
+
+.qrHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.qrBrand {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: -0.01em;
+}
+
+.statusBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+}
+
+.statusActive {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+
+.statusInactive {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+
+.qrCanvas {
+    position: relative;
+}
+
+.canvas {
+    display: block;
+    border-radius: 12px;
+    border: 2px solid var(--border-subtle);
+}
+
+.inactiveOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    color: var(--color-danger);
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.qrPatientInfo {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.qrName {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-heading);
+}
+
+.qrBlood {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.qrId {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.qrActions {
+    display: flex;
+    gap: var(--space-3);
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 9px var(--space-5);
+    background: var(--color-primary);
+    color: white;
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 150ms ease, transform 150ms ease;
+}
+
+.actionBtn:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+}
+
+.actionBtn:active {
+    transform: scale(0.97);
+}
+
+.actionBtnSecondary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 9px var(--space-5);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-body);
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 150ms ease;
+}
+
+.actionBtnSecondary:hover {
+    background: var(--bg-surface-soft);
+}
+
+.deactivateBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 9px var(--space-5);
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
+    justify-content: center;
+    transition: background 150ms ease;
+}
+
+.deactivateBtn:hover {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.activateBtn {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+    border-color: rgba(34, 197, 94, 0.2);
+}
+
+/* Scan log */
+.scanLog {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-5);
+}
+
+.scanLogTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: var(--space-4);
+}
+
+.scanEmpty {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.scanList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.scanItem {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.scanItem:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.scanMeta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.scanLoc {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.scanType {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    background: var(--color-info-bg);
+    color: var(--color-info);
+    border-radius: var(--radius-pill);
+    text-transform: capitalize;
+}
+
+.scanNote {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 4px;
+}
+
+.scanTime {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Privacy */
+.privacySection {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.privacyTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.privacyDesc {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.toggleList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.toggleRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.toggleRow:last-child {
+    border-bottom: none;
+}
+
+.toggleInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.toggleLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.toggleDesc {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.toggle {
+    width: 44px;
+    height: 24px;
+    background: var(--border-subtle);
+    border-radius: var(--radius-pill);
+    position: relative;
+    flex-shrink: 0;
+    transition: background 200ms ease;
+}
+
+.toggleOn {
+    background: var(--color-primary);
+}
+
+.toggleKnob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: var(--radius-pill);
+    transition: left 200ms ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggleOn .toggleKnob {
+    left: 23px;
+}
+
+.eyeIcon {
+    flex-shrink: 0;
+}
+
+/* Preview */
+.previewBox {
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card-sm);
+    padding: var(--space-5);
+}
+
+.previewTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-3);
+}
+
+.previewContent {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: 13.5px;
+    color: var(--text-body);
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: var(--space-8);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-heading);
+    color: white;
+    padding: 12px var(--space-6);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    box-shadow: var(--shadow-float);
+    animation: toastIn 300ms ease;
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .qrCard,
+    .actionBtn,
+    .toggle,
+    .toggleKnob {
+        transition: none;
+    }
+
+    .toast {
+        animation: none;
+    }
+}

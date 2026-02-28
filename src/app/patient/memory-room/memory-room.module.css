@@ -1,0 +1,207 @@
+/* Memory Room Select Page */
+
+.page {
+    padding: var(--space-8) var(--space-6) var(--space-16);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* PAGE HEADER */
+.pageHeader {
+    margin-bottom: var(--space-8);
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-3);
+}
+
+.subtitle {
+    font-size: 18px;
+    color: var(--text-body);
+    line-height: 1.5;
+    max-width: 480px;
+}
+
+/* ROOM GRID — asymmetric */
+.roomGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: var(--space-4);
+}
+
+/* Featured card (Kitchen) spans full width */
+.roomCardFeatured {
+    grid-column: 1 / -1;
+}
+
+/* ROOM CARD */
+.roomCard {
+    display: block;
+    text-decoration: none;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border-subtle);
+    background: var(--room-hue, var(--bg-surface-soft));
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.roomCard:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-elevated);
+    border-color: rgba(45, 90, 61, 0.3);
+}
+
+.roomCard:active {
+    transform: scale(0.98);
+}
+
+.cardInner {
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    height: 100%;
+}
+
+/* Featured card — horizontal layout inside */
+.roomCardFeatured .cardInner {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-8);
+    padding: var(--space-8);
+}
+
+.roomCardFeatured .roomText {
+    flex: 1;
+}
+
+.roomIcon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(45, 90, 61, 0.1);
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.roomCardFeatured .roomIcon {
+    width: 90px;
+    height: 90px;
+    border-radius: 24px;
+}
+
+.roomText {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.roomName {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+}
+
+.roomCardFeatured .roomName {
+    font-size: 28px;
+}
+
+.roomSubtitle {
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.45;
+}
+
+.roomCardFeatured .roomSubtitle {
+    font-size: 17px;
+}
+
+.roomMeta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-1);
+}
+
+.memCount {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.recallScore {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.recallDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.featuredBadge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+    align-self: flex-start;
+    flex-shrink: 0;
+}
+
+/* Mobile: single column */
+@media (max-width: 600px) {
+    .roomGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .roomCardFeatured {
+        grid-column: 1;
+    }
+
+    .roomCardFeatured .cardInner {
+        flex-direction: column;
+        padding: var(--space-6);
+    }
+
+    .title {
+        font-size: 26px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .roomCard {
+        transition: none;
+    }
+}

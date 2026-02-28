@@ -1,0 +1,579 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.digest {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    background: var(--color-primary-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card-sm);
+    padding: var(--space-4) var(--space-5);
+}
+
+.digestIcon {
+    width: 26px;
+    height: 26px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.digestText {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text-body);
+}
+
+/* Asymmetric grid: 3 cols, featured card spans rows 1-2 */
+.grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr;
+    gap: var(--space-5);
+}
+
+.card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+}
+
+.cardFeatured {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+    background: linear-gradient(158deg, #FAFAFE 0%, #EDE9FF 100%);
+}
+
+.cardUrgent {
+    border-left: 3px solid var(--color-danger);
+    border-left-color: var(--color-danger);
+}
+
+.cardHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-3);
+}
+
+.cardTopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cardLabel {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.cardLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-primary);
+    transition: gap 150ms ease;
+    align-self: flex-start;
+}
+
+.cardLink:hover {
+    gap: 7px;
+}
+
+.viewAll {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.viewAll:hover {
+    opacity: 0.75;
+}
+
+/* Cognitive score */
+.scoreRow {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.scoreNum {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--text-heading);
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+.scoreMax {
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.scoreDelta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-success);
+    background: var(--color-success-bg);
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+}
+
+.scoreNote {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.scoreBadge {
+    padding: 4px 14px;
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    height: fit-content;
+}
+
+.trendChart {
+    width: 100%;
+    height: 72px;
+}
+
+.scoreWeeks {
+    display: flex;
+    justify-content: space-between;
+}
+
+.weekLabel {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.featuredStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.fStat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.fStatNum {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+}
+
+.fStatLabel {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Schedule */
+.taskProgress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.taskBar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-surface-soft);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+}
+
+.taskFill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-pill);
+}
+
+.taskCount {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.taskList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.taskItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 13px;
+}
+
+.taskDone {
+    opacity: 0.5;
+}
+
+.taskDot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
+}
+
+.taskTime {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    min-width: 34px;
+}
+
+.taskTitle {
+    flex: 1;
+    color: var(--text-body);
+}
+
+.taskCheck {
+    color: var(--color-success);
+    flex-shrink: 0;
+}
+
+/* Mood */
+.moodMain {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.moodEmoji {
+    font-size: 30px;
+    line-height: 1;
+}
+
+.moodWord {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+    text-transform: capitalize;
+}
+
+.moodSparkWrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.sparkline {
+    width: 110px;
+    height: 32px;
+}
+
+.moodLabel {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.moodNote {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Recall */
+.recallScore {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.recallNum {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.recallLbl {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.recallBar {
+    height: 8px;
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.recallFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+    border-radius: var(--radius-pill);
+}
+
+.recallBreakdown {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Games */
+.streakWrap {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.streakNum {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.streakText {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.latestGame {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-surface-soft);
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+}
+
+.lgTitle {
+    font-size: 13px;
+    color: var(--text-body);
+}
+
+.lgScore {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.gameAvg {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Alerts */
+.alertList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alertItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.alertDot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
+}
+
+.alertDot_danger {
+    background: var(--color-danger);
+}
+
+.alertDot_warning {
+    background: var(--color-warning);
+}
+
+.alertDot_info {
+    background: var(--color-info);
+}
+
+.alertDot_success {
+    background: var(--color-success);
+}
+
+.alertMeta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.alertTitle {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-heading);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.alertTime {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.unreadDot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    flex-shrink: 0;
+}
+
+/* QR */
+.qrCount {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+}
+
+.qrNum {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.qrLbl {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.qrLog {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.qrLogItem {
+    display: flex;
+    justify-content: space-between;
+}
+
+.qrLoc {
+    font-size: 12px;
+    color: var(--text-body);
+    font-weight: 500;
+}
+
+.qrTime {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Skeleton */
+.skH {
+    height: 28px;
+    width: 55%;
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.08) 0%, rgba(124, 58, 237, 0.15) 50%, rgba(124, 58, 237, 0.08) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease infinite;
+    border-radius: 8px;
+}
+
+.skHsm {
+    height: 16px;
+    width: 75%;
+    margin-top: 8px;
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.08) 0%, rgba(124, 58, 237, 0.15) 50%, rgba(124, 58, 237, 0.08) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease infinite;
+    border-radius: 6px;
+}
+
+.skBar {
+    height: 8px;
+    margin-top: 14px;
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.08) 0%, rgba(124, 58, 237, 0.15) 50%, rgba(124, 58, 237, 0.08) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease infinite;
+    border-radius: 4px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        transition: none;
+    }
+
+    .skH,
+    .skHsm,
+    .skBar {
+        animation: none;
+    }
+}

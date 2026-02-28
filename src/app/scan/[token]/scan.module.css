@@ -1,0 +1,360 @@
+/* ─── QR Scan Page ────────────────────────────────────────── */
+
+.page {
+    min-height: 100vh;
+    background: var(--bg-base);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: var(--space-6) var(--space-4) var(--space-12);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Not found */
+.notFound {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    text-align: center;
+    padding: var(--space-16) var(--space-6);
+    max-width: 400px;
+    margin: auto;
+}
+
+.notFoundIcon {
+    color: var(--color-danger);
+}
+
+.notFoundTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-inverse);
+}
+
+.notFoundDesc {
+    font-size: 15px;
+    color: var(--text-inverse-muted);
+    line-height: 1.6;
+}
+
+.emergencyBtn {
+    margin-top: var(--space-4);
+}
+
+/* Main card */
+.card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-float);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.5s ease both;
+}
+
+/* card header */
+.cardHeader {
+    background: linear-gradient(135deg, #1F1135, #3b0e6e);
+    padding: var(--space-4) var(--space-6);
+}
+
+.saathiBranding {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.brandSaathi {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.05em;
+}
+
+.brandCare {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-primary-light);
+}
+
+.brandTag {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Patient identity */
+.identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.patientPhoto {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7C3AED, #C084FC);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    border: 3px solid rgba(124, 58, 237, 0.25);
+}
+
+.identityInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.patientName {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+
+.patientMeta {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.conditionBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: var(--color-warning-bg);
+    color: #92400E;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+    align-self: flex-start;
+}
+
+/* Shared section heading */
+.sectionHeading {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+}
+
+/* Medical section */
+.medSection {
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.medGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+}
+
+.medField {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.medFieldFull {
+    grid-column: 1 / -1;
+}
+
+.medLabel {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.medValue {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-heading);
+    line-height: 1.5;
+}
+
+/* Care section */
+.careSection {
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.careCard {
+    background: var(--color-warning-bg);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: var(--radius-card-sm);
+    padding: var(--space-4);
+    border-left: 3px solid var(--color-warning);
+}
+
+.careText {
+    font-size: 14px;
+    color: #78350F;
+    line-height: 1.7;
+}
+
+/* Contact section */
+.contactSection {
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.callButtonPrimary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-5);
+    background: var(--color-success);
+    border-radius: var(--radius-card-sm);
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: var(--space-2);
+    min-height: 64px;
+    transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.callButtonPrimary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+}
+
+.callButtonSecondary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-5);
+    background: var(--bg-surface-soft);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: var(--radius-card-sm);
+    color: var(--text-heading);
+    text-decoration: none;
+    min-height: 56px;
+    margin-bottom: var(--space-2);
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.callButtonSecondary:hover {
+    background: #EDE9FE;
+    transform: translateY(-2px);
+}
+
+.contactInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.contactName {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.contactRel {
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.callIcon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.callIconSecondary {
+    color: var(--text-muted);
+}
+
+/* Location */
+.locationRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 13px;
+    color: var(--text-body);
+}
+
+.locationIcon {
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.locationText {
+    font-weight: 500;
+}
+
+/* Action buttons */
+.actionButtons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-6);
+}
+
+.actionBtn {
+    min-height: 56px;
+    font-size: 15px;
+    border-radius: var(--radius-card-sm);
+}
+
+/* Scan footer */
+.scanFooter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-6);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    border-top: 1px solid var(--border-subtle);
+}
+
+/* ── Mobile ── */
+@media (max-width: 520px) {
+    .page {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .card {
+        border-radius: 0;
+        box-shadow: none;
+        min-height: 100vh;
+    }
+}

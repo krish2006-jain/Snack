@@ -1,0 +1,324 @@
+/* Patient Home Page */
+
+.page {
+    background: var(--bg-surface-soft);
+    min-height: 100vh;
+}
+
+/* === HERO AREA === */
+.heroArea {
+    background: var(--color-primary);
+    padding: var(--space-10) var(--space-8) var(--space-8);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 2px solid var(--border-subtle);
+}
+
+.heroContent {
+    position: relative;
+    z-index: 1;
+}
+
+.dateLabel {
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.01em;
+}
+
+.greeting {
+    font-family: var(--font-heading);
+    font-size: 48px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: var(--space-2);
+}
+
+.timeLabel {
+    font-size: 20px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* === SECTIONS === */
+.section {
+    padding: var(--space-8) var(--space-8);
+}
+
+.sectionTitle {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-bottom: var(--space-4);
+    letter-spacing: -0.01em;
+}
+
+/* === QUICK ACTION GRID — Asymmetric === */
+.quickGrid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: auto auto;
+    gap: var(--space-4);
+}
+
+.quickCard {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    transition: all var(--transition-base);
+    position: relative;
+    min-height: 150px;
+    box-shadow: var(--shadow-soft);
+}
+
+.quickCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+    border-color: var(--border-medium);
+}
+
+.quickCard:active {
+    transform: scale(0.98);
+}
+
+/* Featured card — schedule — spans full row */
+.quickCardFeatured {
+    background: var(--bg-canvas);
+    border: 1px solid var(--color-primary-muted);
+    grid-row: span 1;
+}
+
+.quickCardTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.quickBadge {
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+}
+
+.quickTitle {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin-top: var(--space-1);
+}
+
+.quickSub {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.chevron {
+    color: var(--text-muted);
+    position: absolute;
+    bottom: var(--space-5);
+    right: var(--space-5);
+    transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.quickCard:hover .chevron {
+    color: var(--color-primary);
+    transform: translateX(4px);
+}
+
+/* Companion card subtle variant */
+.quickCardCompanion {
+    background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface-soft) 100%);
+}
+
+/* === MEDICATION CARD === */
+.medCard {
+    border-radius: var(--radius-card);
+    background: var(--bg-surface);
+}
+
+.medHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.medIcon {
+    width: 56px;
+    height: 56px;
+    background: var(--color-danger-bg);
+    border-radius: var(--radius-card-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.medInfo {
+    flex: 1;
+}
+
+.medLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-danger);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.medTitle {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text-heading);
+    line-height: 1.2;
+    margin-bottom: var(--space-2);
+}
+
+.medMeta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+.medBtn {
+    width: 100%;
+    font-size: 20px !important;
+}
+
+.medDone {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.medSub {
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* === UPCOMING LIST === */
+.upcomingList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.upcomingItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card-sm);
+    transition: transform var(--transition-fast);
+}
+
+.upcomingItem:hover {
+    transform: translateX(4px);
+    border-color: var(--border-medium);
+}
+
+.upcomingDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.upcomingDot[data-status="upcoming"] {
+    background: var(--color-warning);
+}
+
+.upcomingDot[data-status="missed"] {
+    background: var(--color-danger);
+}
+
+.upcomingInfo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+}
+
+.upcomingTitle {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-heading);
+}
+
+.upcomingTime {
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+.viewAllBtn {
+    font-size: 16px;
+    padding-left: var(--space-2);
+    justify-content: flex-start;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .heroArea {
+        padding: var(--space-8) var(--space-5) var(--space-6);
+    }
+
+    .greeting {
+        font-size: 38px;
+    }
+
+    .section {
+        padding: var(--space-6) var(--space-5);
+    }
+
+    .quickGrid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-3);
+    }
+
+    .quickCard {
+        min-height: 130px;
+        padding: var(--space-5);
+    }
+
+    .quickTitle {
+        font-size: 20px;
+    }
+
+    .medTitle {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 360px) {
+    .quickGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .greeting {
+        font-size: 32px;
+    }
+}

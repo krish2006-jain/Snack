@@ -1,0 +1,81 @@
+/* Patient Layout Styles */
+
+.layout {
+    min-height: 100vh;
+    background: var(--bg-surface-soft);
+    display: flex;
+    flex-direction: column;
+}
+
+/* HEADER */
+.header {
+    position: sticky;
+    top: 0;
+    height: var(--header-height);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0 var(--space-8);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+}
+
+.headerLogo {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.logoSaathi {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+}
+
+.logoCare {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--color-primary);
+    letter-spacing: -0.02em;
+}
+
+.headerSos {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-danger);
+    color: white;
+    border-radius: var(--radius-button);
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all var(--transition-base);
+    min-height: 44px;
+}
+
+.headerSos:hover {
+    background: #DC2626;
+    transform: translateY(-1px);
+}
+
+/* MAIN CONTENT */
+.main {
+    flex: 1;
+    padding-bottom: 80px;
+    /* space for bottom tab bar on mobile */
+}
+
+@media (min-width: 769px) {
+    .main {
+        padding-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 0 var(--space-5);
+    }
+}

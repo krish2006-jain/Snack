@@ -1,0 +1,204 @@
+/* Schedule Page */
+
+.page {
+    padding: var(--space-8);
+    max-width: 760px;
+}
+
+/* PAGE HEADER */
+.pageHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-8);
+}
+
+.pageTitle {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.pageSubtitle {
+    font-size: 18px;
+    color: var(--text-muted);
+    margin-top: var(--space-1);
+}
+
+/* PROGRESS RING */
+.progressRing {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+}
+
+.ringSvg {
+    width: 64px;
+    height: 64px;
+    transform: rotate(0deg);
+}
+
+.ringPct {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* TASK LIST */
+.taskList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.taskCard {
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    min-height: 120px;
+
+    /* Override global card hover for list */
+    transition: all 200ms ease;
+}
+
+.taskCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-elevated);
+    border-color: var(--border-medium);
+}
+
+/* Icon column on left */
+.taskIconBlock {
+    width: 80px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-3);
+    border-right: 1px solid var(--border-subtle);
+}
+
+.taskCategoryLabel {
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+}
+
+/* Task info */
+.taskInfo {
+    flex: 1;
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+}
+
+.taskMeta {
+    flex: 1;
+}
+
+.taskTimeRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+
+.taskTime {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.taskTitle {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: var(--space-1);
+}
+
+.taskDesc {
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.5;
+}
+
+/* DONE BUTTON */
+.doneBtn {
+    flex-shrink: 0;
+    min-width: 110px;
+    font-size: 17px !important;
+}
+
+/* DONE INDICATOR */
+.doneIndicator {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-success);
+    font-size: 15px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .page {
+        padding: var(--space-5);
+    }
+
+    .pageTitle {
+        font-size: 26px;
+    }
+
+    .taskCard {
+        flex-direction: column;
+    }
+
+    .taskIconBlock {
+        width: 100%;
+        flex-direction: row;
+        height: 48px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        padding: var(--space-3) var(--space-5);
+        justify-content: flex-start;
+    }
+
+    .taskInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--space-4) var(--space-5);
+    }
+
+    .doneBtn {
+        width: 100%;
+        min-height: 64px;
+        font-size: 18px !important;
+    }
+
+    .doneIndicator {
+        width: 100%;
+        justify-content: center;
+        padding: var(--space-3) 0;
+    }
+}

@@ -1,0 +1,222 @@
+/* SOS Emergency Page — Full screen, dark, urgent */
+
+.page {
+    min-height: 100vh;
+    background: var(--bg-base);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-8) var(--space-8) var(--space-12);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle red ambient */
+.redOrb {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    background: #EF4444;
+    opacity: 0.08;
+    filter: blur(160px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* PATIENT IDENTITY */
+.identityBlock {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-5);
+}
+
+.patientAvatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C0392B, #E74C3C);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-4);
+    border: 3px solid rgba(255, 255, 255, 0.15);
+}
+
+.avatarInitials {
+    font-size: 38px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.02em;
+}
+
+.patientName {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-inverse);
+    letter-spacing: -0.02em;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.patientAge {
+    font-size: 18px;
+    color: var(--text-inverse-muted);
+    text-align: center;
+}
+
+/* LOCATION BADGE */
+.locationBadge {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    margin-bottom: var(--space-8);
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+}
+
+/* CALL BUTTONS */
+.callSection {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+.callBtn {
+    width: 100%;
+    min-height: 80px;
+    border: none;
+    border-radius: var(--radius-card-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding: 0 var(--space-6);
+    transition: all var(--transition-base);
+    font-family: var(--font-body);
+    text-align: left;
+}
+
+.callBtn:active {
+    transform: scale(0.98);
+}
+
+/* Green — primary guardian */
+.callBtn[data-variant="primary"] {
+    background: var(--color-success);
+    color: white;
+    box-shadow: 0 4px 20px rgba(45, 122, 79, 0.35);
+}
+
+.callBtn[data-variant="primary"]:hover {
+    background: #16A34A;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(45, 122, 79, 0.45);
+}
+
+/* White / secondary — caretaker */
+.callBtn[data-variant="secondary"] {
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--text-heading);
+    box-shadow: 0 4px 20px rgba(15, 10, 25, 0.25);
+}
+
+.callBtn[data-variant="secondary"]:hover {
+    background: #FFFFFF;
+    transform: translateY(-2px);
+}
+
+/* Red — emergency */
+.callBtn[data-variant="emergency"] {
+    background: var(--color-danger);
+    color: white;
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+}
+
+.callBtn[data-variant="emergency"]:hover {
+    background: #DC2626;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(239, 68, 68, 0.5);
+}
+
+.callBtnContent {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.callBtnName {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.callBtnPhone {
+    font-size: 14px;
+    opacity: 0.75;
+    font-weight: 400;
+}
+
+/* CANCEL BUTTON */
+.cancelBtn {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-pill);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: all var(--transition-base);
+    font-family: var(--font-body);
+    min-height: 52px;
+}
+
+.cancelBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .page {
+        padding: var(--space-6) var(--space-5);
+    }
+
+    .patientName {
+        font-size: 26px;
+    }
+
+    .callBtn {
+        min-height: 72px;
+        gap: var(--space-4);
+    }
+
+    .callBtnName {
+        font-size: 18px;
+    }
+}

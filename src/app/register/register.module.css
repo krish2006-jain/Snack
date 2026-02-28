@@ -1,0 +1,212 @@
+/* ─── Register Page ───────────────────────────────────────── */
+
+.page {
+    min-height: 100vh;
+    background: var(--bg-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8) var(--space-4);
+    position: relative;
+    overflow: hidden;
+}
+
+.container {
+    width: 100%;
+    max-width: 540px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+    position: relative;
+    z-index: 1;
+}
+
+.logo {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    text-decoration: none;
+}
+
+.logoSaathi {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-inverse);
+    letter-spacing: -0.01em;
+}
+
+.logoCare {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--color-primary-light);
+}
+
+.card {
+    width: 100%;
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-float);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    animation: slideUp 0.5s ease both;
+}
+
+.cardHeader {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.cardTitle {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+}
+
+.cardSubtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Step indicator */
+.stepIndicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.stepGroup {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 1;
+}
+
+.stepCircle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.stepActive {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.stepDone {
+    background: var(--color-success);
+    color: #fff;
+}
+
+.stepFuture {
+    background: var(--bg-surface-soft);
+    color: var(--text-muted);
+    border: 1.5px solid var(--border-subtle);
+}
+
+.stepLabel {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.stepLabelActive {
+    color: var(--text-heading);
+    font-weight: 700;
+}
+
+.stepLine {
+    flex: 1;
+    height: 2px;
+    background: var(--border-subtle);
+    margin: 0 var(--space-2);
+}
+
+.stepLineDone {
+    background: var(--color-success);
+}
+
+/* Form */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.formActions {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+}
+
+.errorBox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-danger-bg);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-card-sm);
+    color: #B91C1C;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+}
+
+/* Login link */
+.loginLink {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.link {
+    color: var(--text-link);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.link:hover {
+    color: var(--color-primary-hover);
+}
+
+@media (max-width: 540px) {
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+}

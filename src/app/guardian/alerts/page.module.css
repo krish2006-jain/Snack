@@ -1,0 +1,334 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.summaryRow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.summaryChip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-5);
+    border: 1px solid;
+    border-radius: var(--radius-card-sm);
+}
+
+.chipNum {
+    display: block;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.chipLbl {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.markAllBtn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 8px var(--space-5);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: background 150ms ease;
+}
+
+.markAllBtn:hover {
+    background: var(--bg-surface);
+    color: var(--text-heading);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 10px var(--space-5);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 150ms ease, border-color 150ms ease;
+}
+
+.tab:hover {
+    color: var(--text-heading);
+}
+
+.tabActive {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.tabBadge {
+    background: var(--color-danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: var(--radius-pill);
+}
+
+/* Filter bar */
+.filterBar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: 6px 14px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    transition: border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+.filterBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.filterActive {
+    border-color: transparent;
+}
+
+/* Alerts list */
+.alertsList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.alertItem {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-5);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card-sm);
+    position: relative;
+    transition: box-shadow 150ms ease;
+}
+
+.alertItem:hover {
+    box-shadow: var(--shadow-soft);
+}
+
+.alertUnread {
+    background: #FDFBFF;
+}
+
+.alertIcon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.alertBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.alertTop {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.alertTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.alertBadge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+}
+
+.sourceBadge {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 2px 8px;
+    background: var(--bg-surface-soft);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+}
+
+.alertDesc {
+    font-size: 13.5px;
+    color: var(--text-body);
+    line-height: 1.6;
+}
+
+.alertFooter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.alertTime {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.readBtn {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-primary);
+    padding: 2px 8px;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-pill);
+    transition: background 150ms ease;
+}
+
+.readBtn:hover {
+    background: var(--color-primary-muted);
+}
+
+.unreadDot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    flex-shrink: 0;
+    margin-top: 6px;
+}
+
+/* QR Tab */
+.qrSection {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.qrTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.qrDesc {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.qrTable {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+}
+
+.qrTableHead {
+    display: grid;
+    grid-template-columns: 140px 1fr 140px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-surface-soft);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.qrTableRow {
+    display: grid;
+    grid-template-columns: 140px 1fr 140px 1fr;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    border-bottom: 1px solid var(--border-subtle);
+    align-items: start;
+}
+
+.qrTableRow:last-child {
+    border-bottom: none;
+}
+
+.qrDate {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.qrLoc {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.qrType {
+    font-size: 12px;
+    color: var(--color-info);
+    background: var(--color-info-bg);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    text-transform: capitalize;
+    height: fit-content;
+}
+
+.qrNote {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .alertItem,
+    .tab,
+    .filterBtn {
+        transition: none;
+    }
+}

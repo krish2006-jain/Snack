@@ -1,0 +1,372 @@
+.page {
+    padding: var(--space-8) var(--space-8) var(--space-12);
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+/* ── Greeting ────────────────────────────────────────── */
+.greetingRow {
+    margin-bottom: var(--space-8);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.greetingTitle {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+}
+
+.shiftInfo {
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+/* ── Quick Stats Row ──────────────────────────────────── */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+}
+
+.statCard {
+    padding: var(--space-5) var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    background: var(--bg-surface);
+}
+
+.ringWrapper {
+    flex-shrink: 0;
+}
+
+.ringCircleBg {
+    fill: none;
+    stroke: var(--bg-surface-soft);
+    stroke-width: 8;
+}
+
+.ringCircleProgress {
+    fill: none;
+    stroke: var(--color-primary);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s ease;
+}
+
+.ringText {
+    font-size: 15px;
+    font-weight: 700;
+    fill: var(--text-heading);
+    font-family: var(--font-body);
+}
+
+.statValue {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-heading);
+    line-height: 1;
+}
+
+.statLabel {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.iconWrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-card-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.iconWrapperSuccess {
+    background: var(--color-success-bg);
+}
+
+.iconWrapperMood {
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--border-subtle);
+}
+
+/* ── Two-col body ─────────────────────────────────────── */
+.bodyGrid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: var(--space-5);
+}
+
+.leftCol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.rightCol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* ── Common Card Parts ── */
+.cardTitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+}
+
+.cardTitle {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.cardTitleUrgent {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-danger);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.viewAllLink {
+    font-size: 13px;
+    color: var(--color-primary);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Urgent Tasks ── */
+.urgentList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.urgentItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-3);
+    background: var(--color-danger-bg);
+    border-radius: var(--radius-card-sm);
+}
+
+.urgentItemTitle {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.urgentItemTime {
+    font-size: 13px;
+    color: var(--color-danger);
+    margin-top: 2px;
+}
+
+/* ── Recent Tasks Preview ── */
+.recentList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.recentItem {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border-radius: var(--radius-card-sm);
+}
+
+.recentItemDone {
+    background: var(--color-success-bg);
+    opacity: 0.8;
+}
+
+.recentItemOverdue {
+    background: var(--color-danger-bg);
+}
+
+.recentItemPending {
+    background: var(--bg-surface-soft);
+}
+
+.recentItemTitle {
+    font-size: 15px;
+}
+
+.recentItemTitleDone {
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.recentItemTitlePending {
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.recentItemTime {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ── Journal Card ── */
+.journalPreview {
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── Right Col Widgets ── */
+.widgetCard {
+    padding: var(--space-5);
+    background: var(--bg-surface);
+}
+
+.widgetTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin-bottom: var(--space-3);
+}
+
+.actionStack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+/* ── Upcoming Tasks Mini ── */
+.upcomingMiniList {
+    display: flex;
+    flex-direction: column;
+}
+
+.upcomingMiniItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.upcomingMiniItem:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.upcomingMiniTitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-heading);
+}
+
+.upcomingMiniTime {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ── Patient Snapshot ── */
+.snapshotCard {
+    background: var(--bg-surface-soft);
+}
+
+.snapshotHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: var(--space-4);
+}
+
+.snapshotAvatar {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-card-sm);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+
+.snapshotName {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.snapshotVitals {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.vitalRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vitalLabel {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.vitalValue {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-heading);
+    text-transform: capitalize;
+}
+
+@media (max-width: 1024px) {
+    .bodyGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .page {
+        padding: var(--space-4) var(--space-4) var(--space-8);
+    }
+}

@@ -1,0 +1,380 @@
+/* Card Match Game */
+
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - var(--header-height));
+    background: var(--bg-surface-soft);
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-6);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: none;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-button);
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-body);
+    cursor: pointer;
+    transition: all 200ms ease;
+    min-height: 44px;
+    flex-shrink: 0;
+}
+
+.backBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.gameTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-heading);
+    flex: 1;
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+
+.stats {
+    display: flex;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-body);
+    background: var(--bg-surface-soft);
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle);
+}
+
+/* CONTENT */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-8) var(--space-6);
+}
+
+.hint {
+    font-size: 18px;
+    color: var(--text-body);
+    text-align: center;
+}
+
+/* CARD GRID — 2x2 */
+.cardGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+    max-width: 480px;
+    width: 100%;
+}
+
+/* CARD */
+.card {
+    position: relative;
+    width: 100%;
+    padding-bottom: 130%;
+    cursor: pointer;
+    background: none;
+    border: none;
+    perspective: 800px;
+    border-radius: var(--radius-card);
+}
+
+.card:disabled {
+    cursor: default;
+}
+
+.cardInner {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+    transform-style: preserve-3d;
+    transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cardFlipped .cardInner,
+.cardMatched .cardInner {
+    transform: rotateY(180deg);
+}
+
+/* CARD BACK */
+.cardBack {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+    backface-visibility: hidden;
+    background: linear-gradient(135deg, #2D5A3D, #1E4A2F);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow-elevated);
+    transition: box-shadow 200ms ease;
+}
+
+.card:not(:disabled):hover .cardBack {
+    box-shadow: var(--shadow-glow);
+}
+
+.cardBackPattern {
+    width: 80%;
+    height: 80%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cardBackLogo {
+    font-size: 28px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: -0.02em;
+}
+
+/* CARD FRONT */
+.cardFront {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+    backface-visibility: hidden;
+    transform: rotateY(180deg);
+    background: var(--bg-surface);
+    border: 2px solid var(--border-subtle);
+    box-shadow: var(--shadow-elevated);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    overflow: hidden;
+}
+
+.cardAvatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+}
+
+.cardName {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-heading);
+    text-align: center;
+    line-height: 1.3;
+}
+
+.cardRelation {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.cardMatched .cardFront {
+    border-color: var(--color-success);
+    background: var(--color-success-bg);
+}
+
+.matchedOverlay {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--color-success);
+    color: white;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* WIN OVERLAY */
+.winOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 10, 25, 0.7);
+    backdrop-filter: blur(10px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6);
+    animation: fadeIn 400ms ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.winCard {
+    background: var(--bg-surface);
+    border-radius: var(--radius-card);
+    padding: var(--space-10) var(--space-8);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    box-shadow: var(--shadow-float);
+    animation: slideUp 400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.winStars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+}
+
+.winTitle {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+}
+
+.winSub {
+    font-size: 17px;
+    color: var(--text-body);
+    line-height: 1.5;
+}
+
+.winStats {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+}
+
+.winStat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-surface-soft);
+    border-radius: var(--radius-card-sm);
+    padding: var(--space-4) var(--space-5);
+    min-width: 80px;
+}
+
+.winStatVal {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-heading);
+}
+
+.winStatLabel {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.winActions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.playAgainBtn {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-button);
+    padding: 14px 28px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    min-height: 52px;
+    transition: all 200ms ease;
+    box-shadow: 0 6px 20px rgba(45, 90, 61, 0.3);
+}
+
+.playAgainBtn:hover {
+    background: var(--color-primary-hover);
+    transform: translateY(-2px);
+}
+
+.backToGamesBtn {
+    background: none;
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--radius-button);
+    padding: 12px 28px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-body);
+    cursor: pointer;
+    min-height: 48px;
+    transition: all 200ms ease;
+}
+
+.backToGamesBtn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cardInner {
+        transition: none;
+    }
+
+    .winCard,
+    .winOverlay {
+        animation: none;
+    }
+}
