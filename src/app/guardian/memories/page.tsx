@@ -5,6 +5,7 @@ import Image from 'next/image';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockMemories, Memory } from '@/lib/mock-data';
 import { Upload, Search, Filter, ImageIcon, Mic, Video, Star, SortAsc } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 type SortKey = 'date' | 'recallScore' | 'emotion';
@@ -27,6 +28,8 @@ function RecallBar({ score }: { score: number }) {
 }
 
 export default function MemoriesPage() {
+    const { user } = useSession();
+    const patientFirstName = user?.patientName?.split(' ')[0] || 'Patient';
     const [memories, setMemories] = useState<Memory[]>(mockMemories);
     const [search, setSearch] = useState('');
     const [sort, setSort] = useState<SortKey>('date');
@@ -54,7 +57,7 @@ export default function MemoriesPage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Memory Manager" subtitle="Ravi's memory archive — 6 memories stored" />
+            <GuardianHeader title="Memory Manager" subtitle={`${patientFirstName}'s memory archive — ${memories.length} memories stored`} />
             <main className={styles.content}>
                 {/* Stats row */}
                 <div className={styles.statsRow}>

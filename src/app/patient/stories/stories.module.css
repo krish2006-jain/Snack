@@ -1,0 +1,793 @@
+/* ══════════════════════════════════════════════════════
+   Stories — unified Voice Journal + Family page
+   Follows SaathiCare design tokens exactly
+   ══════════════════════════════════════════════════════ */
+
+/* ── Page shell ── */
+.page {
+    background: var(--bg-surface-soft);
+    min-height: 100vh;
+    padding-bottom: 120px;
+}
+
+/* ── Header ── */
+.pageHeader {
+    padding: var(--space-8) var(--space-8) var(--space-4);
+}
+
+.title {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-1);
+}
+
+.subtitle {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* ── Tab bar ── */
+.tabBar {
+    display: flex;
+    gap: var(--space-2);
+    padding: 0 var(--space-8) var(--space-5);
+}
+
+.tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 20px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    transition: all 200ms ease;
+}
+
+.tab:hover {
+    border-color: var(--color-primary-muted);
+    color: var(--color-primary);
+    background: rgba(124, 58, 237, 0.04);
+}
+
+.tabActive {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.tabActive:hover {
+    background: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+    color: #fff;
+}
+
+/* ── Bubble row (horizontal scroll) ── */
+.bubblesRow {
+    display: flex;
+    gap: 14px;
+    padding: 0 var(--space-8) var(--space-5);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.bubblesRow::-webkit-scrollbar {
+    display: none;
+}
+
+.bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    animation: fadeSlideUp 0.4s ease both;
+}
+
+.bubble:hover .bubbleRing {
+    transform: scale(1.07);
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bubbleRing {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    padding: 3px;
+    transition: transform 200ms ease;
+}
+
+.bubbleRingNew {
+    background: conic-gradient(var(--color-primary) 0%, var(--color-primary-light) 50%, var(--color-primary) 100%);
+}
+
+.bubbleRingRead {
+    background: var(--border-subtle);
+}
+
+.bubbleRingRecord {
+    background: conic-gradient(var(--color-primary) 0%, var(--color-primary-light) 50%, var(--color-primary) 100%);
+    animation: ringRotate 3s linear infinite;
+}
+
+@keyframes ringRotate {
+    from {
+        filter: none;
+    }
+
+    to {
+        filter: brightness(1.15);
+    }
+}
+
+.bubbleInner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--bg-canvas);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    gap: 2px;
+    position: relative;
+}
+
+.bubbleImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--bg-canvas);
+    position: absolute;
+    inset: 0;
+}
+
+.bubbleInitial {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-primary);
+    z-index: 1;
+}
+
+.bubbleSentimentBar {
+    width: 24px;
+    height: 4px;
+    border-radius: 2px;
+    margin-bottom: 2px;
+    z-index: 1;
+}
+
+.bubbleLabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    max-width: 68px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Cards ── */
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: 0 var(--space-8) var(--space-6);
+}
+
+.card {
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-6);
+    cursor: pointer;
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    animation: cardEnter 0.35s ease both;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elevated);
+    border-color: var(--color-primary-muted);
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+/* card meta row */
+.cardMeta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.cardPhoto {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+
+.cardInitial {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cardMetaText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.cardName {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.cardSub {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cardTitle {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-3);
+    line-height: 1.3;
+}
+
+.cardContent {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-body);
+}
+
+.cardFooter {
+    margin-top: var(--space-4);
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.relationTag {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--color-primary);
+}
+
+/* journal card specifics */
+.journalAccent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+}
+
+.journalAvatarIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-surface-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border-subtle);
+}
+
+.sentimentLabel {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+}
+
+.cardTranscription {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-body);
+    margin-bottom: var(--space-3);
+}
+
+.entityMark {
+    background: rgba(124, 58, 237, 0.12);
+    color: var(--color-primary);
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-style: normal;
+}
+
+.entityTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.entityTag {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg-surface-soft);
+    border: 1px solid var(--border-subtle);
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+}
+
+/* ── FAB ── */
+.fab {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 28px rgba(124, 58, 237, 0.35);
+    border: none;
+    cursor: pointer;
+    z-index: 50;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 36px rgba(124, 58, 237, 0.45);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+/* ── Recording overlay ── */
+.recordOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: linear-gradient(160deg, #1E1B4B 0%, #0F0A19 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.recordPulseRing {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 2px solid rgba(124, 58, 237, 0.25);
+    animation: pulseRing 2.5s ease-out infinite;
+}
+
+@keyframes pulseRing {
+    0% {
+        transform: scale(0.6);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1.8);
+        opacity: 0;
+    }
+}
+
+.recordCore {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 48px rgba(124, 58, 237, 0.5);
+    z-index: 1;
+}
+
+.recordTitle {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    z-index: 1;
+}
+
+.recordLive {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.65);
+    text-align: center;
+    max-width: 360px;
+    line-height: 1.6;
+    min-height: 48px;
+    font-style: italic;
+    z-index: 1;
+}
+
+.recordTimer {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
+    z-index: 1;
+}
+
+.recordActions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    z-index: 1;
+}
+
+.recordCancel {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.recordCancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.recordStop {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.recordStop:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+/* ── Fullscreen viewer (shared) ── */
+.viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-canvas);
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow-y: auto;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.viewerBg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* progress bar */
+.viewerProgress {
+    display: flex;
+    gap: 4px;
+    padding: var(--space-5) var(--space-6) 0;
+    position: relative;
+    z-index: 5;
+}
+
+.progSeg {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--border-subtle);
+}
+
+.progSegActive {
+    background: var(--color-primary);
+}
+
+.progSegDone {
+    background: var(--color-primary-muted);
+}
+
+/* viewer header */
+.viewerHeader {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-6);
+    position: relative;
+    z-index: 5;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.viewerPhoto {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+
+.viewerAvatarWrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--color-primary);
+    background: var(--color-primary-muted);
+    flex-shrink: 0;
+}
+
+.viewerInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.viewerName {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.viewerSub {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.viewerClose {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg-surface-soft);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.viewerClose:hover {
+    color: var(--text-heading);
+    background: var(--border-subtle);
+}
+
+/* viewer body */
+.viewerBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-10) var(--space-8);
+    position: relative;
+    z-index: 5;
+    min-height: 300px;
+}
+
+.viewerAccent {
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    margin-bottom: var(--space-6);
+}
+
+.viewerTitle {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-5);
+    line-height: 1.3;
+}
+
+.viewerText {
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--text-body);
+    font-weight: 400;
+    max-width: 580px;
+    letter-spacing: -0.01em;
+}
+
+.viewerMood {
+    margin-top: var(--space-5);
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.viewerFrom {
+    margin-top: var(--space-6);
+    font-size: 15px;
+    color: var(--text-muted);
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* viewer nav */
+.viewerNav {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6) var(--space-8);
+    position: relative;
+    z-index: 5;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.navBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    border-radius: var(--radius-pill);
+    background: var(--bg-surface-soft);
+    color: var(--text-body);
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: all 200ms ease;
+}
+
+.navBtn:hover:not(:disabled) {
+    background: var(--color-primary-muted);
+    color: var(--color-primary);
+    border-color: var(--color-primary-muted);
+}
+
+.navBtn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .pageHeader {
+        padding: var(--space-6) var(--space-5) var(--space-3);
+    }
+
+    .tabBar {
+        padding: 0 var(--space-5) var(--space-4);
+    }
+
+    .bubblesRow {
+        padding: 0 var(--space-5) var(--space-4);
+        gap: 10px;
+    }
+
+    .bubbleRing {
+        width: 58px;
+        height: 58px;
+    }
+
+    .cards {
+        padding: 0 var(--space-5) var(--space-5);
+    }
+
+    .title {
+        font-size: 26px;
+    }
+
+    .viewerText {
+        font-size: 17px;
+    }
+
+    .viewerTitle {
+        font-size: 22px;
+    }
+}

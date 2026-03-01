@@ -4,6 +4,9 @@
  * SaathiAvatar — 3D avatar wrapper that renders the GLB model
  * in a Three.js canvas, with Web Speech API for TTS/STT,
  * and connects to the existing LLM APIs.
+ *
+ * Emotion-aware: detects emotions from both the user's spoken words
+ * and the AI's response text, animating the avatar accordingly.
  */
 
 import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
@@ -11,6 +14,7 @@ import { Canvas } from '@react-three/fiber';
 import { CameraControls, ContactShadows, Environment, Loader } from '@react-three/drei';
 import { Mic, MicOff, Volume2, VolumeX, ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react';
 import { AvatarModel, type AvatarMessage, type LipSyncCue } from './AvatarModel';
+import { detectEmotion } from './emotionDetector';
 import styles from './avatar.module.css';
 
 /* ═══ Lip-sync generator ═══ */
@@ -26,15 +30,6 @@ function generateLipSync(text: string, duration: number): { mouthCues: LipSyncCu
         t += interval;
     }
     return { mouthCues: cues };
-}
-
-/* ═══ Sentiment → expression ═══ */
-function detectExpression(text: string): string {
-    const lower = text.toLowerCase();
-    if (/\b(sorry|sad|miss|pain|hurt|cry|loss|lost|difficult|hard time)\b/.test(lower)) return 'sad';
-    if (/\b(wow|amazing|great news|wonderful|fantastic|oh!|really)\b/.test(lower)) return 'surprised';
-    if (/\b(haha|laugh|funny|joke|smile|happy|joy|love|glad|wonderful)\b/.test(lower)) return 'smile';
-    return 'smile';
 }
 
 /* ═══ 3D Scene (ported from Experience.jsx) ═══ */
@@ -93,12 +88,14 @@ export default function SaathiAvatar({
     const [isListening, setIsListening] = useState(false);
     const [message, setMessage] = useState<AvatarMessage | null>(null);
     const [statusText, setStatusText] = useState('');
-    const lastSpokenIdRef = useRef<number>(0);
-    const responseIdRef = useRef<number>(0);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const recognitionRef = useRef<any>(null);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+    const userEmotionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // ─── Stable ref for the reactToUserEmotion fn so closures are never stale ───
+    const reactToUserEmotionRef = useRef<(text: string) => void>(() => { });
 
     // Status text
     useEffect(() => {
@@ -122,18 +119,13 @@ export default function SaathiAvatar({
         }
     }, [isTyping]);
 
-    // Track response changes with an ID counter so repeated text still triggers
-    useEffect(() => {
-        if (latestResponse) {
-            responseIdRef.current += 1;
-        }
-    }, [latestResponse]);
+    // Tracking last spoken text to prevent double speaking
+    const lastSpokenTextRef = useRef<string>('');
 
     // Helper: pick the best available voice
     const pickVoice = useCallback(() => {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length === 0) return null;
-        // Prefer en-IN, then en-US, then any English, then default
         return (
             voices.find(v => v.lang === 'en-IN') ||
             voices.find(v => v.lang === 'en-US') ||
@@ -148,12 +140,11 @@ export default function SaathiAvatar({
     // ALWAYS speak + animate when a new AI response arrives
     useEffect(() => {
         if (!latestResponse) return;
-        const currentId = responseIdRef.current;
-        if (currentId === lastSpokenIdRef.current) return;
-        lastSpokenIdRef.current = currentId;
+        if (latestResponse === lastSpokenTextRef.current) return;
+        lastSpokenTextRef.current = latestResponse;
         if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
-        // Only cancel if there is something in the queue or speaking, to avoid cancelling any unlock sequence
+        // Cancel any previous speech
         if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
             console.log('[SaathiAvatar] Cancelling stuck/previous speech queue');
             window.speechSynthesis.cancel();
@@ -163,16 +154,18 @@ export default function SaathiAvatar({
 
         const estimatedDuration = Math.max(2, latestResponse.split(/\s+/).length * 0.35);
         const lipsync = generateLipSync(latestResponse, estimatedDuration);
-        const expression = detectExpression(latestResponse);
+
+        // 🎭 Detect emotion from AI response → drives expression AND body animation
+        const { expression, animation } = detectEmotion(latestResponse);
+        console.log(`[SaathiAvatar] AI emotion detected: expression=${expression}, animation=${animation}`);
 
         const audioObj = { currentTime: 0, duration: estimatedDuration };
 
-        // Set avatar to talking animation with lip-sync
         const avatarMsg: AvatarMessage = {
             text: latestResponse,
             lipsync,
             facialExpression: expression,
-            animation: 'Talking_1',
+            animation,
             audio: audioObj,
         };
         setMessage(avatarMsg);
@@ -187,7 +180,6 @@ export default function SaathiAvatar({
             utterance.pitch = 1.05;
             utterance.volume = voiceEnabled ? 1 : 0;
 
-            // Try to pick a real voice
             const voice = pickVoice();
             if (voice) utterance.voice = voice;
 
@@ -211,15 +203,19 @@ export default function SaathiAvatar({
                     audio: { currentTime: 0, duration: 0 },
                 });
                 // Auto-listen after speaking finishes (natural conversation flow)
-                if (onVoiceInput && !isListening) {
+                if (onVoiceInput) {
                     setTimeout(() => {
-                        const rec = createRecognition();
+                        const rec = createRecognitionFn();
                         if (rec) {
                             recognitionRef.current = rec;
                             rec.lang = 'en-IN';
                             rec.onresult = (e: { results: { [k: number]: { [k: number]: { transcript: string } } } }) => {
                                 const text = e.results[0][0].transcript;
-                                if (text && onVoiceInput) onVoiceInput(text);
+                                if (text) {
+                                    // Use the stable ref so this is never a stale closure
+                                    reactToUserEmotionRef.current(text);
+                                    onVoiceInput(text);
+                                }
                                 setIsListening(false);
                             };
                             rec.onend = () => setIsListening(false);
@@ -230,6 +226,7 @@ export default function SaathiAvatar({
                     }, 500);
                 }
             };
+
             utterance.onerror = (e) => {
                 console.warn('[SaathiAvatar] TTS onerror fired. Error details:', e);
                 setIsSpeaking(false);
@@ -241,7 +238,7 @@ export default function SaathiAvatar({
             console.log('[SaathiAvatar] Calling speechSynthesis.speak() with voice:', voice?.name || 'default');
             window.speechSynthesis.speak(utterance);
 
-            // Chrome keepalive: resume every 5s to prevent Chrome from pausing
+            // Chrome keepalive
             keepAliveRef.current = setInterval(() => {
                 if (window.speechSynthesis.speaking) {
                     window.speechSynthesis.pause();
@@ -250,24 +247,18 @@ export default function SaathiAvatar({
             }, 5000);
         };
 
-        // CHROME BUG WORKAROUND: speechSynthesis.cancel() followed immediately by
-        // speak() causes the speech to be silently dropped. Add a 150ms delay.
-        // Also wait for voices to load if they haven't yet.
         const voices = window.speechSynthesis.getVoices();
         if (voices.length === 0) {
-            // Voices not loaded yet — wait for voiceschanged event
             const onVoicesReady = () => {
                 window.speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
                 setTimeout(doSpeak, 150);
             };
             window.speechSynthesis.addEventListener('voiceschanged', onVoicesReady);
-            // Fallback: if voiceschanged never fires (some browsers), try after 500ms
             setTimeout(() => {
                 window.speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
                 doSpeak();
             }, 500);
         } else {
-            // Voices ready — just delay after cancel
             setTimeout(doSpeak, 150);
         }
 
@@ -287,12 +278,11 @@ export default function SaathiAvatar({
             setIsSpeaking(false);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [latestResponse, responseIdRef.current]);
+    }, [latestResponse]);
 
     // When voiceEnabled toggles while speaking, cancel and re-speak with updated volume
     useEffect(() => {
         if (utteranceRef.current && isSpeaking && latestResponse) {
-            // Cancel current speech and restart with new volume (with Chrome delay)
             window.speechSynthesis.cancel();
             setTimeout(() => {
                 const newUtterance = new SpeechSynthesisUtterance(latestResponse);
@@ -311,8 +301,8 @@ export default function SaathiAvatar({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [voiceEnabled]);
 
-    // Speech recognition
-    const createRecognition = useCallback(() => {
+    // Speech recognition factory (pure, no deps on state)
+    const createRecognitionFn = useCallback(() => {
         if (typeof window === 'undefined') return null;
         type SRConstructor = new () => {
             lang: string; start: () => void; stop: () => void;
@@ -326,26 +316,75 @@ export default function SaathiAvatar({
         return new Ctor();
     }, []);
 
+    /**
+     * 🎭 Detect emotion from user's spoken words and show an empathetic
+     * avatar reaction for 3 seconds, then return to Idle.
+     * The AI response that follows will override this with its own emotion.
+     */
+    const reactToUserEmotion = useCallback((text: string) => {
+        if (isSpeaking) return; // don't interrupt ongoing AI speech
+
+        const { expression, animation, emotion } = detectEmotion(text);
+        if (emotion === 'neutral') return; // no special reaction for neutral speech
+
+        console.log(`[SaathiAvatar] User emotion: ${emotion} → expression=${expression}, animation=${animation}`);
+
+        if (userEmotionTimerRef.current) clearTimeout(userEmotionTimerRef.current);
+
+        // Show empathetic expression immediately
+        setMessage({
+            text: '',
+            lipsync: { mouthCues: [] },
+            facialExpression: expression,
+            animation,
+            audio: { currentTime: 0, duration: 0 },
+        });
+
+        // Return to Idle after 3 s (AI response will naturally override sooner)
+        userEmotionTimerRef.current = setTimeout(() => {
+            setMessage(prev => {
+                if (prev && prev.text === '') {
+                    return {
+                        text: '',
+                        lipsync: { mouthCues: [] },
+                        facialExpression: 'default',
+                        animation: 'Idle',
+                        audio: { currentTime: 0, duration: 0 },
+                    };
+                }
+                return prev;
+            });
+        }, 3000);
+    }, [isSpeaking]);
+
+    // Keep the ref in sync with the latest version of the callback
+    useEffect(() => {
+        reactToUserEmotionRef.current = reactToUserEmotion;
+    }, [reactToUserEmotion]);
+
     const toggleListening = useCallback(() => {
         if (isListening && recognitionRef.current) {
             recognitionRef.current.stop();
             setIsListening(false);
             return;
         }
-        const recognition = createRecognition();
+        const recognition = createRecognitionFn();
         if (!recognition) { setStatusText('Voice not supported'); return; }
         recognitionRef.current = recognition;
         recognition.lang = 'en-IN';
         recognition.onresult = (e) => {
             const text = e.results[0][0].transcript;
-            if (text && onVoiceInput) onVoiceInput(text);
+            if (text) {
+                reactToUserEmotion(text); // 🎭 react to user's emotional words
+                if (onVoiceInput) onVoiceInput(text);
+            }
             setIsListening(false);
         };
         recognition.onend = () => setIsListening(false);
         recognition.onerror = () => { setIsListening(false); setStatusText('Could not hear you'); };
         recognition.start();
         setIsListening(true);
-    }, [isListening, createRecognition, onVoiceInput]);
+    }, [isListening, createRecognitionFn, onVoiceInput, reactToUserEmotion]);
 
     // Canvas height based on mode
     const canvasHeight = fullscreen ? '100%' : collapsed ? 0 : expanded ? 500 : compact ? 200 : 300;

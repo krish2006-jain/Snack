@@ -43,13 +43,18 @@ export async function POST(req: Request) {
 
         const isDemo = DEMO_IDS.includes(user.id);
 
-        // Look up patient name for guardian users
+        // Look up patient name for guardian or caretaker users
         let patientName: string | undefined;
         if (user.role === 'guardian') {
             const gp = db.prepare(
                 'SELECT u.name FROM guardian_patient gp JOIN users u ON u.id = gp.patient_id WHERE gp.guardian_id = ? LIMIT 1'
             ).get(user.id) as { name: string } | undefined;
             if (gp) patientName = gp.name;
+        } else if (user.role === 'caretaker') {
+            const cp = db.prepare(
+                'SELECT u.name FROM caretaker_patient cp JOIN users u ON u.id = cp.patient_id WHERE cp.caretaker_id = ? LIMIT 1'
+            ).get(user.id) as { name: string } | undefined;
+            if (cp) patientName = cp.name;
         }
 
         return NextResponse.json({

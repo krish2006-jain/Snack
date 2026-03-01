@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { AppLayout } from '@/components/ui/AppLayout';
 import { chatHistory, quickMessages, ChatMessageData } from '@/lib/mock-data/caretaker';
 import { Send, Circle } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 
 function formatTime(iso: string) {
     return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
@@ -13,6 +14,10 @@ function formatDate(iso: string) {
 }
 
 export default function CaretakerChatPage() {
+    const { user } = useSession();
+    const caretakerName = user?.name || 'Caretaker';
+    const patientFirstName = user?.patientName ? user.patientName.split(' ')[0] : 'Patient';
+
     const [messages, setMessages] = useState<ChatMessageData[]>(chatHistory);
     const [input, setInput] = useState('');
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -26,7 +31,7 @@ export default function CaretakerChatPage() {
         const msg: ChatMessageData = {
             id: `msg-${Date.now()}`,
             senderId: 'ct-001',
-            senderName: 'Anita Desai',
+            senderName: caretakerName,
             senderRole: 'caretaker',
             content: text.trim(),
             timestamp: new Date().toISOString(),
@@ -45,7 +50,7 @@ export default function CaretakerChatPage() {
     const currentDate = formatDate(chatHistory[0].timestamp);
 
     return (
-        <AppLayout role="caretaker" userName="Anita Desai" alertCount={1}>
+        <AppLayout role="caretaker" userName={caretakerName} alertCount={1}>
             <div style={{
                 height: 'calc(100vh - var(--header-height))',
                 display: 'flex',
@@ -83,13 +88,13 @@ export default function CaretakerChatPage() {
                         }} />
                     </div>
                     <div>
-                        <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-heading)' }}>Priya Sharma</p>
+                        <p style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-heading)' }}>Guardian</p>
                         <p style={{ fontSize: 12, color: 'var(--color-success)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 500 }}>
                             <Circle size={7} fill="var(--color-success)" /> Online
                         </p>
                     </div>
                     <div style={{ marginLeft: 'auto' }}>
-                        <span className="badge badge--purple" style={{ fontSize: 11 }}>Guardian · Ravi's daughter</span>
+                        <span className="badge badge--purple" style={{ fontSize: 11 }}>Guardian · {patientFirstName}'s family</span>
                     </div>
                 </div>
 
@@ -201,7 +206,7 @@ export default function CaretakerChatPage() {
                         className="form-input"
                         value={input}
                         onChange={e => setInput(e.target.value)}
-                        placeholder="Type a message to Priya…"
+                        placeholder="Type a message to the guardian…"
                         style={{ flex: 1, minHeight: 44 }}
                         aria-label="Message input"
                     />

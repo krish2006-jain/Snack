@@ -4,12 +4,15 @@ import { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { Download, FileText, Calendar, Filter, FileCheck2, BarChart3 } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 import { mockReports } from '@/lib/mock-data';
 
 
 export default function ReportsPage() {
+    const { user } = useSession();
+    const patientFirstName = user?.patientName?.split(' ')[0] || 'Patient';
     const [activeTab, setActiveTab] = useState('clinical');
     const [timeRange, setTimeRange] = useState('Last 7 Days');
     const [includeCognitive, setIncludeCognitive] = useState(true);
@@ -48,7 +51,7 @@ export default function ReportsPage() {
         <div className={styles.page}>
             <GuardianHeader
                 title="Reports & Logs"
-                subtitle="Automated summaries of Ravi's platform interactions"
+                subtitle={`Automated summaries of ${patientFirstName}'s platform interactions`}
             />
             <main className={styles.content}>
 

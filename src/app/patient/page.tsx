@@ -15,7 +15,6 @@ import {
     Home,
     Mic,
     BookOpen,
-    Heart,
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { useSession } from '@/lib/useSession';
@@ -73,6 +72,23 @@ function formatDate() {
     });
 }
 
+interface ScheduleTaskAPI {
+    id: string;
+    title: string;
+    scheduled_time: string;
+    category: string;
+    is_completed: number;
+}
+
+interface ApiMedication {
+    id: string;
+    name: string;
+    dosage: string;
+    frequency: string;
+    time_of_day: string;
+    instructions?: string;
+}
+
 export default function PatientHome() {
     const { user, isDemo } = useSession();
     const userName = user?.name?.split(' ')[0] || 'Patient';
@@ -82,28 +98,32 @@ export default function PatientHome() {
     const [loaded, setLoaded] = useState(false);
     const todayDate = formatDate();
 
+    const [apiTasks, setApiTasks] = useState<ScheduleTaskAPI[]>([]);
+    const [apiMedications, setApiMedications] = useState<ApiMedication[]>([]);
+    const [peopleCount, setPeopleCount] = useState<number>(0);
+
     useEffect(() => { const t = setTimeout(() => setLoaded(true), 700); return () => clearTimeout(t); }, []);
     useEffect(() => {
         const interval = setInterval(() => setTime(formatTime()), 30000);
         return () => clearInterval(interval);
     }, []);
 
-    interface ScheduleTaskAPI {
-        id: string;
-        title: string;
-        scheduled_time: string;
-        category: string;
-        is_completed: number;
-    }
-    const [apiTasks, setApiTasks] = useState<ScheduleTaskAPI[]>([]);
-
     useEffect(() => {
         apiFetch<{ tasks: ScheduleTaskAPI[] }>('/api/schedule')
             .then((data) => setApiTasks(data.tasks || []))
-            .catch(() => { /* fallback to mock */ });
-    }, []);
+            .catch(() => { });
 
-    // Use API data if available and not demo, mock data as fallback
+        if (!isDemo) {
+            apiFetch<{ medications: ApiMedication[] }>('/api/medications')
+                .then(d => setApiMedications(d.medications || []))
+                .catch(() => { });
+            apiFetch<{ people: unknown[] }>('/api/people')
+                .then(d => setPeopleCount((d.people || []).length))
+                .catch(() => { });
+        }
+    }, [isDemo]);
+
+    // ── Schedule data ────────────────────────────────────────────────────────
     const hasApiData = apiTasks.length > 0 && !isDemo;
     const pendingTasks = hasApiData
         ? apiTasks.filter(t => !t.is_completed).length
@@ -113,8 +133,28 @@ export default function PatientHome() {
         : mockSchedule.filter(t => t.status === 'done').length;
     const totalTasks = hasApiData ? apiTasks.length : mockSchedule.length;
     const upcomingTasks = hasApiData
-        ? apiTasks.filter(t => !t.is_completed).slice(0, 3).map(t => ({ id: t.id, title: t.title, time: t.scheduled_time, status: 'upcoming' }))
+        ? apiTasks.filter(t => !t.is_completed).slice(0, 3).map(t => ({ id: t.id, title: t.title, time: t.scheduled_time, status: 'upcoming', category: t.category }))
         : mockSchedule.filter((t) => t.status === 'upcoming').slice(0, 3);
+
+    // ── Medication reminder ─────────────────────────────────────────────────
+    // For demo: show first medicine from mock schedule
+    // For real: show first active medication from API that hasn't been taken today
+    const demoFirstMed = mockSchedule.find(t => t.category === 'Medicine' || t.category === 'Medication');
+    const apiFirstMed = apiMedications.length > 0 ? apiMedications[0] : null;
+
+    const medName = isDemo
+        ? 'Donepezil 10mg'
+        : apiFirstMed
+            ? `${apiFirstMed.name} ${apiFirstMed.dosage}`
+            : null;
+    const medTime = isDemo
+        ? (demoFirstMed?.time ?? '8:30 AM')
+        : apiFirstMed?.time_of_day ?? '';
+    const medNote = isDemo
+        ? 'with water after breakfast'
+        : apiFirstMed?.instructions ?? '';
+
+    const resolvedPeopleCount = isDemo ? 6 : peopleCount;
 
     return (
         <div className={`${styles.page} patient-page-enter`}>
@@ -131,9 +171,10 @@ export default function PatientHome() {
 
             {!loaded ? <SkeletonDash /> : (
                 <>
-                    {/* Quick action grid — asymmetric layout */}
+                    {/* Quick action grid */}
                     <section className={styles.section}>
                         <div className={styles.quickGrid}>
+
                             {/* Featured — Schedule */}
                             <Link href="/patient/schedule" className={`${styles.quickCard} ${styles.quickCardFeatured} card-enter`} style={{ animationDelay: '0ms' }}>
                                 <div className={styles.quickCardTop}>
@@ -145,23 +186,33 @@ export default function PatientHome() {
                                 <ChevronRight size={22} className={styles.chevron} />
                             </Link>
 
-                            {/* Memory Time */}
-                            <Link href="/patient/memories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '100ms' }}>
-                                <Brain size={44} color="var(--color-primary)" aria-hidden="true" />
-                                <h2 className={styles.quickTitle}>Memory Time</h2>
-                                <p className={styles.quickSub}><AnimatedNumber value={hasApiData ? 0 : 14} /> flashcards waiting</p>
-                            </Link>
+                            {/* Memory Time + Memory Room — split half-block */}
+                            <div className={styles.splitCardRow}>
+                                <Link href="/patient/memories" className={`${styles.quickCard} ${styles.quickCardSplit} card-enter`} style={{ animationDelay: '100ms' }}>
+                                    <Brain size={32} color="var(--color-primary)" aria-hidden="true" />
+                                    <div>
+                                        <h2 className={styles.quickTitleSmall}>Memory Time</h2>
+                                        <p className={styles.quickSub}>Flashcards</p>
+                                    </div>
+                                </Link>
+                                <Link href="/patient/memory-room" className={`${styles.quickCard} ${styles.quickCardSplit} card-enter`} style={{ animationDelay: '150ms' }}>
+                                    <Home size={32} color="var(--color-primary)" aria-hidden="true" />
+                                    <div>
+                                        <h2 className={styles.quickTitleSmall}>Memory Room</h2>
+                                        <p className={styles.quickSub}>Familiar spaces</p>
+                                    </div>
+                                </Link>
+                            </div>
 
                             {/* My People */}
                             <Link href="/patient/people" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '200ms' }}>
                                 <Users size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>My People</h2>
-                                <p className={styles.quickSub}><AnimatedNumber value={hasApiData ? 0 : 6} /> people who love you</p>
+                                <p className={styles.quickSub}><AnimatedNumber value={resolvedPeopleCount} /> people who love you</p>
                             </Link>
 
-                            {/* Saathi Dual Action Block */}
+                            {/* Saathi — split block */}
                             <div className={styles.splitCardRow}>
-                                {/* Talk to Saathi (Voice) */}
                                 <Link href="/patient/companion" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '300ms' }}>
                                     <Mic size={32} color="var(--color-primary)" aria-hidden="true" />
                                     <div>
@@ -169,8 +220,6 @@ export default function PatientHome() {
                                         <p className={styles.quickSub}>Voice</p>
                                     </div>
                                 </Link>
-
-                                {/* Chat with Saathi (Text) */}
                                 <Link href="/patient/chat" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '350ms' }}>
                                     <MessageCircle size={32} color="var(--color-primary)" aria-hidden="true" />
                                     <div>
@@ -180,38 +229,24 @@ export default function PatientHome() {
                                 </Link>
                             </div>
 
-                            {/* Memory Room */}
-                            <Link href="/patient/memory-room" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '400ms' }}>
-                                <Home size={44} color="var(--color-primary)" aria-hidden="true" />
-                                <h2 className={styles.quickTitle}>Memory Room</h2>
-                                <p className={styles.quickSub}>Explore familiar rooms</p>
-                            </Link>
-
                             {/* Brain Games */}
-                            <Link href="/patient/games" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '500ms' }}>
+                            <Link href="/patient/games" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '400ms' }}>
                                 <Gamepad2 size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Brain Games</h2>
                                 <p className={styles.quickSub}>Keep your mind active</p>
                             </Link>
 
-                            {/* Voice Journal */}
-                            <Link href="/patient/journal" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '600ms' }}>
+                            {/* Stories */}
+                            <Link href="/patient/stories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '500ms' }}>
                                 <BookOpen size={44} color="var(--color-primary)" aria-hidden="true" />
-                                <h2 className={styles.quickTitle}>My Journal</h2>
-                                <p className={styles.quickSub}>Record your stories</p>
-                            </Link>
-
-                            {/* Family Stories */}
-                            <Link href="/patient/family-stories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '700ms' }}>
-                                <Heart size={44} color="var(--color-primary)" aria-hidden="true" />
-                                <h2 className={styles.quickTitle}>Family Stories</h2>
-                                <p className={styles.quickSub}>Messages from loved ones</p>
+                                <h2 className={styles.quickTitle}>Stories</h2>
+                                <p className={styles.quickSub}>Your journal and family messages</p>
                             </Link>
                         </div>
                     </section>
 
-                    {/* Medication reminder — urgent */}
-                    {!medTaken && (
+                    {/* Medication reminder — only show if there's a med to remind about */}
+                    {!medTaken && medName && (
                         <section className={styles.section}>
                             <div className={`card card--urgent ${styles.medCard}`}>
                                 <div className={styles.medHeader}>
@@ -220,17 +255,17 @@ export default function PatientHome() {
                                     </div>
                                     <div className={styles.medInfo}>
                                         <p className={styles.medLabel}>Medication Reminder</p>
-                                        <h3 className={styles.medTitle}>Time to take Donepezil</h3>
+                                        <h3 className={styles.medTitle}>Time to take {medName}</h3>
                                         <div className={styles.medMeta}>
                                             <Clock size={14} />
-                                            <span>10:00 AM — with water after breakfast</span>
+                                            <span>{medTime}{medNote ? ` — ${medNote}` : ''}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <button
                                     className={`btn btn--success btn--patient ${styles.medBtn}`}
                                     onClick={() => setMedTaken(true)}
-                                    aria-label="Mark Donepezil as taken"
+                                    aria-label={`Mark ${medName} as taken`}
                                 >
                                     <CheckCircle size={22} />
                                     Mark as Taken
@@ -245,9 +280,9 @@ export default function PatientHome() {
                                 <CheckCircle size={28} color="var(--color-success)" />
                                 <div>
                                     <h3 className={styles.medTitle} style={{ color: 'var(--color-success)' }}>
-                                        Donepezil taken!
+                                        {medName ? `${medName} taken!` : 'Medication taken!'}
                                     </h3>
-                                    <p className={styles.medSub}>Next medication at 8:00 PM</p>
+                                    <p className={styles.medSub}>Great job! Check your schedule for next tasks.</p>
                                 </div>
                             </div>
                         </section>

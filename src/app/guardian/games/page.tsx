@@ -4,6 +4,7 @@ import { useState } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockGameScores } from '@/lib/mock-data';
 import { Gamepad2, Trophy, Clock, Target, PlayCircle, Settings, Download } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 const GAMES_META = [
@@ -15,6 +16,8 @@ const GAMES_META = [
 ];
 
 export default function GamesPage() {
+    const { user } = useSession();
+    const patientFirstName = user?.patientName?.split(' ')[0] || 'Patient';
     const [activeTab, setActiveTab] = useState<'overview' | 'settings'>('overview');
 
     // Group scores by game
@@ -33,7 +36,7 @@ export default function GamesPage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Cognitive Games" subtitle="Manage Ravi's therapeutic game settings & track progress" />
+            <GuardianHeader title="Cognitive Games" subtitle={`Manage ${patientFirstName}'s therapeutic game settings & track progress`} />
             <main className={styles.content}>
 
                 {/* Top KPIs */}
@@ -117,7 +120,7 @@ export default function GamesPage() {
                     <div className={styles.settingsPanel}>
                         <div className={styles.settingsCard}>
                             <h2 className={styles.settingsTitle}>Difficulty Management</h2>
-                            <p className={styles.settingsDesc}>SaathiCare automatically adjusts difficulty based on Ravi's performance, but you can override it here.</p>
+                            <p className={styles.settingsDesc}>SaathiCare automatically adjusts difficulty based on {patientFirstName}&apos;s performance, but you can override it here.</p>
 
                             <ul className={styles.settingsList}>
                                 {GAMES_META.map(game => (
@@ -147,7 +150,7 @@ export default function GamesPage() {
                             <div className={styles.toggleRow}>
                                 <div>
                                     <span className={styles.toggleLabel}>Remind if goal not met</span>
-                                    <span className={styles.toggleDesc}>Sends an alert to Ravi at 6:00 PM</span>
+                                    <span className={styles.toggleDesc}>Sends an alert to {patientFirstName} at 6:00 PM</span>
                                 </div>
                                 <div className={styles.toggle} role="switch" aria-checked="true" tabIndex={0}>
                                     <div className={styles.toggleKnobActive} />

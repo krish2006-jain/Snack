@@ -29,7 +29,7 @@ function formatTime() {
 }
 
 export default function ChatPage() {
-    const { user } = useSession();
+    const { user, token } = useSession();
     const userName = user?.name?.split(' ')[0] || 'friend';
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -66,9 +66,16 @@ export default function ChatPage() {
                 content: m.text,
             }));
 
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json',
+            };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const res = await fetch('/api/companion/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                     patientId: user?.id || 'anonymous',
                     message: text,

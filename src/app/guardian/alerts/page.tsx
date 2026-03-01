@@ -4,6 +4,7 @@ import { useState } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockAlerts, mockQRScans, Alert } from '@/lib/mock-data';
 import { AlertTriangle, Info, CheckCircle2, ShieldAlert, Filter, Bell, QrCode, MailOpen } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 type FilterType = 'all' | 'danger' | 'warning' | 'info' | 'success';
@@ -20,6 +21,8 @@ const TYPE_META: Record<string, { label: string; color: string; bg: string; icon
 };
 
 export default function AlertsPage() {
+    const { user } = useSession();
+    const patientFirstName = user?.patientName?.split(' ')[0] || 'Patient';
     const [alerts, setAlerts] = useState<Alert[]>(mockAlerts);
     const [filter, setFilter] = useState<FilterType>('all');
     const [tab, setTab] = useState<'alerts' | 'qr'>('alerts');
@@ -40,7 +43,7 @@ export default function AlertsPage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Alerts & Scan Log" subtitle="Ravi's safety monitoring feed" />
+            <GuardianHeader title="Alerts & Scan Log" subtitle={`${patientFirstName}'s safety monitoring feed`} />
             <main className={styles.content}>
                 {/* Summary chips */}
                 <div className={styles.summaryRow}>
@@ -163,7 +166,7 @@ export default function AlertsPage() {
                 {tab === 'qr' && (
                     <div className={styles.qrSection}>
                         <h2 className={styles.qrTitle}>QR Code Scan History</h2>
-                        <p className={styles.qrDesc}>Every time Ravi's SaathiCare QR is scanned by a Good Samaritan or hospital.</p>
+                        <p className={styles.qrDesc}>Every time {patientFirstName}&apos;s SaathiCare QR is scanned by a Good Samaritan or hospital.</p>
                         <div className={styles.qrTable}>
                             <div className={styles.qrTableHead}>
                                 <span>Date & Time</span>

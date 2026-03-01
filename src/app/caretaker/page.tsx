@@ -1,12 +1,7 @@
 'use client';
 
 import { AppLayout } from '@/components/ui/AppLayout';
-import {
-    todaysTasks,
-    journalEntries,
-    medications,
-    caretakerProfile,
-} from '@/lib/mock-data/caretaker';
+import { caretakerProfile } from '@/lib/mock-data/caretaker';
 import {
     CheckCircle2, Clock, AlertCircle, Pill, BookOpen,
     Stethoscope, MessageCircle, ChevronRight, TrendingUp,
@@ -16,7 +11,34 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { useSession } from '@/lib/useSession';
+import { apiFetch } from '@/lib/api';
 import styles from './page.module.css';
+import { todaysTasks, journalEntries, medications as mockMedications } from '@/lib/mock-data/caretaker';
+
+// ─── Types ─────────────────────────────────────────────────────────────────
+
+interface ScheduleTask {
+    id: string;
+    title: string;
+    scheduled_time: string;
+    category: string;
+    is_completed: number;
+}
+
+interface Medication {
+    id: string;
+    name: string;
+    dosage: string;
+    frequency: string;
+    time_of_day: string;
+}
+
+interface MedLog {
+    medication_id: string;
+    administered_at: number;
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────────────
 
 function SkeletonDash() {
     return (
@@ -32,7 +54,6 @@ function SkeletonDash() {
     );
 }
 
-// --- helpers ---
 const getGreeting = () => {
     const h = new Date().getHours();
     if (h < 12) return 'Good morning';
@@ -46,41 +67,94 @@ const moodColors: Record<number, string> = {
     3: 'var(--text-muted)', 4: 'var(--color-success)', 5: '#2D7A4F',
 };
 
-// Use simple SVG instead of emoji
 const MoodIcon = ({ score }: { score: number }) => {
     if (score >= 4) return <Activity size={24} color={moodColors[score]} />;
     if (score === 3) return <TrendingUp size={24} color={moodColors[score]} />;
     return <AlertCircle size={24} color={moodColors[score]} />;
 };
 
+function CategoryBadge({ cat }: { cat: string }) {
+    const map: Record<string, { label: string; cls: string }> = {
+        medication: { label: 'Med', cls: 'badge--info' },
+        meal: { label: 'Meal', cls: 'badge--success' },
+        activity: { label: 'Activity', cls: 'badge--primary' },
+        therapy: { label: 'Therapy', cls: 'badge--warning' },
+        hygiene: { label: 'Hygiene', cls: 'badge--info' },
+        check: { label: 'Check', cls: 'badge--danger' },
+        rest: { label: 'Rest', cls: 'badge--success' },
+    };
+    const b = map[cat] ?? { label: cat, cls: 'badge--primary' };
+    return <span className={`badge ${b.cls}`}>{b.label}</span>;
+}
+
+function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+    return (
+        <div className={styles.vitalRow}>
+            <span className={styles.vitalLabel}>{icon} {label}</span>
+            <span className={styles.vitalValue}>{value}</span>
+        </div>
+    );
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────
+
 export default function CaretakerDashboard() {
     const [loaded, setLoaded] = useState(false);
-    const { user } = useSession();
+    const { user, isDemo } = useSession();
     const userName = user?.name?.split(' ')[0] || caretakerProfile.firstName;
+    const patientName = user?.patientName || 'Your Patient';
+
+    const [apiTasks, setApiTasks] = useState<ScheduleTask[]>([]);
+    const [apiMeds, setApiMeds] = useState<Medication[]>([]);
+    const [medLogs, setMedLogs] = useState<MedLog[]>([]);
 
     useEffect(() => {
         const t = setTimeout(() => setLoaded(true), 700);
         return () => clearTimeout(t);
     }, []);
 
-    const completedTasks = todaysTasks.filter(t => t.status === 'completed').length;
-    const overdueTasks = todaysTasks.filter(t => t.status === 'overdue');
-    const totalTasks = todaysTasks.length;
+    useEffect(() => {
+        if (isDemo) return;
+        apiFetch<{ tasks: ScheduleTask[] }>('/api/schedule')
+            .then(d => setApiTasks(d.tasks || []))
+            .catch(() => { });
+        apiFetch<{ medications: Medication[]; todayLogs: MedLog[] }>('/api/medications')
+            .then(d => { setApiMeds(d.medications || []); setMedLogs(d.todayLogs || []); })
+            .catch(() => { });
+    }, [isDemo]);
 
-    const medsGivenToday = medications.filter(m => m.administeredToday.every(Boolean)).length;
-    const todayEntry = journalEntries[0];
+    // ── Resolve data ──────────────────────────────────────────────────────
+    const useMock = isDemo || apiTasks.length === 0;
 
-    const ringPct = Math.round((completedTasks / totalTasks) * 100) || 0;
+    // Tasks
+    type ResolvedTask = { id: string; title: string; time: string; category: string; status: 'completed' | 'pending' | 'overdue' };
+    const resolvedTasks: ResolvedTask[] = useMock
+        ? todaysTasks.map(t => ({ id: t.id, title: t.title, time: t.time, category: t.category, status: t.status as 'completed' | 'pending' | 'overdue' }))
+        : apiTasks.map(t => ({ id: t.id, title: t.title, time: t.scheduled_time, category: t.category, status: t.is_completed ? 'completed' : 'pending' }));
+
+    const completedTasks = resolvedTasks.filter(t => t.status === 'completed').length;
+    const overdueTasks = resolvedTasks.filter(t => t.status === 'overdue');
+    const totalTasks = resolvedTasks.length;
+    const recentTasks = resolvedTasks.slice(0, 4);
+
+    const ringPct = Math.round((completedTasks / (totalTasks || 1)) * 100) || 0;
     const circumference = 2 * Math.PI * 36;
     const strokeDashoffset = circumference - (ringPct / 100) * circumference;
 
-    const recentTasks = todaysTasks.slice(0, 4);
+    // Medications
+    const resolvedMeds = isDemo ? mockMedications : apiMeds;
+    const medsGivenToday = isDemo
+        ? mockMedications.filter(m => m.administeredToday.every(Boolean)).length
+        : medLogs.length;
+
+    // Journal / mood (always from mock for caretaker view — caretaker enters these live on journal page)
+    const todayEntry = journalEntries[0];
 
     return (
-        <AppLayout role="caretaker" userName={userName} alertCount={1}>
+        <AppLayout role="caretaker" userName={userName} alertCount={overdueTasks.length}>
             <div className={styles.page}>
 
-                {/* ── Greeting ────────────────────────────────────────── */}
+                {/* ── Greeting ────────────────────────────────────────────── */}
                 <div className={styles.greetingRow}>
                     <div>
                         <h1 className={styles.greetingTitle}>
@@ -127,7 +201,7 @@ export default function CaretakerDashboard() {
                                     <Pill size={24} color="var(--color-success)" />
                                 </div>
                                 <div>
-                                    <p className={styles.statValue}><AnimatedNumber value={medsGivenToday} />/{medications.length}</p>
+                                    <p className={styles.statValue}><AnimatedNumber value={medsGivenToday} />/{resolvedMeds.length}</p>
                                     <p className={styles.statLabel}>Meds given</p>
                                 </div>
                             </div>
@@ -193,29 +267,26 @@ export default function CaretakerDashboard() {
                                                 ? styles.recentItemDone
                                                 : isOverdue ? styles.recentItemOverdue
                                                     : styles.recentItemPending;
-
                                             const titleClass = isDone
                                                 ? styles.recentItemTitleDone
                                                 : styles.recentItemTitlePending;
-
                                             const iconColor = isDone
                                                 ? 'var(--color-success)'
-                                                : isOverdue ? 'var(--color-danger)'
-                                                    : 'var(--text-muted)';
-
+                                                : isOverdue ? 'var(--color-danger)' : 'var(--text-muted)';
                                             return (
                                                 <div key={t.id} className={`${styles.recentItem} ${itemClass}`}>
                                                     <CheckCircle2 size={20} color={iconColor} />
                                                     <div style={{ flex: 1 }}>
-                                                        <p className={`${styles.recentItemTitle} ${titleClass}`}>
-                                                            {t.title}
-                                                        </p>
+                                                        <p className={`${styles.recentItemTitle} ${titleClass}`}>{t.title}</p>
                                                         <p className={styles.recentItemTime}>{t.time}</p>
                                                     </div>
                                                     <CategoryBadge cat={t.category} />
                                                 </div>
                                             );
                                         })}
+                                        {recentTasks.length === 0 && (
+                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', padding: '8px 0' }}>No tasks scheduled for today.</p>
+                                        )}
                                     </div>
                                 </div>
 
@@ -229,9 +300,7 @@ export default function CaretakerDashboard() {
                                             </h2>
                                             <Link href="/caretaker/journal" className={styles.viewAllLink}>Edit</Link>
                                         </div>
-                                        <p className={styles.journalPreview}>
-                                            {todayEntry.notes}
-                                        </p>
+                                        <p className={styles.journalPreview}>{todayEntry.notes}</p>
                                     </div>
                                 )}
                             </div>
@@ -261,7 +330,7 @@ export default function CaretakerDashboard() {
                                 <div className={`card card--flat ${styles.widgetCard}`}>
                                     <h2 className={styles.widgetTitle}>Up next</h2>
                                     <div className={styles.upcomingMiniList}>
-                                        {todaysTasks.filter(t => t.status === 'pending').slice(0, 4).map(t => (
+                                        {resolvedTasks.filter(t => t.status === 'pending').slice(0, 4).map(t => (
                                             <div key={t.id} className={styles.upcomingMiniItem}>
                                                 <Clock size={16} color="var(--text-muted)" style={{ flexShrink: 0 }} />
                                                 <div style={{ flex: 1 }}>
@@ -270,25 +339,28 @@ export default function CaretakerDashboard() {
                                                 </div>
                                             </div>
                                         ))}
+                                        {resolvedTasks.filter(t => t.status === 'pending').length === 0 && (
+                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No pending tasks.</p>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Patient snapshot */}
+                                {/* Patient snapshot — name from session */}
                                 <div className={`card ${styles.snapshotCard} ${styles.widgetCard}`}>
                                     <div className={styles.snapshotHeader}>
                                         <div className={styles.snapshotAvatar}>
                                             <Users size={20} />
                                         </div>
                                         <div>
-                                            <p className={styles.snapshotName}>Ravi Sharma</p>
-                                            <span className="badge badge--primary">Moderate stage</span>
+                                            <p className={styles.snapshotName}>{patientName}</p>
+                                            <span className="badge badge--primary">Active Patient</span>
                                         </div>
                                     </div>
                                     <div className={styles.snapshotVitals}>
                                         <InfoRow icon={<Activity size={16} />} label="Mood" value={moodLabels[todayEntry.mood]} />
                                         <InfoRow icon={<Thermometer size={16} />} label="Appetite" value={todayEntry.appetite} />
                                         <InfoRow icon={<TrendingUp size={16} />} label="Sleep" value={todayEntry.sleep} />
-                                        <InfoRow icon={<Stethoscope size={16} />} label="BP" value="128/82 mmHg" />
+                                        <InfoRow icon={<Stethoscope size={16} />} label="Tasks" value={`${completedTasks}/${totalTasks} done`} />
                                     </div>
                                 </div>
                             </div>
@@ -297,30 +369,5 @@ export default function CaretakerDashboard() {
                 )}
             </div>
         </AppLayout>
-    );
-}
-
-function CategoryBadge({ cat }: { cat: string }) {
-    const map: Record<string, { label: string; cls: string }> = {
-        medication: { label: 'Med', cls: 'badge--info' },
-        meal: { label: 'Meal', cls: 'badge--success' },
-        activity: { label: 'Activity', cls: 'badge--primary' },
-        therapy: { label: 'Therapy', cls: 'badge--warning' },
-        hygiene: { label: 'Hygiene', cls: 'badge--info' },
-        check: { label: 'Check', cls: 'badge--danger' },
-        rest: { label: 'Rest', cls: 'badge--success' },
-    };
-    const b = map[cat] ?? { label: cat, cls: 'badge--primary' };
-    return <span className={`badge ${b.cls}`}>{b.label}</span>;
-}
-
-function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-    return (
-        <div className={styles.vitalRow}>
-            <span className={styles.vitalLabel}>
-                {icon} {label}
-            </span>
-            <span className={styles.vitalValue}>{value}</span>
-        </div>
     );
 }

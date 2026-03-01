@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { AppLayout } from '@/components/ui/AppLayout';
 import { journalEntries, JournalEntry } from '@/lib/mock-data/caretaker';
 import { BookOpen, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 
 const moodEmoji = ['😔', '😟', '😐', '😊', '😄'];
 const moodLabels = ['Very low', 'Low', 'Fair', 'Good', 'Great'];
@@ -96,6 +97,10 @@ function Field({ label, value }: { label: string; value: string }) {
 }
 
 export default function CaretakerJournalPage() {
+    const { user } = useSession();
+    const caretakerName = user?.name || 'Caretaker';
+    const patientName = user?.patientName || 'Patient';
+
     const [entries, setEntries] = useState<JournalEntry[]>(journalEntries);
 
     const [mood, setMood] = useState<number>(3);
@@ -164,7 +169,7 @@ export default function CaretakerJournalPage() {
     };
 
     return (
-        <AppLayout role="caretaker" userName="Anita Desai" alertCount={1}>
+        <AppLayout role="caretaker" userName={caretakerName} alertCount={1}>
             <div style={{ padding: '32px 32px 48px', maxWidth: 760, margin: '0 auto' }}>
 
                 <div style={{ marginBottom: 28 }}>
@@ -172,7 +177,7 @@ export default function CaretakerJournalPage() {
                         Daily Journal
                     </h1>
                     <p style={{ marginTop: 4, color: 'var(--text-muted)', fontSize: 15 }}>
-                        Log today's observations for Ravi Sharma
+                        Log today's observations for {patientName}
                     </p>
                 </div>
 

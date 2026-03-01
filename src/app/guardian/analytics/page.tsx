@@ -1,10 +1,32 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
-import { mockAnalytics, mockGameScores, mockPeople } from '@/lib/mock-data';
+import { mockAnalytics, mockGameScores } from '@/lib/mock-data';
 import { Download, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
+import { useSession } from '@/lib/useSession';
+import { apiFetch } from '@/lib/api';
 import styles from './page.module.css';
+
+interface AnalyticsData {
+    cognitiveScore: number;
+    careStage: string;
+    cognitiveScoreTrend: { date: string; score: number }[];
+    recallAccuracy: number;
+    moodDistribution: { mood: string; count: number }[];
+    gameStreak: number;
+    avgDailyGameScore: number;
+    scheduleCompletion: { total: number; completed: number };
+}
+
+interface Medication {
+    id: string;
+    name: string;
+    dosage: string;
+    frequency: string;
+    time_of_day: string;
+}
 
 function LineChart({
     data, color = '#7C3AED', label
@@ -13,6 +35,13 @@ function LineChart({
     color?: string;
     label: string;
 }) {
+    if (!data || data.length < 2) {
+        return (
+            <div style={{ height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                Not enough data yet
+            </div>
+        );
+    }
     const w = 400, h = 180;
     const padding = { top: 20, right: 10, bottom: 20, left: 30 };
     const chartW = w - padding.left - padding.right;
@@ -21,7 +50,7 @@ function LineChart({
     const scores = data.map(d => d.score);
     const min = Math.max(0, Math.min(...scores) - 5);
     const max = Math.min(100, Math.max(...scores) + 5);
-    const range = max - min;
+    const range = max - min || 1;
 
     const pts = scores.map((s, i) => {
         const x = padding.left + (i / (scores.length - 1)) * chartW;
@@ -32,7 +61,6 @@ function LineChart({
     const area = `M ${padding.left},${padding.top + chartH} L ${pts.map(p => `${p.x},${p.y}`).join(' L ')} L ${pts[pts.length - 1].x},${padding.top + chartH} Z`;
     const line = `M ${pts.map(p => `${p.x},${p.y}`).join(' L ')}`;
 
-    // Generate 4 grid lines
     const gridLines = [];
     for (let i = 0; i < 4; i++) {
         const val = min + (range * i) / 3;
@@ -48,49 +76,20 @@ function LineChart({
                     <stop offset="100%" stopColor={color} stopOpacity="0" />
                 </linearGradient>
             </defs>
-
-            {/* Grid lines and Y-axis labels */}
             {gridLines.map((lineDef, i) => (
                 <g key={i}>
                     <line x1={padding.left} y1={lineDef.y} x2={w - padding.right} y2={lineDef.y} stroke="var(--border-subtle)" strokeWidth="1" strokeDasharray="4 4" vectorEffect="non-scaling-stroke" />
                     <text x={padding.left - 8} y={lineDef.y + 4} fontSize="11" fill="var(--text-muted)" textAnchor="end" fontFamily="var(--font-body)">{lineDef.val}</text>
                 </g>
             ))}
-
-            {/* Area and Line */}
             <path d={area} fill={`url(#grad-${label})`} />
             <path d={line} stroke={color} strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-
-            {/* Data Points */}
             {pts.map((p, i) => (
                 <g key={i}>
                     <circle cx={p.x} cy={p.y} r="4" fill="var(--bg-surface)" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" />
                 </g>
             ))}
         </svg>
-    );
-}
-
-function MoodHeatmap() {
-    const moods = mockAnalytics.moodTrend;
-    const moodColor: Record<string, string> = {
-        happy: '#22C55E', calm: '#3B82F6', neutral: '#94A3B8',
-        anxious: '#F59E0B', agitated: '#EF4444', sad: '#EF4444'
-    };
-    const days = ['1', '4', '7', '10', '13', '16', '19', '22', '25', '28'];
-
-    return (
-        <div className={styles.heatmapGrid} role="img" aria-label="Mood heatmap for February">
-            {days.map((day, i) => {
-                const mood = moods[i]?.mood || 'neutral';
-                return (
-                    <div key={day} className={styles.heatCell} title={`Feb ${day}: ${mood}`}>
-                        <div className={styles.heatBlock} style={{ background: moodColor[mood] }} />
-                        <span className={styles.heatDay}>{day}</span>
-                    </div>
-                );
-            })}
-        </div>
     );
 }
 
@@ -108,33 +107,55 @@ function GameBar({ game, score }: { game: string; score: number }) {
 }
 
 export default function AnalyticsPage() {
-    const avgGame = mockAnalytics.avgDailyGameScore;
-    const cogLast = mockAnalytics.cognitiveScores;
-    const first = cogLast[0].score;
-    const last = cogLast[cogLast.length - 1].score;
+    const { user, isDemo } = useSession();
+    const patientFirstName = user?.patientName?.split(' ')[0] || 'your patient';
+
+    const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+    const [medications, setMedications] = useState<Medication[]>([]);
+
+    useEffect(() => {
+        if (isDemo) return;
+        apiFetch<AnalyticsData>('/api/analytics').then(setAnalytics).catch(() => { });
+        apiFetch<{ medications: Medication[] }>('/api/medications').then(d => setMedications(d.medications || [])).catch(() => { });
+    }, [isDemo]);
+
+    // Resolve values
+    const cogScore = isDemo ? 72 : (analytics?.cognitiveScore ?? 0);
+    const cogTrend = isDemo ? mockAnalytics.cognitiveScores : (analytics?.cognitiveScoreTrend ?? []);
+    const recallPct = isDemo ? mockAnalytics.averageRecall : (analytics?.recallAccuracy ?? 0);
+    const gameStreakVal = isDemo ? mockAnalytics.gameStreak : (analytics?.gameStreak ?? 0);
+    const wanderingCount = isDemo ? mockAnalytics.wanderingIncidents : 0;
+    const medAdherence = isDemo ? mockAnalytics.medicationAdherence : 0;
+
+    const first = cogTrend.length > 0 ? cogTrend[0].score : cogScore;
+    const last = cogTrend.length > 0 ? cogTrend[cogTrend.length - 1].score : cogScore;
     const trend = last - first;
 
-    // Per-game averages
+    // Game averages from mock (analytics doesn't break down by game type from API yet)
     const games = ['Memory Match', 'Name That Face', 'Word Puzzle (Hindi)', 'Picture Sequence', 'Number Sort'];
-    const gameAvgs = games.map(game => {
-        const relevant = mockGameScores.filter(g => g.game === game);
-        const avg = relevant.length > 0 ? Math.round(relevant.reduce((s, g) => s + g.score, 0) / relevant.length) : 0;
-        return { game, avg };
-    });
+    const gameAvgs = isDemo
+        ? games.map(game => {
+            const relevant = mockGameScores.filter(g => g.game === game);
+            const avg = relevant.length > 0 ? Math.round(relevant.reduce((s, g) => s + g.score, 0) / relevant.length) : 0;
+            return { game, avg };
+        })
+        : games.map(game => ({ game, avg: analytics?.avgDailyGameScore ?? 0 }));
+
+    const today = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Care Analytics" subtitle="30-day cognitive and behavioural trends for Ravi" />
+            <GuardianHeader title="Care Analytics" subtitle={`30-day cognitive and behavioural trends for ${patientFirstName}`} />
             <main className={styles.content}>
                 {/* Top KPIs */}
                 <div className={styles.kpiRow}>
                     {[
-                        { label: 'Current Cognitive Score', num: 72, suffix: '/100', delta: `+${trend} pts (30 days)`, up: trend >= 0 },
-                        { label: 'Medication Adherence', num: mockAnalytics.medicationAdherence, suffix: '%', delta: 'Good compliance', up: true },
-                        { label: 'Average Memory Recall', num: mockAnalytics.averageRecall, suffix: '%', delta: '78% this month', up: true },
-                        { label: 'Game Streak', num: mockAnalytics.gameStreak, suffix: 'd', delta: '🔥 Ongoing streak', up: true },
-                        { label: 'Wandering Incidents', num: mockAnalytics.wanderingIncidents, suffix: '', delta: 'Last 30 days', up: false },
-                        { label: 'QR Scans', num: mockAnalytics.qrScansLast30, suffix: '', delta: 'Good Samaritans helped', up: true },
+                        { label: 'Current Cognitive Score', num: cogScore, suffix: '/100', delta: trend !== 0 ? `${trend > 0 ? '+' : ''}${trend} pts trend` : 'Stable', up: trend >= 0 },
+                        { label: 'Medication Adherence', num: medAdherence, suffix: '%', delta: medAdherence > 0 ? 'Good compliance' : 'No data yet', up: medAdherence >= 80 },
+                        { label: 'Average Memory Recall', num: recallPct, suffix: '%', delta: recallPct > 0 ? 'This period' : 'No data yet', up: recallPct >= 70 },
+                        { label: 'Game Streak', num: gameStreakVal, suffix: 'd', delta: '🔥 Ongoing streak', up: true },
+                        { label: 'Wandering Incidents', num: wanderingCount, suffix: '', delta: 'Last 30 days', up: wanderingCount === 0 },
+                        { label: 'Schedule Completion', num: analytics ? Math.round((analytics.scheduleCompletion.completed / (analytics.scheduleCompletion.total || 1)) * 100) : 0, suffix: '%', delta: `${analytics?.scheduleCompletion.completed ?? 0}/${analytics?.scheduleCompletion.total ?? 0} tasks today`, up: true },
                     ].map((kpi, i) => (
                         <div key={i} className={styles.kpiCard}>
                             <span className={styles.kpiValue}>
@@ -153,8 +174,8 @@ export default function AnalyticsPage() {
                     <section className={styles.chartCard} style={{ gridColumn: '1 / 3' }}>
                         <div className={styles.chartHeader}>
                             <div>
-                                <h2 className={styles.chartTitle}>Cognitive Score — 30-Day Trend</h2>
-                                <p className={styles.chartSub}>Mini-Mental State assessment scores plotted over time</p>
+                                <h2 className={styles.chartTitle}>Cognitive Score — Trend</h2>
+                                <p className={styles.chartSub}>Game and assessment scores plotted over time</p>
                             </div>
                             <span className={`${styles.trendPill} ${trend >= 0 ? styles.trendUp : styles.trendDown}`}>
                                 {trend >= 0 ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
@@ -162,29 +183,17 @@ export default function AnalyticsPage() {
                             </span>
                         </div>
                         <div className={styles.chartWrap}>
-                            <LineChart data={cogLast} color="#7C3AED" label="Cognitive score trend" />
+                            <LineChart data={cogTrend} color="#7C3AED" label="Cognitive score trend" />
                         </div>
-                        <div className={styles.chartXAxis}>
-                            {['Jan 29', 'Feb 5', 'Feb 12', 'Feb 19', 'Feb 28'].map(d => (
-                                <span key={d} className={styles.xLabel}>{d}</span>
-                            ))}
-                        </div>
-                    </section>
-
-                    {/* Mood heatmap */}
-                    <section className={styles.chartCard}>
-                        <div className={styles.chartHeader}>
-                            <h2 className={styles.chartTitle}>Mood Calendar — February</h2>
-                        </div>
-                        <MoodHeatmap />
-                        <div className={styles.moodLegend}>
-                            {[['#22C55E', 'Happy'], ['#3B82F6', 'Calm'], ['#F59E0B', 'Anxious'], ['#EF4444', 'Agitated']].map(([c, l]) => (
-                                <div key={l} className={styles.moodLegendItem}>
-                                    <span className={styles.moodLegendDot} style={{ background: c }} aria-hidden="true" />
-                                    <span>{l}</span>
-                                </div>
-                            ))}
-                        </div>
+                        {cogTrend.length > 0 && (
+                            <div className={styles.chartXAxis}>
+                                {[...new Set(cogTrend.map(d => d.date))].slice(0, 5).map(d => (
+                                    <span key={d} className={styles.xLabel}>
+                                        {new Date(d).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' })}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
                     </section>
 
                     {/* Game performance */}
@@ -197,67 +206,33 @@ export default function AnalyticsPage() {
                                 <GameBar key={game} game={game} score={avg} />
                             ))}
                         </div>
-                        <p className={styles.chartSub}>Average score per game type — last 30 days</p>
-                    </section>
-
-                    {/* People recognition */}
-                    <section className={styles.chartCard} style={{ gridColumn: '1 / 3' }}>
-                        <div className={styles.chartHeader}>
-                            <h2 className={styles.chartTitle}>People Recognition Rates</h2>
-                            <p className={styles.chartSub}>How reliably Ravi identifies each person in his wallet</p>
-                        </div>
-                        <div className={styles.recognitionGrid}>
-                            {mockPeople.map((person, i) => {
-                                const color = person.recognitionRate >= 85 ? 'var(--color-success)' : person.recognitionRate >= 65 ? 'var(--color-warning)' : 'var(--color-danger)';
-                                const initials = person.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-                                return (
-                                    <div key={person.id} className={styles.recognitionItem}>
-                                        <div className={styles.recogAvatar}>{initials}</div>
-                                        <div className={styles.recogInfo}>
-                                            <span className={styles.recogName}>{person.name.split(' ')[0]}</span>
-                                            <span className={styles.recogRelation}>{person.relation}</span>
-                                        </div>
-                                        <div className={styles.recogBarWrap}>
-                                            <div className={styles.recogBar}>
-                                                <div className={styles.recogFill} style={{ width: `${person.recognitionRate}%`, background: color }} />
-                                            </div>
-                                            <span className={styles.recogScore} style={{ color }}>{person.recognitionRate}%</span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        <p className={styles.chartSub}>Average score per game type</p>
                     </section>
 
                     {/* Medication adherence */}
                     <section className={styles.chartCard}>
                         <div className={styles.chartHeader}>
-                            <h2 className={styles.chartTitle}>Medication Adherence</h2>
+                            <h2 className={styles.chartTitle}>Active Medications</h2>
                         </div>
-                        <div className={styles.circleWrap}>
-                            <svg viewBox="0 0 80 80" className={styles.donut} aria-label={`${mockAnalytics.medicationAdherence}% medication adherence`}>
-                                <circle cx="40" cy="40" r="30" fill="none" stroke="var(--bg-surface-soft)" strokeWidth="10" />
-                                <circle cx="40" cy="40" r="30" fill="none" stroke="var(--color-success)" strokeWidth="10"
-                                    strokeDasharray={`${(mockAnalytics.medicationAdherence / 100) * 188.5} 188.5`}
-                                    strokeLinecap="round" transform="rotate(-90 40 40)" />
-                                <text x="40" y="44" textAnchor="middle" fontSize="14" fontWeight="800" fill="var(--text-heading)">{mockAnalytics.medicationAdherence}%</text>
-                            </svg>
-                            <p className={styles.donutLabel}>87% doses taken on time this month</p>
-                        </div>
-                        <div className={styles.adherenceBreakdown}>
-                            <div className={styles.adherenceItem}>
-                                <span className={styles.aLabel}>Donepezil (morning)</span>
-                                <span className={styles.aScore} style={{ color: 'var(--color-success)' }}>93%</span>
+                        {medications.length === 0 && !isDemo ? (
+                            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px' }}>No medications found in database.</p>
+                        ) : (
+                            <div className={styles.adherenceBreakdown}>
+                                {(isDemo
+                                    ? [{ id: 'm1', name: 'Donepezil', dosage: '10mg', frequency: 'Morning', time_of_day: 'morning', score: 93, color: 'var(--color-success)' },
+                                    { id: 'm2', name: 'Memantine', dosage: '20mg', frequency: 'Evening', time_of_day: 'evening', score: 81, color: 'var(--color-warning)' },
+                                    { id: 'm3', name: 'Vitamin D3', dosage: '', frequency: 'Weekly', time_of_day: 'morning', score: 100, color: 'var(--color-success)' }] as (Medication & { score: number; color: string })[]
+                                    : medications.map(m => ({ ...m, score: 0, color: 'var(--text-muted)' }))
+                                ).map((m) => (
+                                    <div key={m.id} className={styles.adherenceItem}>
+                                        <span className={styles.aLabel}>{m.name} {m.dosage} ({m.time_of_day || m.frequency})</span>
+                                        {isDemo && (m as { score: number }).score > 0 && (
+                                            <span className={styles.aScore} style={{ color: (m as { color: string }).color }}>{(m as { score: number }).score}%</span>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
-                            <div className={styles.adherenceItem}>
-                                <span className={styles.aLabel}>Memantine (evening)</span>
-                                <span className={styles.aScore} style={{ color: 'var(--color-warning)' }}>81%</span>
-                            </div>
-                            <div className={styles.adherenceItem}>
-                                <span className={styles.aLabel}>Vitamin D3 (weekly)</span>
-                                <span className={styles.aScore} style={{ color: 'var(--color-success)' }}>100%</span>
-                            </div>
-                        </div>
+                        )}
                     </section>
 
                     {/* Decline alerts */}
@@ -267,10 +242,10 @@ export default function AnalyticsPage() {
                         </div>
                         <div className={styles.riskGrid}>
                             {[
-                                { label: 'Cognitive Stability', status: 'Good', color: 'var(--color-success)', note: 'Score trending up' },
-                                { label: 'Medication Gaps', status: 'Moderate', color: 'var(--color-warning)', note: '2 missed in 30 days' },
-                                { label: 'Wandering Risk', status: 'Elevated', color: 'var(--color-danger)', note: '2 incidents this month' },
-                                { label: 'Social Engagement', status: 'Good', color: 'var(--color-success)', note: 'Weekly family calls' },
+                                { label: 'Cognitive Stability', status: trend >= 0 ? 'Good' : 'Declining', color: trend >= 0 ? 'var(--color-success)' : 'var(--color-danger)', note: trend !== 0 ? `Score ${trend > 0 ? '+' : ''}${trend} pts` : 'Stable' },
+                                { label: 'Medication Gaps', status: medAdherence >= 80 ? 'Good' : 'Moderate', color: medAdherence >= 80 ? 'var(--color-success)' : 'var(--color-warning)', note: `${medAdherence}% adherence` },
+                                { label: 'Wandering Risk', status: wanderingCount === 0 ? 'Low' : 'Elevated', color: wanderingCount === 0 ? 'var(--color-success)' : 'var(--color-danger)', note: `${wanderingCount} incidents` },
+                                { label: 'Game Engagement', status: gameStreakVal >= 3 ? 'Good' : 'Low', color: gameStreakVal >= 3 ? 'var(--color-success)' : 'var(--color-warning)', note: `${gameStreakVal} day streak` },
                             ].map(item => (
                                 <div key={item.label} className={styles.riskItem}>
                                     <span className={styles.riskDot} style={{ background: item.color }} aria-hidden="true" />
@@ -287,7 +262,7 @@ export default function AnalyticsPage() {
 
                 <div className={styles.exportRow}>
                     <p className={styles.exportNote}>
-                        <Activity size={14} aria-hidden="true" /> Analytics are generated from Ravi's daily care logs. Last updated: 28 Feb 2026.
+                        <Activity size={14} aria-hidden="true" /> Analytics generated from {patientFirstName}&apos;s daily care logs. Last updated: {today}.
                     </p>
                     <button className={styles.exportBtn}>
                         <Download size={16} aria-hidden="true" /> Export PDF Report

@@ -125,7 +125,7 @@ export function AppHeader({
                         width: 36,
                         height: 36,
                         borderRadius: '50%',
-                        background: 'linear-gradient(135deg, #7C3AED, #C084FC)',
+                        background: 'var(--color-primary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',

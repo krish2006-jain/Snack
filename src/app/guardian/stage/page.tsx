@@ -2,6 +2,7 @@
 
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { Activity, Brain, Shield, Crosshair, ArrowRight, BookOpen } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 const STAGES = [
@@ -15,6 +16,8 @@ const STAGES = [
 ];
 
 export default function CareStagePage() {
+    const { user } = useSession();
+    const patientFirstName = user?.patientName?.split(' ')[0] || 'The patient';
     return (
         <div className={styles.page}>
             <GuardianHeader
@@ -32,7 +35,7 @@ export default function CareStagePage() {
                             <span className={styles.stageLabel}>Current Assessment (Last verified: 12 Feb 2026)</span>
                             <h1 className={styles.stageTitle}>Stage 4: Moderate Cognitive Decline</h1>
                             <p className={styles.stageDesc}>
-                                Ravi requires assistance with complex daily tasks like managing finances, making travel plans, and occasionally
+                                {patientFirstName} requires assistance with complex daily tasks like managing finances, making travel plans, and occasionally
                                 remembering recent events. However, he remains highly oriented to time and familiar people, and can recognize his home environment.
                             </p>
 

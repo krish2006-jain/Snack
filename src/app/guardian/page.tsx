@@ -4,18 +4,52 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import {
-    mockAlerts, mockSchedule, mockQRScans, mockGameScores, mockAnalytics, type Alert, type QRScan, type GameScore
-} from '@/lib/mock-data';
-import { mockPatient } from '@/lib/mock-data/patient';
-import {
     Brain, Calendar, Smile, Zap, Gamepad2, QrCode,
     AlertTriangle, ChevronRight, TrendingUp, CheckCircle2
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { useSession } from '@/lib/useSession';
+import { apiFetch } from '@/lib/api';
 import styles from './page.module.css';
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface ScheduleTask {
+    id: string;
+    title: string;
+    scheduled_time: string;
+    category: string;
+    is_completed: number;
+    description?: string;
+}
+
+interface Alert {
+    id: string;
+    alert_type: string;
+    severity: string;
+    message: string;
+    is_read: number;
+    created_at: number;
+}
+
+interface AnalyticsData {
+    cognitiveScore: number;
+    careStage: string;
+    cognitiveScoreTrend: { date: string; score: number }[];
+    recallAccuracy: number;
+    moodDistribution: { mood: string; count: number }[];
+    gameStreak: number;
+    avgDailyGameScore: number;
+    scheduleCompletion: { total: number; completed: number };
+}
+
+// ─── Mock fallback analytics (demo accounts) ───────────────────────────────
+import { mockAnalytics, mockAlerts, mockSchedule, mockGameScores, type Alert as MockAlert, type GameScore, type QRScan, mockQRScans } from '@/lib/mock-data';
+
+// ─── Sub-components ────────────────────────────────────────────────────────
+
 function CognitiveTrendChart({ scores }: { scores: { date: string; score: number }[] }) {
+    if (!scores || scores.length < 2) return null;
     const max = 100, min = 50, range = max - min;
     const w = 220, h = 64;
     const points = scores.map((d, i) => {
@@ -26,7 +60,7 @@ function CognitiveTrendChart({ scores }: { scores: { date: string; score: number
     const pathD = `M ${points.join(' L ')}`;
     const areaD = `M 0,${h} L ${points.join(' L ')} L ${w},${h} Z`;
     return (
-        <svg viewBox={`0 0 ${w} ${h}`} className={styles.trendChart} aria-label="Cognitive score trend over 4 weeks">
+        <svg viewBox={`0 0 ${w} ${h}`} className={styles.trendChart} aria-label="Cognitive score trend">
             <defs>
                 <linearGradient id="cog-grad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.25" />
@@ -44,27 +78,15 @@ function CognitiveTrendChart({ scores }: { scores: { date: string; score: number
     );
 }
 
-function MoodSparkline() {
-    const moods = mockAnalytics.moodTrend.slice(-7);
-    const moodVal: Record<string, number> = { happy: 5, calm: 4, neutral: 3, anxious: 2, agitated: 1, sad: 1 };
+function MoodBadge({ distribution }: { distribution: { mood: string; count: number }[] }) {
     const moodColor: Record<string, string> = { happy: '#22C55E', calm: '#3B82F6', neutral: '#F59E0B', anxious: '#F59E0B', agitated: '#EF4444', sad: '#EF4444' };
-    const w = 110, h = 32;
-    const vals = moods.map((m: { date: string; mood: string }) => moodVal[m.mood] || 3);
-    const max = 5, min = 1;
-    const points = vals.map((v: number, i: number) => {
-        const x = (i / (vals.length - 1)) * w;
-        const y = h - ((v - min) / (max - min)) * h;
-        return `${x},${y}`;
-    });
-    const last = moods[moods.length - 1];
+    const moodEmoji: Record<string, string> = { happy: '😊', calm: '😌', neutral: '😐', anxious: '😟', agitated: '😤', sad: '😢' };
+    // Most frequent mood
+    const top = distribution.reduce((a, b) => (a.count >= b.count ? a : b), { mood: 'calm', count: 0 });
     return (
-        <div className={styles.moodSparkWrap}>
-            <svg viewBox={`0 0 ${w} ${h}`} className={styles.sparkline} aria-label="Mood trend sparkline">
-                <path d={`M ${points.join(' L ')}`} stroke={moodColor[last?.mood] || '#3B82F6'} strokeWidth="2" fill="none" strokeLinecap="round" />
-            </svg>
-            <span className={styles.moodLabel} style={{ color: moodColor[last?.mood] || '#3B82F6' }}>
-                {last?.mood ?? 'calm'}
-            </span>
+        <div className={styles.moodMain}>
+            <span className={styles.moodEmoji} role="img" aria-label={top.mood}>{moodEmoji[top.mood] ?? '😌'}</span>
+            <span className={styles.moodWord} style={{ color: moodColor[top.mood] }}>{top.mood.charAt(0).toUpperCase() + top.mood.slice(1)}</span>
         </div>
     );
 }
@@ -83,24 +105,71 @@ function SkeletonDash() {
     );
 }
 
+// ─── Main Component ────────────────────────────────────────────────────────
+
 export default function GuardianDashboard() {
-    const { user } = useSession();
+    const { user, isDemo } = useSession();
     const guardianName = user?.name?.split(' ')[0] || 'there';
     const patientName = user?.patientName?.split(' ')[0] || 'your loved one';
-    const [loaded, setLoaded] = useState(false);
-    useEffect(() => { const t = setTimeout(() => setLoaded(true), 700); return () => clearTimeout(t); }, []);
 
-    // mockSchedule status is 'done' | 'upcoming' | 'missed'
-    const today = mockSchedule.slice(0, 5);
-    const completedToday = today.filter(t => t.completed).length;
-    const urgentAlerts = mockAlerts.filter((a: Alert) => a.type === 'danger' || a.type === 'warning');
-    const latestGame = mockGameScores[0] as GameScore | undefined;
+    const [loaded, setLoaded] = useState(false);
+    const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+    const [schedule, setSchedule] = useState<ScheduleTask[]>([]);
+    const [alerts, setAlerts] = useState<Alert[]>([]);
+    const [qrCount, setQrCount] = useState<number>(0);
+
+    useEffect(() => {
+        const t = setTimeout(() => setLoaded(true), 700);
+        return () => clearTimeout(t);
+    }, []);
+
+    useEffect(() => {
+        if (isDemo) return; // demo uses mock data below
+
+        apiFetch<AnalyticsData>('/api/analytics').then(setAnalytics).catch(() => { });
+        apiFetch<{ tasks: ScheduleTask[] }>('/api/schedule').then(d => setSchedule(d.tasks || [])).catch(() => { });
+        apiFetch<{ alerts: Alert[] }>('/api/alerts').then(d => setAlerts(d.alerts || [])).catch(() => { });
+    }, [isDemo]);
+
+    // ── Resolve data: API for real users, mock for demo ─────────────────────
+    const cogScore = isDemo ? 72 : (analytics?.cognitiveScore ?? 0);
+    const cogTrend = isDemo ? mockAnalytics.cognitiveScores : (analytics?.cognitiveScoreTrend ?? []);
+    const medAdherence = isDemo ? mockAnalytics.medicationAdherence : 0;
+    const recallPct = isDemo ? mockAnalytics.averageRecall : (analytics?.recallAccuracy ?? 0);
+    const gameStreak = isDemo ? mockAnalytics.gameStreak : (analytics?.gameStreak ?? 0);
+    const avgGame = isDemo ? mockAnalytics.avgDailyGameScore : (analytics?.avgDailyGameScore ?? 0);
+
+    // Mood
+    const moodDistribution = isDemo
+        ? [{ mood: 'calm', count: 5 }]
+        : (analytics?.moodDistribution ?? [{ mood: 'calm', count: 1 }]);
+
+    // Schedule
+    const resolvedSchedule = isDemo ? mockSchedule.slice(0, 5).map(t => ({
+        id: t.id,
+        title: t.title,
+        scheduled_time: t.time,
+        category: t.category,
+        is_completed: t.completed ? 1 : 0,
+    })) : schedule.slice(0, 5);
+    const completedToday = resolvedSchedule.filter(t => t.is_completed).length;
+
+    // Alerts
+    const resolvedAlerts = isDemo ? mockAlerts.slice(0, 3) : alerts.slice(0, 3);
+
+    // QR scans — number only
+    const resolvedQrCount = isDemo ? mockQRScans.length : qrCount;
 
     const categoryColors: Record<string, string> = {
         medication: 'var(--color-danger)', exercise: 'var(--color-success)',
         therapy: 'var(--color-primary)', meal: 'var(--color-warning)',
         hygiene: 'var(--color-info)', social: '#EC4899',
+        medicine: 'var(--color-danger)',
     };
+
+    const trendDelta = cogTrend.length >= 2
+        ? cogTrend[cogTrend.length - 1].score - cogTrend[0].score
+        : 0;
 
     return (
         <div className={styles.page}>
@@ -111,46 +180,46 @@ export default function GuardianDashboard() {
                         <section className={styles.digest} aria-label="Daily digest">
                             <div className={styles.digestIcon}><Zap size={15} aria-hidden="true" /></div>
                             <p className={styles.digestText}>
-                                <strong>Today&rsquo;s summary:</strong> {patientName} had a calm morning — completed the walk and medication on time.
-                                Cognitive score is stable at <strong>72/100</strong>, up 3 points from last week.
-                                The caretaker is on shift until 4 PM. Two alerts need your attention.
+                                <strong>Today&rsquo;s summary:</strong> {patientName} completed {completedToday} of {resolvedSchedule.length} tasks today.
+                                Cognitive score is <strong>{cogScore}/100</strong>
+                                {trendDelta !== 0 && <>, {trendDelta > 0 ? 'up' : 'down'} {Math.abs(trendDelta)} pts vs last reading</>}.
+                                {resolvedAlerts.filter(a => !('read' in a ? a.read : a.is_read)).length > 0
+                                    ? ` ${resolvedAlerts.filter(a => !('read' in a ? a.read : a.is_read)).length} alerts need your attention.`
+                                    : ' No urgent alerts.'}
                             </p>
                         </section>
 
                         <div className={styles.grid}>
-                            {/* COGNITIVE SCORE — featured 2-row card */}
+                            {/* COGNITIVE SCORE */}
                             <article className={`${styles.card} ${styles.cardFeatured}`} aria-label="Cognitive score overview">
                                 <div className={styles.cardHeaderRow}>
                                     <div>
                                         <span className={styles.cardLabel}>Cognitive Score</span>
                                         <div className={styles.scoreRow}>
-                                            <span className={styles.scoreNum}><AnimatedNumber value={72} /></span>
+                                            <span className={styles.scoreNum}><AnimatedNumber value={cogScore} /></span>
                                             <span className={styles.scoreMax}>/100</span>
-                                            <span className={styles.scoreDelta}>
-                                                <TrendingUp size={13} aria-hidden="true" /> +3 this week
-                                            </span>
+                                            {trendDelta !== 0 && (
+                                                <span className={styles.scoreDelta}>
+                                                    <TrendingUp size={13} aria-hidden="true" /> {trendDelta > 0 ? '+' : ''}{trendDelta} this period
+                                                </span>
+                                            )}
                                         </div>
-                                        <p className={styles.scoreNote}>Moderate range — 4-week upward trend</p>
+                                        <p className={styles.scoreNote}>{analytics?.careStage ?? 'Moderate'} range</p>
                                     </div>
-                                    <span className={styles.scoreBadge}>Moderate</span>
+                                    <span className={styles.scoreBadge}>{analytics?.careStage?.charAt(0).toUpperCase() + (analytics?.careStage?.slice(1) ?? '') || 'Moderate'}</span>
                                 </div>
-                                <CognitiveTrendChart scores={mockAnalytics.cognitiveScores} />
-                                <div className={styles.scoreWeeks}>
-                                    {['4 wks ago', '3 wks', '2 wks', 'This week'].map((l, i) => (
-                                        <span key={i} className={styles.weekLabel}>{l}</span>
-                                    ))}
-                                </div>
+                                <CognitiveTrendChart scores={cogTrend} />
                                 <div className={styles.featuredStats}>
                                     <div className={styles.fStat}>
-                                        <span className={styles.fStatNum}><AnimatedNumber value={87} suffix="%" /></span>
+                                        <span className={styles.fStatNum}><AnimatedNumber value={medAdherence} suffix="%" /></span>
                                         <span className={styles.fStatLabel}>Medication adherence</span>
                                     </div>
                                     <div className={styles.fStat}>
-                                        <span className={styles.fStatNum}><AnimatedNumber value={78} suffix="%" /></span>
+                                        <span className={styles.fStatNum}><AnimatedNumber value={recallPct} suffix="%" /></span>
                                         <span className={styles.fStatLabel}>Avg recall rate</span>
                                     </div>
                                     <div className={styles.fStat}>
-                                        <span className={styles.fStatNum}><AnimatedNumber value={mockAnalytics.gameStreak} suffix="d" /></span>
+                                        <span className={styles.fStatNum}><AnimatedNumber value={gameStreak} suffix="d" /></span>
                                         <span className={styles.fStatLabel}>Game streak</span>
                                     </div>
                                 </div>
@@ -167,33 +236,29 @@ export default function GuardianDashboard() {
                                 </div>
                                 <div className={styles.taskProgress}>
                                     <div className={styles.taskBar}>
-                                        <div className={styles.taskFill} style={{ width: `${(completedToday / today.length) * 100}%` }} />
+                                        <div className={styles.taskFill} style={{ width: `${resolvedSchedule.length ? (completedToday / resolvedSchedule.length) * 100 : 0}%` }} />
                                     </div>
-                                    <span className={styles.taskCount}>{completedToday}/{today.length}</span>
+                                    <span className={styles.taskCount}>{completedToday}/{resolvedSchedule.length}</span>
                                 </div>
                                 <ul className={styles.taskList}>
-                                    {today.slice(0, 4).map(task => (
-                                        <li key={task.id} className={`${styles.taskItem} ${task.completed ? styles.taskDone : ''}`}>
-                                            <span className={styles.taskDot} style={{ background: categoryColors[task.category.toLowerCase()] || 'var(--color-primary)' }} aria-hidden="true" />
-                                            <span className={styles.taskTime}>{task.time}</span>
+                                    {resolvedSchedule.slice(0, 4).map(task => (
+                                        <li key={task.id} className={`${styles.taskItem} ${task.is_completed ? styles.taskDone : ''}`}>
+                                            <span className={styles.taskDot} style={{ background: categoryColors[task.category?.toLowerCase()] || 'var(--color-primary)' }} aria-hidden="true" />
+                                            <span className={styles.taskTime}>{task.scheduled_time}</span>
                                             <span className={styles.taskTitle}>{task.title}</span>
-                                            {task.completed && <CheckCircle2 size={12} className={styles.taskCheck} aria-label="Done" />}
+                                            {!!task.is_completed && <CheckCircle2 size={12} className={styles.taskCheck} aria-label="Done" />}
                                         </li>
                                     ))}
                                 </ul>
                             </article>
 
                             {/* MOOD */}
-                            <article className={styles.card} aria-label="Patient's mood today">
+                            <article className={styles.card} aria-label="Patient's mood">
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><Smile size={13} aria-hidden="true" /> Mood Today</span>
                                 </div>
-                                <div className={styles.moodMain}>
-                                    <span className={styles.moodEmoji} role="img" aria-label="Calm face">😌</span>
-                                    <span className={styles.moodWord}>Calm</span>
-                                </div>
-                                <MoodSparkline />
-                                <p className={styles.moodNote}>7-day trend — mostly calm</p>
+                                <MoodBadge distribution={moodDistribution} />
+                                <p className={styles.moodNote}>Based on logged mood entries</p>
                             </article>
 
                             {/* MEMORY RECALL */}
@@ -203,14 +268,11 @@ export default function GuardianDashboard() {
                                     <Link href="/guardian/memories" className={styles.viewAll}>View</Link>
                                 </div>
                                 <div className={styles.recallScore}>
-                                    <span className={styles.recallNum}><AnimatedNumber value={85} suffix="%" /></span>
-                                    <span className={styles.recallLbl}>family recognition</span>
+                                    <span className={styles.recallNum}><AnimatedNumber value={recallPct} suffix="%" /></span>
+                                    <span className={styles.recallLbl}>recall accuracy</span>
                                 </div>
-                                <div className={styles.recallBar} role="meter" aria-valuenow={85} aria-valuemin={0} aria-valuemax={100} aria-label="85% recall">
-                                    <div className={styles.recallFill} style={{ width: '85%' }} />
-                                </div>
-                                <div className={styles.recallBreakdown}>
-                                    <span>People: 94%</span><span>Objects: 78%</span>
+                                <div className={styles.recallBar} role="meter" aria-valuenow={recallPct} aria-valuemin={0} aria-valuemax={100}>
+                                    <div className={styles.recallFill} style={{ width: `${recallPct}%` }} />
                                 </div>
                             </article>
 
@@ -221,41 +283,45 @@ export default function GuardianDashboard() {
                                     <Link href="/guardian/games" className={styles.viewAll}>View</Link>
                                 </div>
                                 <div className={styles.streakWrap}>
-                                    <span className={styles.streakNum}><AnimatedNumber value={mockAnalytics.gameStreak} /></span>
+                                    <span className={styles.streakNum}><AnimatedNumber value={gameStreak} /></span>
                                     <span className={styles.streakText}>day streak 🔥</span>
                                 </div>
-                                {latestGame && (
-                                    <div className={styles.latestGame}>
-                                        <span className={styles.lgTitle}>{latestGame.game}</span>
-                                        <span className={styles.lgScore}>{latestGame.score}/100</span>
-                                    </div>
-                                )}
-                                <p className={styles.gameAvg}>Avg: {mockAnalytics.avgDailyGameScore}/100 this month</p>
+                                <p className={styles.gameAvg}>Avg: {avgGame}/100 this month</p>
                             </article>
 
                             {/* ALERTS */}
                             <article
-                                className={`${styles.card} ${urgentAlerts.length > 0 ? styles.cardUrgent : ''}`}
+                                className={`${styles.card} ${resolvedAlerts.length > 0 ? styles.cardUrgent : ''}`}
                                 aria-label="Recent alerts"
                             >
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><AlertTriangle size={13} aria-hidden="true" /> Alerts</span>
                                     <Link href="/guardian/alerts" className={styles.viewAll}>All alerts</Link>
                                 </div>
-                                <ul className={styles.alertList}>
-                                    {mockAlerts.slice(0, 3).map((alert: Alert) => (
-                                        <li key={alert.id} className={styles.alertItem}>
-                                            <span className={`${styles.alertDot} ${styles[`alertDot_${alert.type}`]}`} aria-hidden="true" />
-                                            <div className={styles.alertMeta}>
-                                                <span className={styles.alertTitle}>{alert.title}</span>
-                                                <span className={styles.alertTime}>
-                                                    {new Date(alert.timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
-                                                </span>
-                                            </div>
-                                            {!alert.read && <span className={styles.unreadDot} aria-label="Unread" />}
-                                        </li>
-                                    ))}
-                                </ul>
+                                {resolvedAlerts.length === 0 ? (
+                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px' }}>No recent alerts.</p>
+                                ) : (
+                                    <ul className={styles.alertList}>
+                                        {resolvedAlerts.map((alert) => {
+                                            const isApiAlert = 'is_read' in alert;
+                                            const title = isApiAlert ? (alert as Alert).message : (alert as MockAlert).title;
+                                            const unread = isApiAlert ? !(alert as Alert).is_read : !(alert as MockAlert).read;
+                                            const time = isApiAlert
+                                                ? new Date((alert as Alert).created_at * 1000).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+                                                : new Date((alert as MockAlert).timestamp).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                                            return (
+                                                <li key={alert.id} className={styles.alertItem}>
+                                                    <span className={`${styles.alertDot} ${styles[`alertDot_${isApiAlert ? (alert as Alert).severity : (alert as MockAlert).type}`]}`} aria-hidden="true" />
+                                                    <div className={styles.alertMeta}>
+                                                        <span className={styles.alertTitle}>{title}</span>
+                                                        <span className={styles.alertTime}>{time}</span>
+                                                    </div>
+                                                    {unread && <span className={styles.unreadDot} aria-label="Unread" />}
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                )}
                             </article>
 
                             {/* QR LOG */}
@@ -265,17 +331,9 @@ export default function GuardianDashboard() {
                                     <Link href="/guardian/qr" className={styles.viewAll}>Manage</Link>
                                 </div>
                                 <div className={styles.qrCount}>
-                                    <span className={styles.qrNum}><AnimatedNumber value={mockQRScans.length} /></span>
-                                    <span className={styles.qrLbl}>scans in 30 days</span>
+                                    <span className={styles.qrNum}><AnimatedNumber value={resolvedQrCount} /></span>
+                                    <span className={styles.qrLbl}>scans logged</span>
                                 </div>
-                                <ul className={styles.qrLog}>
-                                    {mockQRScans.slice(0, 2).map((scan: QRScan) => (
-                                        <li key={scan.id} className={styles.qrLogItem}>
-                                            <span className={styles.qrLoc}>{scan.location}</span>
-                                            <span className={styles.qrTime}>{new Date(scan.timestamp).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
-                                        </li>
-                                    ))}
-                                </ul>
                             </article>
                         </div>
                     </>

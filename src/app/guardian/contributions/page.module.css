@@ -180,12 +180,12 @@
 
 .statusPending {
     background: var(--color-warning-bg);
-    color: #B45309;
+    color: var(--color-warning);
 }
 
 .statusApproved {
     background: var(--color-success-bg);
-    color: #15803D;
+    color: var(--color-success);
 }
 
 .statusRejected {
@@ -226,7 +226,7 @@
     display: flex;
     gap: var(--space-2);
     padding: var(--space-3) var(--space-5) var(--space-5);
-    border-top: 1px solid rgba(124, 58, 237, 0.06);
+    border-top: 1px solid var(--border-subtle);
 }
 
 .approveBtn {
@@ -247,7 +247,8 @@
 }
 
 .approveBtn:hover {
-    background: #16A34A;
+    background: var(--color-success-bg);
+    filter: brightness(0.9);
     transform: translateY(-1px);
 }
 

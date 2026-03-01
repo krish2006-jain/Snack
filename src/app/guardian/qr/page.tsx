@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
-import { mockPatient, mockGuardian, mockQRScans, mockEmergencyContacts } from '@/lib/mock-data';
+import { mockQRScans, mockEmergencyContacts } from '@/lib/mock-data';
 import { Download, Printer, ShieldCheck, ShieldOff, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 declare global {
@@ -12,17 +13,21 @@ declare global {
 
 type PrivacyField = 'name' | 'address' | 'phone' | 'bloodGroup' | 'diagnosis' | 'guardianName' | 'guardianPhone';
 
-const PRIVACY_FIELDS: { key: PrivacyField; label: string; description: string }[] = [
-    { key: 'name', label: "Patient's Full Name", description: "Ravi Sharma — visible to finder" },
-    { key: 'address', label: "Home Address", description: "Sector 12, Gurugram — helps return home" },
-    { key: 'phone', label: "Emergency Phone", description: "+91 98765 43210 — direct call" },
-    { key: 'bloodGroup', label: "Blood Group", description: "B+ — for medical emergencies" },
-    { key: 'diagnosis', label: "Diagnosis", description: "Alzheimer's Disease — context for finder" },
-    { key: 'guardianName', label: "Guardian Name", description: "Priya Sharma — who to contact" },
-    { key: 'guardianPhone', label: "Guardian Phone", description: "+91 99887 76655 — guardian contact" },
+const PRIVACY_FIELDS_STATIC = [
+    { key: 'name' as PrivacyField, label: "Patient's Full Name", description: 'Visible to finder' },
+    { key: 'address' as PrivacyField, label: "Home Address", description: 'Sector 12, Gurugram — helps return home' },
+    { key: 'phone' as PrivacyField, label: "Emergency Phone", description: 'Direct call on emergency' },
+    { key: 'bloodGroup' as PrivacyField, label: "Blood Group", description: 'For medical emergencies' },
+    { key: 'diagnosis' as PrivacyField, label: "Diagnosis", description: "Alzheimer's Disease — context for finder" },
+    { key: 'guardianName' as PrivacyField, label: "Guardian Name", description: 'Who to contact' },
+    { key: 'guardianPhone' as PrivacyField, label: "Guardian Phone", description: 'Guardian contact number' },
 ];
 
 export default function QRPage() {
+    const { user } = useSession();
+    const patientName = user?.patientName || 'Your Patient';
+    const guardianName = user?.name || 'Guardian';
+    const patientSlug = patientName.toLowerCase().replace(/\s+/g, '-');
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [privacy, setPrivacy] = useState<Record<PrivacyField, boolean>>({
         name: true, address: true, phone: true, bloodGroup: true,
@@ -105,7 +110,7 @@ export default function QRPage() {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const link = document.createElement('a');
-        link.download = `saathicare-qr-ravi-sharma.png`;
+        link.download = `saathicare-qr-${patientSlug}.png`;
         link.href = canvas.toDataURL();
         link.click();
         showToast('QR code downloaded');
@@ -122,7 +127,7 @@ export default function QRPage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="QR Code Manager" subtitle="Ravi's SaathiCare identity card — SAATHI-RAVI-SHARMA-001" />
+            <GuardianHeader title="QR Code Manager" subtitle={`${patientName}'s SaathiCare identity card`} />
             <main className={styles.content}>
                 <div className={styles.layout}>
                     {/* QR display */}
@@ -136,7 +141,7 @@ export default function QRPage() {
                             </div>
 
                             <div className={styles.qrCanvas}>
-                                <canvas ref={canvasRef} className={styles.canvas} aria-label="QR code for Ravi Sharma SaathiCare ID" />
+                                <canvas ref={canvasRef} className={styles.canvas} aria-label={`QR code for ${patientName} SaathiCare ID`} />
                                 {!isActive && (
                                     <div className={styles.inactiveOverlay}>
                                         <ShieldOff size={36} />
@@ -146,11 +151,11 @@ export default function QRPage() {
                             </div>
 
                             <div className={styles.qrPatientInfo}>
-                                {privacy.name && <span className={styles.qrName}>{mockPatient.name}</span>}
+                                {privacy.name && <span className={styles.qrName}>{patientName}</span>}
                                 {privacy.bloodGroup && (
-                                    <span className={styles.qrBlood}>Blood Group: {mockPatient.bloodType}</span>
+                                    <span className={styles.qrBlood}>Blood Group: B+</span>
                                 )}
-                                <span className={styles.qrId}>ID: {mockPatient.id}</span>
+                                <span className={styles.qrId}>SaathiCare ID</span>
                             </div>
 
                             <div className={styles.qrActions}>
@@ -202,10 +207,10 @@ export default function QRPage() {
                     {/* Privacy toggles */}
                     <section className={styles.privacySection}>
                         <h2 className={styles.privacyTitle}>Privacy Settings</h2>
-                        <p className={styles.privacyDesc}>Control what a Good Samaritan sees when they scan Ravi's QR code.</p>
+                        <p className={styles.privacyDesc}>Control what a Good Samaritan sees when they scan {patientName}&apos;s QR code.</p>
 
                         <div className={styles.toggleList}>
-                            {PRIVACY_FIELDS.map(field => (
+                            {PRIVACY_FIELDS_STATIC.map(field => (
                                 <div key={field.key} className={styles.toggleRow}>
                                     <div className={styles.toggleInfo}>
                                         <span className={styles.toggleLabel}>{field.label}</span>
@@ -230,13 +235,13 @@ export default function QRPage() {
                         <div className={styles.previewBox}>
                             <h4 className={styles.previewTitle}>What the finder sees:</h4>
                             <div className={styles.previewContent}>
-                                {privacy.name && <p><strong>Name:</strong> {mockPatient.name}</p>}
-                                {privacy.address && <p><strong>Address:</strong> {mockPatient.location}</p>}
-                                {privacy.bloodGroup && <p><strong>Blood Group:</strong> {mockPatient.bloodType}</p>}
+                                {privacy.name && <p><strong>Name:</strong> {patientName}</p>}
+                                {privacy.address && <p><strong>Address:</strong> Sector 12, Gurugram</p>}
+                                {privacy.bloodGroup && <p><strong>Blood Group:</strong> B+</p>}
                                 {privacy.phone && <p><strong>Emergency:</strong> {mockEmergencyContacts[0].phone}</p>}
-                                {privacy.diagnosis && <p><strong>Condition:</strong> {mockPatient.condition}</p>}
-                                {privacy.guardianName && <p><strong>Guardian:</strong> {mockGuardian.name} (Primary Caregiver)</p>}
-                                {privacy.guardianPhone && <p><strong>Guardian Phone:</strong> {mockGuardian.phone}</p>}
+                                {privacy.diagnosis && <p><strong>Condition:</strong> Alzheimer&apos;s Disease</p>}
+                                {privacy.guardianName && <p><strong>Guardian:</strong> {guardianName} (Primary Caregiver)</p>}
+                                {privacy.guardianPhone && <p><strong>Guardian Phone:</strong> Contact via SaathiCare</p>}
                             </div>
                         </div>
                     </section>

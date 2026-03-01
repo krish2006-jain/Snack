@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { AppLayout } from '@/components/ui/AppLayout';
 import { medications, Medication } from '@/lib/mock-data/caretaker';
 import { CheckCircle2, Circle, AlertCircle, ChevronDown, ChevronUp, PenLine } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 
 const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -160,8 +161,12 @@ function MedCard({ med }: { med: Medication }) {
 }
 
 export default function CaretakerMedicationsPage() {
+    const { user } = useSession();
+    const caretakerName = user?.name || 'Caretaker';
+    const patientName = user?.patientName || 'Patient';
+
     return (
-        <AppLayout role="caretaker" userName="Anita Desai" alertCount={1}>
+        <AppLayout role="caretaker" userName={caretakerName} alertCount={1}>
             <div style={{ padding: '32px 32px 48px', maxWidth: 760, margin: '0 auto' }}>
 
                 <div style={{ marginBottom: 8 }}>
@@ -169,7 +174,7 @@ export default function CaretakerMedicationsPage() {
                         Medications
                     </h1>
                     <p style={{ marginTop: 4, color: 'var(--text-muted)', fontSize: 15 }}>
-                        Ravi Sharma · {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                        {patientName} · {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
                 </div>
 

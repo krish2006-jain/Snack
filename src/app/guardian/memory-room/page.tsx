@@ -6,6 +6,7 @@ import GuardianHeader from '@/components/guardian/GuardianHeader';
 import MemoryRoomSVG from '@/components/ui/MemoryRoomSVG';
 import { mockMemoryRooms, MemoryRoom, MemoryObject } from '@/lib/mock-data';
 import { Plus, Pencil, Trash2, Sparkles, ChevronRight, ChevronDown, Eye } from 'lucide-react';
+import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -28,6 +29,8 @@ function RecallBar({ score }: { score: number }) {
 }
 
 export default function MemoryRoomPage() {
+    const { user } = useSession();
+    const patientFirstName = user?.patientName?.split(' ')[0] || 'Patient';
     const [rooms, setRooms] = useState<MemoryRoom[]>(mockMemoryRooms);
     const [expandedRoom, setExpandedRoom] = useState<string>(mockMemoryRooms[0].id);
     const [editingObject, setEditingObject] = useState<string | null>(null);
@@ -68,7 +71,7 @@ export default function MemoryRoomPage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Memory Room Manager" subtitle="Ravi's home mapped for cognitive recall training" />
+            <GuardianHeader title="Memory Room Manager" subtitle={`${patientFirstName}'s home mapped for cognitive recall training`} />
             <div className={styles.roomMapWrap}>
                 <MemoryRoomSVG className={styles.roomMap} />
             </div>
