@@ -6,11 +6,22 @@ SaathiCare provides a unified ecosystem that adapts content and interaction comp
 
 ---
 
-## Quick Start
+## Live Deployment
+
+🚀 We have deployed SaathiCare here: **[https://snack-production-ca02.up.railway.app/](https://snack-production-ca02.up.railway.app/)**
+
+---
+
+## Quick Start (Run Locally)
 
 ```bash
+# 1. Install dependencies
 npm install
+
+# 2. Set up environment variables
 cp .env.example .env.local   # fill in optional GEMINI_API_KEY
+
+# 3. Start the development server (runs database seed automatically)
 npm run dev                   # → http://localhost:3000
 ```
 
