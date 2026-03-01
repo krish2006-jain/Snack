@@ -24,8 +24,8 @@ const CARETAKER_REPLIES = [
     "If he seems agitated, try speaking softly and saying 'Ravi ji, Anita aa rahi hai'.",
 ];
 
-const LYZR_AGENT_ID = '69a32cba675a8bc0688d0ce8';
-const LYZR_API_KEY = 'sk-default-Eo8gWWPsUcfUtXwqinR4sPSPqb1vCIk5';
+const LYZR_AGENT_ID = '69a3d08068ff729c11861f15';
+const LYZR_API_KEY = 'sk-default-LOAJucbt33x48yhM6raYUTCbektTHAyu';
 const LYZR_ENDPOINT = 'https://agent-prod.studio.lyzr.ai/v3/inference/chat/';
 
 export async function POST(req: Request, { params }: Params) {

@@ -267,6 +267,13 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
     }
 
     async function sendChatMessage(content: string) {
+        // [Browser TTS Hack] Unlock speech engine synchronously on user interaction
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window && chatChannel === 'ai') {
+            const unlockUtterance = new SpeechSynthesisUtterance(' ');
+            unlockUtterance.volume = 0; // silent
+            window.speechSynthesis.speak(unlockUtterance);
+        }
+
         if (!content.trim() || chatSending) return
         setChatSending(true)
         setChatInput('')

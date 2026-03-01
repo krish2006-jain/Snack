@@ -34,6 +34,13 @@ export default function CompanionVoicePage() {
 
     // Trigger greeting once the user has tapped to start
     const handleStart = () => {
+        // [Browser TTS Hack] Sync unlock the speech synthesizer inside the native click event
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+            const unlockUtterance = new SpeechSynthesisUtterance(' ');
+            unlockUtterance.volume = 0; // silent
+            window.speechSynthesis.speak(unlockUtterance);
+        }
+
         setHasStarted(true);
 
         const userName = user?.name?.split(' ')[0] || 'friend';
@@ -137,16 +144,9 @@ export default function CompanionVoicePage() {
                 )}
 
                 {/* Avatar taking up the main screen */}
-                <div className={styles.avatarContainer}>
-                    {!hasStarted ? (
-                        <div className={styles.startOverlay} onClick={handleStart}>
-                            <div className={styles.startPulse}>
-                                <Heart size={48} color="white" fill="rgba(255,255,255,0.9)" />
-                            </div>
-                            <h2 className={styles.startTitle}>Tap to wake Saathi</h2>
-                            <p className={styles.startDesc}>Tap anywhere to start talking with your AI companion</p>
-                        </div>
-                    ) : (
+                <div className={styles.avatarContainer} style={{ position: 'relative' }}>
+                    {/* Always mount SaathiAvatar behind the overlay so Strict Mode unmount/remount doesn't crash the TTS queue mid-gesture */}
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, visibility: hasStarted ? 'visible' : 'hidden' }}>
                         <SaathiAvatar
                             isTyping={isTyping}
                             latestResponse={latestAiResponse}
@@ -158,6 +158,16 @@ export default function CompanionVoicePage() {
                             fullscreen={true}
                             onSpeakingChange={handleSpeakingChange}
                         />
+                    </div>
+
+                    {!hasStarted && (
+                        <div className={styles.startOverlay} onClick={handleStart} style={{ zIndex: 10 }}>
+                            <div className={styles.startPulse}>
+                                <Heart size={48} color="white" fill="rgba(255,255,255,0.9)" />
+                            </div>
+                            <h2 className={styles.startTitle}>Tap to wake Saathi</h2>
+                            <p className={styles.startDesc}>Tap anywhere to start talking with your AI companion</p>
+                        </div>
                     )}
                 </div>
 

@@ -119,9 +119,6 @@ export default function SaathiAvatar({
         }
     }, [isTyping]);
 
-    // Tracking last spoken text to prevent double speaking
-    const lastSpokenTextRef = useRef<string>('');
-
     // Helper: pick the best available voice
     const pickVoice = useCallback(() => {
         const voices = window.speechSynthesis.getVoices();
@@ -134,30 +131,20 @@ export default function SaathiAvatar({
         );
     }, []);
 
-    // Chrome keepalive ref - Chrome pauses long utterances after ~15s
-    const keepAliveRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
     // ALWAYS speak + animate when a new AI response arrives
     useEffect(() => {
         if (!latestResponse) return;
-        if (latestResponse === lastSpokenTextRef.current) return;
-        lastSpokenTextRef.current = latestResponse;
         if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
 
-        // Cancel any previous speech
-        if (window.speechSynthesis.speaking || window.speechSynthesis.pending) {
-            console.log('[SaathiAvatar] Cancelling stuck/previous speech queue');
-            window.speechSynthesis.cancel();
-        }
+        let isActive = true;
+        let startTimeout: ReturnType<typeof setTimeout> | null = null;
         if (intervalRef.current) clearInterval(intervalRef.current);
-        if (keepAliveRef.current) clearInterval(keepAliveRef.current);
 
         const estimatedDuration = Math.max(2, latestResponse.split(/\s+/).length * 0.35);
         const lipsync = generateLipSync(latestResponse, estimatedDuration);
 
         // 🎭 Detect emotion from AI response → drives expression AND body animation
         const { expression, animation } = detectEmotion(latestResponse);
-        console.log(`[SaathiAvatar] AI emotion detected: expression=${expression}, animation=${animation}`);
 
         const audioObj = { currentTime: 0, duration: estimatedDuration };
 
@@ -168,12 +155,15 @@ export default function SaathiAvatar({
             animation,
             audio: audioObj,
         };
+
         setMessage(avatarMsg);
         setIsSpeaking(true);
         onSpeakingChange?.(true);
 
-        // Function to actually speak - called after a delay (Chrome bug workaround)
         const doSpeak = () => {
+            if (!isActive) return;
+
+            // Give the browser engine a tiny breather after cancel() to avoid the Chrome freeze bug
             const utterance = new SpeechSynthesisUtterance(latestResponse);
             utterance.lang = 'en-IN';
             utterance.rate = 0.9;
@@ -186,15 +176,15 @@ export default function SaathiAvatar({
             utteranceRef.current = utterance;
 
             utterance.onstart = () => {
-                console.log('[SaathiAvatar] TTS onstart fired');
+                if (!isActive) return;
+                window.speechSynthesis.resume(); // Safari/Chrome lock workaround
             };
 
             utterance.onend = () => {
-                console.log('[SaathiAvatar] TTS onend fired');
+                if (!isActive) return;
                 setIsSpeaking(false);
                 onSpeakingChange?.(false);
                 if (intervalRef.current) clearInterval(intervalRef.current);
-                if (keepAliveRef.current) clearInterval(keepAliveRef.current);
                 setMessage({
                     text: '',
                     lipsync: { mouthCues: [] },
@@ -202,9 +192,10 @@ export default function SaathiAvatar({
                     animation: 'Idle',
                     audio: { currentTime: 0, duration: 0 },
                 });
-                // Auto-listen after speaking finishes (natural conversation flow)
+                // Auto-listen after speaking finishes
                 if (onVoiceInput) {
-                    setTimeout(() => {
+                    startTimeout = setTimeout(() => {
+                        if (!isActive) return;
                         const rec = createRecognitionFn();
                         if (rec) {
                             recognitionRef.current = rec;
@@ -212,7 +203,6 @@ export default function SaathiAvatar({
                             rec.onresult = (e: { results: { [k: number]: { [k: number]: { transcript: string } } } }) => {
                                 const text = e.results[0][0].transcript;
                                 if (text) {
-                                    // Use the stable ref so this is never a stale closure
                                     reactToUserEmotionRef.current(text);
                                     onVoiceInput(text);
                                 }
@@ -228,38 +218,28 @@ export default function SaathiAvatar({
             };
 
             utterance.onerror = (e) => {
-                console.warn('[SaathiAvatar] TTS onerror fired. Error details:', e);
+                if (!isActive) return;
                 setIsSpeaking(false);
                 onSpeakingChange?.(false);
                 if (intervalRef.current) clearInterval(intervalRef.current);
-                if (keepAliveRef.current) clearInterval(keepAliveRef.current);
             };
 
-            console.log('[SaathiAvatar] Calling speechSynthesis.speak() with voice:', voice?.name || 'default');
             window.speechSynthesis.speak(utterance);
-
-            // Chrome keepalive
-            keepAliveRef.current = setInterval(() => {
-                if (window.speechSynthesis.speaking) {
-                    window.speechSynthesis.pause();
-                    window.speechSynthesis.resume();
-                }
-            }, 5000);
         };
 
         const voices = window.speechSynthesis.getVoices();
         if (voices.length === 0) {
             const onVoicesReady = () => {
                 window.speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
-                setTimeout(doSpeak, 150);
+                if (isActive) startTimeout = setTimeout(doSpeak, 150);
             };
             window.speechSynthesis.addEventListener('voiceschanged', onVoicesReady);
-            setTimeout(() => {
+            startTimeout = setTimeout(() => {
                 window.speechSynthesis.removeEventListener('voiceschanged', onVoicesReady);
-                doSpeak();
+                if (isActive) doSpeak();
             }, 500);
         } else {
-            setTimeout(doSpeak, 150);
+            startTimeout = setTimeout(doSpeak, 150);
         }
 
         // Drive the simulated audio timer for lip-sync
@@ -271,10 +251,9 @@ export default function SaathiAvatar({
         }, 100);
 
         return () => {
-            console.log('[SaathiAvatar] Cleanup: cancelling TTS');
-            if (window.speechSynthesis.speaking) window.speechSynthesis.cancel();
+            isActive = false;
+            if (startTimeout) clearTimeout(startTimeout);
             if (intervalRef.current) clearInterval(intervalRef.current);
-            if (keepAliveRef.current) clearInterval(keepAliveRef.current);
             setIsSpeaking(false);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps

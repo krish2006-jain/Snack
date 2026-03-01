@@ -4,8 +4,8 @@ import { getNextFallback } from '@/lib/companion-fallbacks';
 import { getSessionUser } from '@/lib/session';
 import { mockPeople, mockPatient } from '@/lib/mock-data/patient';
 
-const LYZR_AGENT_ID = '69a3425868ac87eb486672ac';
-const LYZR_API_KEY = 'sk-default-Eo8gWWPsUcfUtXwqinR4sPSPqb1vCIk5';
+const LYZR_AGENT_ID = '69a3d18272ae16298991c2ed';
+const LYZR_API_KEY = 'sk-default-LOAJucbt33x48yhM6raYUTCbektTHAyu';
 const LYZR_ENDPOINT = 'https://agent-prod.studio.lyzr.ai/v3/inference/chat/';
 
 /**
