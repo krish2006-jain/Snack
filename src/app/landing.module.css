@@ -291,7 +291,7 @@
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.miniStatRight {}
+/* .miniStatRight intentionally empty */
 
 .miniStatIcon {
     color: var(--color-primary);
@@ -578,6 +578,167 @@
     line-height: 1.6;
 }
 
+/* ── RESEARCH SECTION ── */
+.researchSection {
+    position: relative;
+    z-index: 1;
+    padding: var(--space-24) var(--outer-padding) var(--space-16);
+    background: var(--bg-surface-soft);
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.researchHeader {
+    max-width: 640px;
+    margin-bottom: var(--space-16);
+}
+
+.researchLead {
+    font-size: 17px;
+    color: var(--text-body);
+    line-height: 1.65;
+    margin-top: var(--space-4);
+    max-width: 560px;
+}
+
+.researchGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    align-items: start;
+}
+
+/* Base card */
+.researchCard {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.researchCard:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+}
+
+/* Accent variant — subtle tint */
+.researchCardAccent {
+    background: linear-gradient(158deg, #FAFAFE 0%, #F5F3FF 100%);
+    border-color: rgba(124, 58, 237, 0.18);
+}
+
+/* Wide card — spans 2 columns to break symmetry */
+.researchCardWide {
+    grid-column: span 2;
+}
+
+.researchCardTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.researchFeaturePill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(124, 58, 237, 0.08);
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.researchIconWrap {
+    color: var(--color-primary-light);
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.researchQuote {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+    font-style: italic;
+    border-left: 3px solid var(--color-primary-light);
+    padding-left: var(--space-5);
+    margin: 0;
+}
+
+.researchSource {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.researchPaperMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.researchPaperTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-heading);
+    line-height: 1.3;
+}
+
+.researchJournal {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.researchLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    transition: all 150ms ease;
+    flex-shrink: 0;
+    text-decoration: none;
+}
+
+.researchLink:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: rgba(124, 58, 237, 0.06);
+}
+
+/* Footer disclaimer row */
+.researchFooterRow {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-10);
+}
+
+.researchFooterPill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 13px;
+    color: var(--text-muted);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    padding: 8px 20px;
+}
+
 /* ── FINAL CTA ── */
 .ctaSection {
     position: relative;
@@ -724,6 +885,10 @@
         flex-direction: row;
         gap: var(--space-8);
     }
+
+    .researchGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -763,5 +928,18 @@
     .trustRow {
         flex-direction: column;
         gap: var(--space-3);
+    }
+
+    .researchGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .researchCardWide {
+        grid-column: span 1;
+    }
+
+    .researchSection {
+        padding-left: var(--space-6);
+        padding-right: var(--space-6);
     }
 }

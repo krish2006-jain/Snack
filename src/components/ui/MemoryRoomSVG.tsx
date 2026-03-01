@@ -1,4 +1,4 @@
-export default function MemoryRoomSVG({ className }: { className?: string }) {
+﻿export default function MemoryRoomSVG({ className }: { className?: string }) {
     return (
         <svg
             className={className}
@@ -46,7 +46,7 @@ export default function MemoryRoomSVG({ className }: { className?: string }) {
 
             {/* Label */}
             <text x="40" y="38" fill="#0F172A" style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, fontWeight: 700 }}>
-                Memory Room — Living Room
+                Memory Room - Living Room
             </text>
             <text x="40" y="60" fill="#475569" style={{ fontFamily: 'Inter, sans-serif', fontSize: 12 }}>
                 Visual map to aid recall: key furniture and objects.

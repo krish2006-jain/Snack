@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
@@ -77,7 +77,7 @@ export default function HealthRecordsPage() {
                     type: r.record_type || 'note',
                     date: r.record_date || new Date(r.uploaded_at * 1000).toISOString().split('T')[0],
                     doctorName: r.doctor_name || 'Unknown',
-                    facility: r.hospital || '—',
+                    facility: r.hospital || '-',
                 }));
                 setRecords(mapped);
             })
@@ -202,7 +202,7 @@ export default function HealthRecordsPage() {
                                         <h3 className={styles.medName}>{m.name}</h3>
                                         <span className={styles.medDosage}>
                                             {m.dosage} • {m.frequency || m.time_of_day}
-                                            {m.instructions && ` — ${m.instructions}`}
+                                            {m.instructions && ` - ${m.instructions}`}
                                         </span>
                                     </div>
                                 </div>

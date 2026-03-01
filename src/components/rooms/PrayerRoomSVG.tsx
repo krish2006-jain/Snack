@@ -1,4 +1,4 @@
-export default function PrayerRoomSVG({ className }: { className?: string }) {
+﻿export default function PrayerRoomSVG({ className }: { className?: string }) {
     return (
         <svg
             className={className}
@@ -107,7 +107,7 @@ export default function PrayerRoomSVG({ className }: { className?: string }) {
                 </g>
             </g>
 
-            {/* === DIYA (oil lamp) — left of mandir === */}
+            {/* === DIYA (oil lamp) - left of mandir === */}
             <g data-object-id="diya" transform="translate(300, 370)">
                 {/* Diya base */}
                 <ellipse cx="0" cy="0" rx="16" ry="6" fill="#D4A855" stroke="#B8902A" strokeWidth="1.5" />
@@ -122,7 +122,7 @@ export default function PrayerRoomSVG({ className }: { className?: string }) {
                 <circle cx="0" cy="-18" r="25" fill="#F59E0B" opacity="0.06" />
             </g>
 
-            {/* === AGARBATTI (incense stand) — right of mandir === */}
+            {/* === AGARBATTI (incense stand) - right of mandir === */}
             <g data-object-id="incense" transform="translate(700, 350)">
                 {/* Stand base */}
                 <ellipse cx="0" cy="20" rx="12" ry="5" fill="#8B7355" stroke="#6B5335" strokeWidth="1" />

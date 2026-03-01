@@ -111,6 +111,7 @@ export default function PeoplePage() {
                                 className={`${styles.voiceBtn} ${playing ? styles.voiceBtnPlaying : ''}`}
                                 onClick={handleVoiceNote}
                                 aria-label={playing ? 'Pause voice note' : `Play voice note from ${person.name.split(' ')[0]}`}
+                                data-tooltip={playing ? 'Pause the voice message' : `Play a personal voice message from ${person.name.split(' ')[0]}`}
                             >
                                 {playing ? (
                                     <Volume2 size={26} />
@@ -144,6 +145,7 @@ export default function PeoplePage() {
                                     href={`tel:${person.phone}`}
                                     className={`btn btn--primary btn--patient ${styles.callBtn}`}
                                     aria-label={`Call ${person.name.split(' ')[0]}`}
+                                    data-tooltip={`Call ${person.name.split(' ')[0]} right now`}
                                 >
                                     <Phone size={20} />
                                     Call {person.name.split(' ')[0]}
@@ -174,6 +176,7 @@ export default function PeoplePage() {
                     className={`btn btn--secondary ${styles.navBtn}`}
                     onClick={goPrev}
                     aria-label="Previous person"
+                    data-tooltip="See the previous person in your people wallet"
                 >
                     <ChevronLeft size={24} />
                     Previous
@@ -183,6 +186,7 @@ export default function PeoplePage() {
                     className={`btn btn--primary ${styles.navBtn}`}
                     onClick={goNext}
                     aria-label="Next person"
+                    data-tooltip="See the next person in your people wallet"
                 >
                     Next
                     <ChevronRight size={24} />

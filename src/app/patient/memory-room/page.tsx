@@ -1,5 +1,6 @@
-'use client';
+﻿'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { UtensilsCrossed, BedDouble, Sofa, Flower2, FlameKindling, Home } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
@@ -78,6 +79,37 @@ const rooms: RoomCard[] = [
 export default function MemoryRoomPage() {
     const { user } = useSession();
     const userName = user?.name?.split(' ')[0] || 'friend';
+    const [customRooms, setCustomRooms] = useState<any[]>([]);
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem('saathi_custom_rooms');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                setCustomRooms(parsed);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }, []);
+
+    const allRooms = [
+        ...rooms,
+        ...customRooms.map((cr: any) => ({
+            id: cr.id,
+            slug: cr.slug,
+            name: cr.name,
+            subtitle: cr.description,
+            memoryCount: cr.hotspots?.length || 0,
+            recallAvg: 0,
+            icon: cr.bgImage ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={cr.bgImage} alt="" style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} />
+            ) : <Home size={28} />,
+            featured: false,
+            hue: 'hsl(210,40%,97%)',
+        }))
+    ];
 
     return (
         <div className={styles.page}>
@@ -93,13 +125,13 @@ export default function MemoryRoomPage() {
             </div>
 
             <div className={styles.roomGrid}>
-                {rooms.map((room) => (
+                {allRooms.map((room) => (
                     <Link
                         key={room.id}
                         href={`/patient/memory-room/${room.slug}`}
                         className={`${styles.roomCard} ${room.featured ? styles.roomCardFeatured : ''}`}
                         style={{ '--room-hue': room.hue } as React.CSSProperties}
-                        aria-label={`Explore ${room.name} — ${room.memoryCount} memories`}
+                        aria-label={`Explore ${room.name} - ${room.memoryCount} memories`}
                     >
                         <div className={styles.cardInner}>
                             <div className={styles.roomIcon}>{room.icon}</div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Mic, MicOff, Square, X, ChevronLeft, ChevronRight, BookOpen, Clock } from 'lucide-react';
@@ -86,7 +86,7 @@ export default function VoiceJournalPage() {
 
         const text = liveText.trim();
         if (text) {
-            // Simple entity extraction — match against known names
+            // Simple entity extraction - match against known names
             const knownEntities = ['Priya', 'Smita', 'Anita', 'Aarav', 'Riya', 'Mohit', 'Kamla', 'Varanasi', 'cricket', 'chai', 'garden'];
             const entities = knownEntities.filter(e => text.toLowerCase().includes(e.toLowerCase()));
 

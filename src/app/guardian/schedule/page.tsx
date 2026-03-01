@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
@@ -57,7 +57,7 @@ export default function SchedulePage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Schedule Editor" subtitle="Weekly care plan — Monday, 28 Feb 2026" />
+            <GuardianHeader title="Schedule Editor" subtitle="Weekly care plan - Monday, 28 Feb 2026" />
             <main className={styles.content}>
                 {/* Week overview bar */}
                 <section className={styles.weekBar} aria-label="Week completion overview">
@@ -67,6 +67,7 @@ export default function SchedulePage() {
                             className={`${styles.dayTab} ${activeDay === day ? styles.dayTabActive : ''}`}
                             onClick={() => setActiveDay(day)}
                             aria-pressed={activeDay === day}
+                            data-tooltip={`${day}: ${completed}/${total} tasks completed`}
                         >
                             <span className={styles.dayName}>{day}</span>
                             <span className={styles.dayCount}>{completed}/{total}</span>
@@ -88,7 +89,7 @@ export default function SchedulePage() {
                                 <h2 className={styles.sectionTitle}>{activeDay}&#39;s Tasks</h2>
                                 <p className={styles.sectionSub}>{completedCount} of {dayTasks.length} completed</p>
                             </div>
-                            <button className={styles.addBtn} onClick={() => { setForm({ ...EMPTY_TASK, day: activeDay }); setShowForm(true); }}>
+                            <button className={styles.addBtn} onClick={() => { setForm({ ...EMPTY_TASK, day: activeDay }); setShowForm(true); }} data-tooltip="Add a new care task to this day's schedule">
                                 <Plus size={16} aria-hidden="true" /> Add Task
                             </button>
                         </div>
@@ -141,6 +142,7 @@ export default function SchedulePage() {
                                             className={styles.checkBtn}
                                             onClick={() => toggleComplete(task.id)}
                                             aria-label={task.completed ? `Mark ${task.title} incomplete` : `Mark ${task.title} complete`}
+                                            data-tooltip={task.completed ? 'Mark as not yet done' : 'Mark this task as completed'}
                                         >
                                             {task.completed
                                                 ? <CheckCircle2 size={22} color="var(--color-success)" />
@@ -160,6 +162,7 @@ export default function SchedulePage() {
                                             className={styles.deleteBtn}
                                             onClick={() => deleteTask(task.id)}
                                             aria-label={`Delete ${task.title}`}
+                                            data-tooltip="Permanently remove this task from the schedule"
                                         >
                                             <Trash2 size={15} aria-hidden="true" />
                                         </button>
@@ -173,7 +176,7 @@ export default function SchedulePage() {
                     <aside className={styles.statsPanel}>
                         <h3 className={styles.statsTitle}>Week Statistics</h3>
                         {weekStats.map(({ day, total, completed }) => (
-                            <div key={day} className={styles.statRow}>
+                            <div key={day} className={styles.statRow} data-tooltip={`${day}: ${completed} of ${total} tasks completed`}>
                                 <span className={styles.statDay}>{day}</span>
                                 <div className={styles.statBarWrap}>
                                     <div className={styles.statBar}>

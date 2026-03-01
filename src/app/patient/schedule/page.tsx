@@ -246,6 +246,7 @@ export default function SchedulePage() {
                                         ? { background: 'var(--color-primary)', borderColor: 'var(--color-primary)', color: '#fff' }
                                         : undefined}
                                 onClick={() => setFilter(cat)}
+                                data-tooltip={cat === 'All' ? 'Show all tasks for today' : `Filter to show only ${cfg?.label} tasks`}
                             >
                                 {cfg && <span className={styles.filterTabIcon}>{cfg.emoji}</span>}
                                 {cfg?.label ?? 'All'}
@@ -346,6 +347,7 @@ function TaskCard({ task, cfg, onDone }: {
                         style={{ background: cfg.accent }}
                         onClick={() => onDone(task.id)}
                         aria-label={`Mark ${task.title} as done`}
+                        data-tooltip="Tap to mark this task as completed"
                     >
                         <Check size={16} strokeWidth={2.5} />
                         Done

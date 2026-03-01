@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useCallback } from 'react';
 import { Heart, ArrowLeft } from 'lucide-react';
@@ -35,13 +35,6 @@ export default function CompanionVoicePage() {
     // Trigger greeting once the user has tapped to start
     const handleStart = () => {
         setHasStarted(true);
-
-        // Safari/Chrome autoplay unlock: must speak in direct response to user click
-        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-            const unlockUtterance = new SpeechSynthesisUtterance('');
-            unlockUtterance.volume = 0; // Silent unlock
-            window.speechSynthesis.speak(unlockUtterance);
-        }
 
         const userName = user?.name?.split(' ')[0] || 'friend';
         const greeting = `Namaste ${userName}! I'm Saathi, your memory companion. I know all about your family and the people who love you. How are you feeling today?`;
@@ -91,7 +84,7 @@ export default function CompanionVoicePage() {
 
             // If the API flagged an alert (emotional distress detected), log it
             if (data.alert) {
-                console.log('[Companion] Alert triggered — emotional distress detected in conversation');
+                console.log('[Companion] Alert triggered - emotional distress detected in conversation');
             }
         } catch (err) {
             console.warn('[Companion] API call failed, using warm fallback:', err);

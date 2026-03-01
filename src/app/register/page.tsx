@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -232,7 +232,7 @@ export default function RegisterPage() {
                             <header className={styles.cardHeader}>
                                 <h1 className={styles.cardTitle}>Create your account</h1>
                                 <p className={styles.cardSubtitle}>
-                                    You&apos;re the guardian — the person managing your loved one&apos;s care.
+                                    You&apos;re the guardian - the person managing your loved one&apos;s care.
                                 </p>
                             </header>
 

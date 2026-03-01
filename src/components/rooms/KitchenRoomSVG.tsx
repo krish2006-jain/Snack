@@ -1,4 +1,4 @@
-export default function KitchenRoomSVG({ className }: { className?: string }) {
+﻿export default function KitchenRoomSVG({ className }: { className?: string }) {
     return (
         <svg
             className={className}
@@ -48,9 +48,9 @@ export default function KitchenRoomSVG({ className }: { className?: string }) {
 
             {/* === WALL CLOCK === */}
             <g data-object-id="clock">
-                <circle cx="170" cy="170" r="0" fill="none" /> {/* Positioned in window area — actual clock is above stove */}
+                <circle cx="170" cy="170" r="0" fill="none" /> {/* Positioned in window area - actual clock is above stove */}
             </g>
-            {/* Actual wall clock position — above counter center */}
+            {/* Actual wall clock position - above counter center */}
             <g data-object-id="wall-clock" transform="translate(460, 80)">
                 <circle cx="0" cy="0" r="50" fill="#FAFAF8" stroke="#A28B6D" strokeWidth="4" />
                 <circle cx="0" cy="0" r="44" fill="white" stroke="#E8E0D0" strokeWidth="1" />
@@ -182,7 +182,7 @@ export default function KitchenRoomSVG({ className }: { className?: string }) {
                 <rect x="18" y="55" width="14" height="22" rx="2" fill="none" stroke="#8B7355" strokeWidth="2" />
             </g>
 
-            {/* === WARM LIGHT EFFECT — sunlight from window === */}
+            {/* === WARM LIGHT EFFECT - sunlight from window === */}
             <ellipse cx="200" cy="350" rx="200" ry="120" fill="rgba(255, 240, 200, 0.12)" />
         </svg>
     );

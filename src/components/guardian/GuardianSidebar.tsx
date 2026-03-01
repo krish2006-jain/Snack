@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -36,6 +36,7 @@ const navGroups: NavGroup[] = [
         items: [
             { href: '/guardian/schedule', label: 'Schedule', icon: <Calendar size={18} /> },
             { href: '/guardian/memories', label: 'Memories', icon: <Brain size={18} /> },
+            { href: '/guardian/memory-room', label: 'Memory Room', icon: <Home size={18} /> },
             { href: '/guardian/people', label: 'People Wallet', icon: <Users size={18} /> },
             { href: '/guardian/contributions', label: 'Contributions', icon: <Heart size={18} />, badge: 1 },
         ],
@@ -61,7 +62,7 @@ const navGroups: NavGroup[] = [
 export default function GuardianSidebar() {
     const pathname = usePathname();
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
     const { user, logout } = useSession();
 
     const guardianName = user?.name || 'Guardian';
@@ -88,15 +89,7 @@ export default function GuardianSidebar() {
             role="navigation"
             aria-label="Guardian navigation"
         >
-            {/* Collapse toggle button */}
-            <button
-                className={styles.collapseBtn}
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-                {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-            </button>
+
 
             <div className={styles.logoArea}>
                 <div className={styles.logoIcon}>
@@ -127,7 +120,7 @@ export default function GuardianSidebar() {
                             className={styles.navGroup}
                             style={{ animationDelay: `${groupIdx * 80}ms` }}
                         >
-                            {/* Group header — Overview has no toggle */}
+                            {/* Group header - Overview has no toggle */}
                             {group.label !== 'Overview' ? (
                                 <button
                                     className={`${styles.groupHeader} ${groupActive ? styles.groupHeaderActive : ''}`}
@@ -142,7 +135,7 @@ export default function GuardianSidebar() {
                                 </button>
                             ) : null}
 
-                            {/* Nav items — always show Overview, toggle others */}
+                            {/* Nav items - always show Overview, toggle others */}
                             <ul
                                 className={`${styles.navList} ${group.label !== 'Overview' && !isOpen ? styles.navListCollapsed : ''
                                     }`}

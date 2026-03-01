@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { CheckCircle, HelpCircle, ChevronLeft, ChevronRight, Lightbulb } from 'lucide-react';
@@ -128,11 +128,11 @@ export default function MemoriesPage() {
             {/* FLASHCARD */}
             {card && (
                 <article className={styles.flashcard} aria-label={`Memory card: ${card.question}`}>
-                    {/* Photo placeholder — colorful illustrated placeholder */}
+                    {/* Photo placeholder - colorful illustrated placeholder */}
                     <div
                         className={styles.cardPhoto}
                         style={{
-                            background:
+                            background: card.photo ? 'var(--bg-surface)' :
                                 card.category === 'family'
                                     ? 'linear-gradient(135deg, #F0EBE3 0%, #E8E0D4 100%)'
                                     : card.category === 'places'
@@ -143,9 +143,13 @@ export default function MemoriesPage() {
                         }}
                         aria-hidden="true"
                     >
-                        <span className={styles.cardEmoji}>
-                            {categoryEmoji[card.category] ?? '🧠'}
-                        </span>
+                        {card.photo ? (
+                            <img src={card.photo} alt={card.question} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                            <span className={styles.cardEmoji}>
+                                {categoryEmoji[card.category] ?? '🧠'}
+                            </span>
+                        )}
                     </div>
 
                     {/* Question */}

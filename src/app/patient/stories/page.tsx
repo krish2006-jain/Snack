@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { Mic, Square, X, ChevronLeft, ChevronRight, Users, Clock, Pen } from 'lucide-react';
@@ -15,7 +15,7 @@ const sentimentLabel: Record<string, string> = {
     sad: 'Thoughtful',
 };
 
-// Colored accent per sentiment — no emojis, just clean colored bars
+// Colored accent per sentiment - no emojis, just clean colored bars
 const sentimentColor: Record<string, string> = {
     happy: 'var(--color-success)',
     nostalgic: 'var(--color-warning)',
@@ -406,7 +406,7 @@ export default function StoriesPage() {
                     <div className={styles.viewerBody} onClick={e => e.stopPropagation()}>
                         <h2 className={styles.viewerTitle}>{viewingFamily.title}</h2>
                         <p className={styles.viewerText}>&ldquo;{viewingFamily.content}&rdquo;</p>
-                        <span className={styles.viewerFrom}>— {viewingFamily.contributorName.split(' ')[0]}</span>
+                        <span className={styles.viewerFrom}>- {viewingFamily.contributorName.split(' ')[0]}</span>
                     </div>
                     <div className={styles.viewerNav} onClick={e => e.stopPropagation()}>
                         <button className={styles.navBtn} disabled={viewingFamilyIdx <= 0} onClick={() => setViewingFamilyIdx(i => Math.max(0, (i ?? 0) - 1))}>

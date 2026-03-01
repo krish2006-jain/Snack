@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import MemoryRoomSVG from '@/components/ui/MemoryRoomSVG';
@@ -69,137 +69,291 @@ export default function MemoryRoomPage() {
         showToast('AI descriptions refreshed for this room');
     };
 
+    const [customRooms, setCustomRooms] = useState<any[]>([]);
+    const [mode, setMode] = useState<'list' | 'create_custom' | 'edit_custom'>('list');
+    const [currentCustomRoom, setCurrentCustomRoom] = useState<any>(null);
+    const [roomName, setRoomName] = useState('');
+    const [roomDesc, setRoomDesc] = useState('');
+    const [bgImage, setBgImage] = useState('');
+    const [editingHotspot, setEditingHotspot] = useState<any>(null);
+
+    // Using simple ref access would require useRef, we'll fetch coordinates by simple event properties
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (event.target?.result) setBgImage(event.target.result as string);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem('saathi_custom_rooms');
+            if (raw) setCustomRooms(JSON.parse(raw));
+        } catch (e) { }
+    }, []);
+
+    const saveCustomRooms = (newRooms: any[]) => {
+        setCustomRooms(newRooms);
+        localStorage.setItem('saathi_custom_rooms', JSON.stringify(newRooms));
+    };
+
+    const saveCustomRoom = () => {
+        if (!roomName || !bgImage) return showToast('Name and image required');
+        let newRoom: any;
+        if (mode === 'create_custom') {
+            newRoom = {
+                id: 'cr-' + Date.now(),
+                slug: roomName.toLowerCase().replace(/\s+/g, '-'),
+                name: roomName,
+                description: roomDesc,
+                bgImage,
+                hotspots: []
+            };
+            saveCustomRooms([...customRooms, newRoom]);
+        } else if (mode === 'edit_custom' && currentCustomRoom) {
+            newRoom = { ...currentCustomRoom, name: roomName, description: roomDesc, bgImage };
+            saveCustomRooms(customRooms.map(r => r.id === newRoom.id ? newRoom : r));
+        }
+        setMode('list');
+        setCurrentCustomRoom(null);
+        showToast('Familiar space saved');
+    };
+
+    const startEditCustom = (r: any) => {
+        setCurrentCustomRoom(r);
+        setRoomName(r.name);
+        setRoomDesc(r.description);
+        setBgImage(r.bgImage);
+        setMode('edit_custom');
+    };
+
+    const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+        if (mode !== 'edit_custom' || !currentCustomRoom) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+
+        setEditingHotspot({
+            id: 'hs-' + Date.now(),
+            label: 'New Object',
+            x: xPercent, y: yPercent,
+            flashcard: { title: '', subtitle: '', detail: '', tip: '' }
+        });
+    };
+
+    const saveHotspot = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingHotspot || !currentCustomRoom) return;
+        const updatedRoom = {
+            ...currentCustomRoom,
+            hotspots: [...currentCustomRoom.hotspots.filter((h: any) => h.id !== editingHotspot.id), editingHotspot]
+        };
+        saveCustomRooms(customRooms.map(r => r.id === updatedRoom.id ? updatedRoom : r));
+        setCurrentCustomRoom(updatedRoom);
+        setEditingHotspot(null);
+        showToast('Memory object saved');
+    };
+
     return (
         <div className={styles.page}>
             <GuardianHeader title="Memory Room Manager" subtitle={`${patientFirstName}'s home mapped for cognitive recall training`} />
-            <div className={styles.roomMapWrap}>
-                <MemoryRoomSVG className={styles.roomMap} />
-            </div>
-            <main className={styles.content}>
-                {/* Room overview */}
-                <div className={styles.roomOverview}>
-                    {rooms.map(room => (
-                        <div key={room.id} className={`${styles.roomStat} ${expandedRoom === room.id ? styles.roomStatActive : ''}`}
-                            onClick={() => setExpandedRoom(prev => prev === room.id ? '' : room.id)}>
-                            <span className={styles.roomName}>{room.name}</span>
-                            <span className={styles.roomAvg} style={{
-                                color: room.recallAvg >= 80 ? 'var(--color-success)' : room.recallAvg >= 65 ? 'var(--color-warning)' : 'var(--color-danger)'
-                            }}>{room.recallAvg}% recall</span>
-                            <span className={styles.roomObjCount}>{room.objectCount} objects</span>
+
+            {mode === 'list' && (
+                <>
+                    <div className={styles.roomMapWrap}>
+                        <MemoryRoomSVG className={styles.roomMap} />
+                    </div>
+                    <main className={styles.content}>
+                        {/* Custom Rooms Section */}
+                        <div className={styles.editorHeader} style={{ justifyContent: 'space-between', marginBottom: 'var(--space-4)' }}>
+                            <h2 className={styles.editorTitle}>Custom Familiar Spaces</h2>
+                            <button className={styles.addObjBtn} onClick={() => {
+                                setRoomName(''); setRoomDesc(''); setBgImage(''); setMode('create_custom'); setCurrentCustomRoom(null);
+                            }}>
+                                <Plus size={16} /> Add Space
+                            </button>
                         </div>
-                    ))}
-                </div>
 
-                {/* Room sections */}
-                {rooms.map(room => (
-                    <section key={room.id} className={styles.roomSection}>
-                        <button
-                            className={styles.roomHeader}
-                            onClick={() => setExpandedRoom(prev => prev === room.id ? '' : room.id)}
-                            aria-expanded={expandedRoom === room.id}
-                        >
-                            <div className={styles.roomHeaderLeft}>
-                                <span className={styles.roomTitle}>{room.name}</span>
-                                <span className={styles.roomDesc}>{room.description}</span>
-                            </div>
-                            <div className={styles.roomHeaderRight}>
-                                <button
-                                    className={styles.aiBtn}
-                                    onClick={e => { e.stopPropagation(); handleAiGenerate(room.id); }}
-                                    disabled={aiLoading === room.id}
-                                    aria-label="AI generate descriptions"
-                                >
-                                    <Sparkles size={13} aria-hidden="true" />
-                                    {aiLoading === room.id ? 'Generating…' : 'AI Enhance'}
-                                </button>
-                                <button
-                                    className={styles.addObjBtn}
-                                    onClick={e => { e.stopPropagation(); setShowAddObj(prev => prev === room.id ? null : room.id); }}
-                                    aria-label="Add object"
-                                >
-                                    <Plus size={13} aria-hidden="true" /> Add Object
-                                </button>
-                                <Link
-                                    href={`/patient/memory-room/${room.name.toLowerCase().replace(/ room$/i, '').replace(/\s+/g, '')}`}
-                                    className={styles.viewRoomBtn}
-                                    onClick={e => e.stopPropagation()}
-                                    aria-label={`View ${room.name} as patient`}
-                                >
-                                    <Eye size={13} aria-hidden="true" /> View Patient Room
-                                </Link>
-                                {expandedRoom === room.id ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
-                            </div>
-                        </button>
+                        <div className={styles.customRoomsGrid}>
+                            {/* Demo box / CTA */}
+                            <button
+                                className={styles.addSpaceCard}
+                                onClick={() => {
+                                    setRoomName(''); setRoomDesc(''); setBgImage(''); setMode('create_custom'); setCurrentCustomRoom(null);
+                                }}
+                            >
+                                <div className={styles.addSpaceIcon}>
+                                    <Plus size={24} />
+                                </div>
+                                <div>
+                                    <h3 className={styles.addSpaceText}>Add New Space</h3>
+                                    <p className={styles.addSpaceSubtext}>Upload a photo of a familiar room</p>
+                                </div>
+                            </button>
 
-                        {expandedRoom === room.id && (
-                            <div className={styles.roomBody}>
-                                {/* Add object form */}
-                                {showAddObj === room.id && (
-                                    <div className={styles.addForm}>
-                                        <input className={styles.input} placeholder="Object name (e.g. Reading Glasses)"
-                                            value={newObj.name} onChange={e => setNewObj(p => ({ ...p, name: e.target.value }))} />
-                                        <input className={styles.input} placeholder="Description"
-                                            value={newObj.description} onChange={e => setNewObj(p => ({ ...p, description: e.target.value }))} />
-                                        <input className={styles.input} placeholder="Location in room"
-                                            value={newObj.location} onChange={e => setNewObj(p => ({ ...p, location: e.target.value }))} />
-                                        <div className={styles.addFormActions}>
-                                            <button className={styles.cancelBtn} onClick={() => setShowAddObj(null)}>Cancel</button>
-                                            <button className={styles.saveBtn} onClick={() => addObject(room.id)}>Add Object</button>
+                            {/* Custom Rooms */}
+                            {customRooms.map(r => (
+                                <article key={r.id} className={styles.customRoomCard}>
+                                    <div className={styles.customRoomThumb} onClick={() => startEditCustom(r)}>
+                                        <img src={r.bgImage} alt={r.name} className={styles.customRoomThumbImg} />
+                                    </div>
+                                    <div className={styles.customRoomInfo}>
+                                        <h3 className={styles.customRoomTitle}>{r.name}</h3>
+                                        <p className={styles.customRoomDesc}>{r.description}</p>
+
+                                        <div className={styles.customRoomActions}>
+                                            <button className={styles.viewRoomBtn} onClick={() => startEditCustom(r)}>
+                                                <Pencil size={13} /> Edit
+                                            </button>
+                                            <Link href={`/patient/memory-room/${r.slug}`} className={styles.viewRoomBtn}>
+                                                <Eye size={13} /> View Layout
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+
+                        <hr style={{ margin: '24px 0', border: '1px solid var(--border-subtle)' }} />
+                        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: 16 }}>Pre-mapped Areas</h2>
+
+                        {/* Room sections */}
+                        {rooms.map(room => (
+                            <section key={room.id} className={styles.roomSection}>
+                                <div
+                                    className={styles.roomHeader}
+                                    onClick={() => setExpandedRoom(prev => prev === room.id ? '' : room.id)}
+                                >
+                                    <div className={styles.roomHeaderLeft}>
+                                        <span className={styles.roomTitle}>{room.name}</span>
+                                        <span className={styles.roomDesc}>{room.description}</span>
+                                    </div>
+                                    <div className={styles.roomHeaderRight}>
+                                        <Link href={`/patient/memory-room/${room.name.toLowerCase().replace(/ room$/i, '').replace(/\s+/g, '')}`} className={styles.viewRoomBtn} onClick={e => e.stopPropagation()}>
+                                            <Eye size={13} /> View Patient Room
+                                        </Link>
+                                        {expandedRoom === room.id ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+                                    </div>
+                                </div>
+
+                                {expandedRoom === room.id && (
+                                    <div className={styles.roomBody}>
+                                        <div className={styles.objectGrid}>
+                                            {room.objects.map(obj => (
+                                                <article key={obj.id} className={styles.objectCard}>
+                                                    <div className={styles.objectTop}>
+                                                        <div><span className={styles.objectName}>{obj.name}</span></div>
+                                                    </div>
+                                                    <p className={styles.objectDesc}>{obj.description}</p>
+                                                    <span className={styles.objectLocation}>📍 {obj.location}</span>
+                                                    <RecallBar score={obj.recallScore} />
+                                                </article>
+                                            ))}
                                         </div>
                                     </div>
                                 )}
+                            </section>
+                        ))}
+                    </main>
+                </>
+            )}
 
-                                {/* Object list */}
-                                <div className={styles.objectGrid}>
-                                    {room.objects.map(obj => (
-                                        <article key={obj.id} className={styles.objectCard}>
-                                            <div className={styles.objectTop}>
-                                                <div>
-                                                    <span className={styles.objectName}>{obj.name}</span>
-                                                    <span
-                                                        className={styles.categoryBadge}
-                                                        style={{ background: CATEGORY_COLORS[obj.category] + '18', color: CATEGORY_COLORS[obj.category] }}
-                                                    >
-                                                        {obj.category}
-                                                    </span>
-                                                </div>
-                                                <div className={styles.objectActions}>
-                                                    <button className={styles.iconBtn} onClick={() => setEditingObject(obj.id === editingObject ? null : obj.id)} aria-label={`Edit ${obj.name}`}>
-                                                        <Pencil size={13} />
-                                                    </button>
-                                                    <button className={styles.iconBtnDanger} onClick={() => deleteObject(room.id, obj.id)} aria-label={`Delete ${obj.name}`}>
-                                                        <Trash2 size={13} />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <p className={styles.objectDesc}>{obj.description}</p>
-                                            <span className={styles.objectLocation}>📍 {obj.location}</span>
-                                            <RecallBar score={obj.recallScore} />
-                                        </article>
+            {(mode === 'create_custom' || mode === 'edit_custom') && (
+                <main className={styles.content}>
+                    <div className={styles.editorHeader}>
+                        <button className={styles.viewRoomBtn} onClick={() => setMode('list')}>Cancel</button>
+                        <h2 className={styles.editorTitle}>{mode === 'create_custom' ? 'Create Custom Space' : 'Edit Custom Space'}</h2>
+                        <button className={styles.addObjBtn} onClick={saveCustomRoom}>Save Space</button>
+                    </div>
+
+                    <div className={styles.editorMain}>
+                        <div className={styles.editorLeft}>
+                            <input className={styles.editorInput} placeholder="Space Name (e.g. Garden)" value={roomName} onChange={e => setRoomName(e.target.value)} />
+                            <textarea className={styles.editorInput} style={{ resize: 'vertical' }} rows={3} placeholder="Description..." value={roomDesc} onChange={e => setRoomDesc(e.target.value)} />
+                            <div className={styles.uploadBox}>
+                                <label className={styles.uploadLabel}>Background Image</label>
+                                <input type="file" accept="image/*" onChange={handleImageUpload} />
+                            </div>
+
+                            {bgImage && (
+                                <div className={styles.previewWrap}>
+                                    <p className={styles.previewHint}>
+                                        {mode === 'edit_custom' ? "Click anywhere on the image to add an object" : "Save this space first to add objects"}
+                                    </p>
+                                    <img
+                                        src={bgImage}
+                                        alt="Preview"
+                                        className={mode === 'edit_custom' ? styles.previewImgEdit : styles.previewImgCreate}
+                                        style={{ width: '100%', display: 'block' }}
+                                        onClick={mode === 'edit_custom' ? handleImageClick : undefined}
+                                    />
+                                    {mode === 'edit_custom' && currentCustomRoom?.hotspots?.map((hs: any) => (
+                                        <div key={hs.id} className={styles.hotspotTarget} style={{ left: `${hs.x}%`, top: `${hs.y}%` }} onClick={(e) => { e.stopPropagation(); setEditingHotspot(hs); }}>
+                                            {hs.label}
+                                        </div>
                                     ))}
                                 </div>
+                            )}
+                        </div>
 
-                                {/* Recall heatmap for this room */}
-                                <div className={styles.roomHeatmap}>
-                                    <span className={styles.heatTitle}>Recall Heatmap</span>
-                                    <div className={styles.heatRow}>
-                                        {room.objects.map(obj => {
-                                            const intensity = obj.recallScore / 100;
-                                            const color = obj.recallScore >= 80 ? `rgba(34,197,94,${intensity})` : obj.recallScore >= 60 ? `rgba(245,158,11,${intensity})` : `rgba(239,68,68,${intensity})`;
-                                            return (
-                                                <div key={obj.id} className={styles.heatCell} title={`${obj.name}: ${obj.recallScore}%`}>
-                                                    <div className={styles.heatBlock} style={{ background: color }} aria-hidden="true" />
-                                                    <span className={styles.heatLabel}>{obj.name.split(' ')[0]}</span>
-                                                </div>
-                                            );
-                                        })}
+                        <div className={styles.editorRight}>
+                            {editingHotspot && (
+                                <form onSubmit={saveHotspot} className={styles.hotspotForm}>
+                                    <h3 className={styles.formTitle}>Editing Object</h3>
+                                    <div className={styles.fieldGroup}>
+                                        <div>
+                                            <label className={styles.fieldLabel}>Short Label</label>
+                                            <input required className={styles.input} value={editingHotspot.label} onChange={e => setEditingHotspot({ ...editingHotspot, label: e.target.value })} />
+                                        </div>
+                                        <div>
+                                            <label className={styles.fieldLabel}>Flashcard Title</label>
+                                            <input required className={styles.input} value={editingHotspot.flashcard.title} onChange={e => setEditingHotspot({ ...editingHotspot, flashcard: { ...editingHotspot.flashcard, title: e.target.value } })} />
+                                        </div>
+                                        <div>
+                                            <label className={styles.fieldLabel}>Subtitle</label>
+                                            <input className={styles.input} value={editingHotspot.flashcard.subtitle} onChange={e => setEditingHotspot({ ...editingHotspot, flashcard: { ...editingHotspot.flashcard, subtitle: e.target.value } })} />
+                                        </div>
+                                        <div>
+                                            <label className={styles.fieldLabel}>Story / Detail</label>
+                                            <textarea required rows={4} className={styles.input} style={{ resize: 'vertical' }} value={editingHotspot.flashcard.detail} onChange={e => setEditingHotspot({ ...editingHotspot, flashcard: { ...editingHotspot.flashcard, detail: e.target.value } })} />
+                                        </div>
+                                        <div>
+                                            <label className={styles.fieldLabel}>Recall Tip</label>
+                                            <input className={styles.input} value={editingHotspot.flashcard.tip} onChange={e => setEditingHotspot({ ...editingHotspot, flashcard: { ...editingHotspot.flashcard, tip: e.target.value } })} />
+                                        </div>
+                                        <div className={styles.btnGroup}>
+                                            <button type="button" className={styles.cancelBtn} onClick={() => {
+                                                const updated = { ...currentCustomRoom, hotspots: currentCustomRoom.hotspots.filter((h: any) => h.id !== editingHotspot.id) };
+                                                saveCustomRooms(customRooms.map(r => r.id === updated.id ? updated : r));
+                                                setCurrentCustomRoom(updated);
+                                                setEditingHotspot(null);
+                                            }}>Delete</button>
+                                            <button type="submit" className={styles.addObjBtn}>Save</button>
+                                        </div>
                                     </div>
+                                </form>
+                            )}
+                            {!editingHotspot && mode === 'edit_custom' && currentCustomRoom?.hotspots?.length > 0 && (
+                                <div className={styles.savedObjectsCard}>
+                                    <h3 className={styles.formTitle}>Saved Objects</h3>
+                                    <ul className={styles.savedObjectsList}>
+                                        {currentCustomRoom.hotspots.map((hs: any) => (
+                                            <li key={hs.id} className={styles.savedObjectItem}>
+                                                {hs.label}
+                                                <button className={styles.editObjBtn} onClick={() => setEditingHotspot(hs)}>Edit</button>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
-                            </div>
-                        )}
-                    </section>
-                ))}
-            </main>
+                            )}
+                        </div>
+                    </div>
+                </main>
+            )}
+
             {toast && <div className={styles.toast} role="status" aria-live="polite">{toast}</div>}
         </div>
     );

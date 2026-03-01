@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getNextFallback } from '@/lib/companion-fallbacks';
 import { getSessionUser } from '@/lib/session';
@@ -74,11 +74,11 @@ function buildPatientContext(
         '',
         `[IMPORTANT INSTRUCTIONS]`,
         `- ALWAYS reference the People Wallet data above when the patient asks about family, people, or relationships.`,
-        `- When the patient feels sad, lonely, confused, or low — provide warm emotional support, validate their emotions, and gently reference positive memories involving the people listed above.`,
+        `- When the patient feels sad, lonely, confused, or low - provide warm emotional support, validate their emotions, and gently reference positive memories involving the people listed above.`,
         `- Keep responses warm, simple (2-4 sentences), and reassuring.`,
         `- Never fabricate names, relationships, or memories not listed in the People Wallet.`,
         `- If asked about someone not in the wallet, gently say you don't have that information yet.`,
-        `- You are Saathi, a caring memory companion — not a doctor. Do not diagnose or prescribe.`,
+        `- You are Saathi, a caring memory companion - not a doctor. Do not diagnose or prescribe.`,
         `[END OF CONTEXT]`,
     ];
 
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
         ).all(pid, today) as { title: string; scheduled_time: string; is_completed: number }[];
 
         const scheduleStr = tasks.length > 0
-            ? tasks.map(t => `${t.scheduled_time} — ${t.title} (${t.is_completed ? 'done' : 'pending'})`).join(', ')
+            ? tasks.map(t => `${t.scheduled_time} - ${t.title} (${t.is_completed ? 'done' : 'pending'})`).join(', ')
             : 'Morning Medicine at 8:00, Breakfast at 8:30, Walking at 9:30, Lunch at 12:30, Evening Medicine at 18:00';
 
         // ── Fetch People Wallet (critical for memory/relationship queries) ──

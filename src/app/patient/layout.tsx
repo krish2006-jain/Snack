@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -66,11 +66,11 @@ export default function PatientLayout({
                 })}
             </nav>
 
-            {/* Floating SOS — always visible */}
+            {/* Floating SOS - always visible */}
             <Link
                 href="/patient/sos"
                 className="sos-fab"
-                aria-label="SOS Emergency — tap for help"
+                aria-label="SOS Emergency - tap for help"
                 style={{ display: 'flex' }}
             >
                 <AlertTriangle size={32} strokeWidth={2.5} />

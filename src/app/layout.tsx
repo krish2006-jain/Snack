@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SaathiCare — Alzheimer's Care Platform",
+  title: "SaathiCare - Alzheimer's Care Platform",
   description: "Compassionate, intelligent care for Alzheimer's patients and their families. Supporting Ravi, guided by Priya.",
 };
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -136,9 +136,9 @@ export default function PatternTapGame() {
                 {(state !== 'idle' || level > 0) && state !== 'won' && (
                     <div className={styles.statusBar}>
                         {state === 'showing' && <span className={styles.statusShowing}>👀 Watch the pattern…</span>}
-                        {state === 'input' && <span className={styles.statusInput}>👆 Your turn — tap the pattern</span>}
+                        {state === 'input' && <span className={styles.statusInput}>👆 Your turn - tap the pattern</span>}
                         {state === 'correct' && <span className={styles.statusCorrect}>✓ Correct! Next level…</span>}
-                        {state === 'wrong' && <span className={styles.statusWrong}>Not quite — good effort!</span>}
+                        {state === 'wrong' && <span className={styles.statusWrong}>Not quite - good effort!</span>}
                     </div>
                 )}
 
@@ -163,7 +163,7 @@ export default function PatternTapGame() {
                     </div>
                 )}
 
-                {/* Start — compact */}
+                {/* Start - compact */}
                 {state === 'idle' && level === 0 && (
                     <div className={styles.grid} style={{ opacity: 0.4, pointerEvents: 'none' }} aria-hidden="true">
                         {COLORS.map((col) => (
@@ -181,7 +181,7 @@ export default function PatternTapGame() {
                             ))}
                         </div>
                         <h2 className={styles.wonTitle}>{level > 4 ? `Outstanding, ${userName}! 🎉` : `Well done, ${userName}! 👏`}</h2>
-                        <p className={styles.wonSub}>You reached level {level} — sequence of {sequence.length} colours.</p>
+                        <p className={styles.wonSub}>You reached level {level} - sequence of {sequence.length} colours.</p>
                         <div className={styles.wonActions}>
                             <button className={styles.playAgainBtn} onClick={startGame}>Play Again</button>
                             <button className={styles.backBtn2} onClick={() => router.push('/patient/games')}>Back to Games</button>

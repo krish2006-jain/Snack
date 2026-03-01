@@ -1,4 +1,4 @@
-// ── Caretaker Mock Data ─────────────────────────────────────── //
+﻿// ── Caretaker Mock Data ─────────────────────────────────────── //
 
 export const caretakerProfile = {
     id: 'ct-001',
@@ -32,7 +32,7 @@ export interface CaretakerTask {
 export const todaysTasks: CaretakerTask[] = [
     {
         id: 't-01',
-        title: 'Morning medication — Donepezil 10mg',
+        title: 'Morning medication - Donepezil 10mg',
         time: '08:00',
         category: 'medication',
         status: 'completed',
@@ -49,7 +49,7 @@ export const todaysTasks: CaretakerTask[] = [
     },
     {
         id: 't-03',
-        title: 'Breakfast — idli, sambar, fruit',
+        title: 'Breakfast - idli, sambar, fruit',
         time: '09:15',
         category: 'meal',
         status: 'completed',
@@ -83,7 +83,7 @@ export const todaysTasks: CaretakerTask[] = [
     },
     {
         id: 't-07',
-        title: 'Lunch — dal khichdi, vegetables',
+        title: 'Lunch - dal khichdi, vegetables',
         time: '13:00',
         category: 'meal',
         status: 'completed',
@@ -100,7 +100,7 @@ export const todaysTasks: CaretakerTask[] = [
     },
     {
         id: 't-09',
-        title: 'Evening medication — Memantine 10mg',
+        title: 'Evening medication - Memantine 10mg',
         time: '15:00',
         category: 'medication',
         status: 'pending',
@@ -114,7 +114,7 @@ export const todaysTasks: CaretakerTask[] = [
     },
     {
         id: 't-11',
-        title: 'Evening snack — biscuits & tea',
+        title: 'Evening snack - biscuits & tea',
         time: '16:00',
         category: 'meal',
         status: 'pending',
@@ -167,7 +167,7 @@ export const journalEntries: JournalEntry[] = [
         appetite: 'good',
         sleep: 'excellent',
         incidents: '',
-        notes: 'Best day this week. Ravi sang along to old Hindi songs during the music session. Priya visited for 2 hours — patient was clearly happy. Finished entire lunch.',
+        notes: 'Best day this week. Ravi sang along to old Hindi songs during the music session. Priya visited for 2 hours - patient was clearly happy. Finished entire lunch.',
         caretakerId: 'ct-001',
     },
     {
@@ -207,7 +207,7 @@ export const journalEntries: JournalEntry[] = [
         appetite: 'excellent',
         sleep: 'good',
         incidents: '',
-        notes: 'Very good day. Completed all therapy sessions. Walked 1800 steps. Ate everything at every meal. Told a new joke at dinner — memory fragments from earlier life are appearing more frequently.',
+        notes: 'Very good day. Completed all therapy sessions. Walked 1800 steps. Ate everything at every meal. Told a new joke at dinner - memory fragments from earlier life are appearing more frequently.',
         caretakerId: 'ct-001',
     },
 ];
@@ -318,7 +318,7 @@ export const chatHistory: ChatMessageData[] = [
         senderId: 'ct-001',
         senderName: 'Anita Desai',
         senderRole: 'caretaker',
-        content: 'Good morning, Priya ji. Yes, a little restless around 3 AM but calmed down quickly. This morning he\'s doing well — had breakfast and is now walking in the garden.',
+        content: 'Good morning, Priya ji. Yes, a little restless around 3 AM but calmed down quickly. This morning he\'s doing well - had breakfast and is now walking in the garden.',
         timestamp: '2026-02-28T08:22:00',
         isOwn: true,
         status: 'read',
@@ -338,7 +338,7 @@ export const chatHistory: ChatMessageData[] = [
         senderId: 'ct-001',
         senderName: 'Anita Desai',
         senderRole: 'caretaker',
-        content: 'Yes, he called me "baai" — he remembers me 😊 Donepezil given at 8:07 AM with warm milk as usual. I\'ll update the medication log now.',
+        content: 'Yes, he called me "baai" - he remembers me 😊 Donepezil given at 8:07 AM with warm milk as usual. I\'ll update the medication log now.',
         timestamp: '2026-02-28T08:31:00',
         isOwn: true,
         status: 'read',
@@ -348,7 +348,7 @@ export const chatHistory: ChatMessageData[] = [
         senderId: 'g-001',
         senderName: 'Priya Sharma',
         senderRole: 'guardian',
-        content: 'That\'s wonderful. I\'ll try to visit this evening around 6 PM. Please tell him Meera drew a picture for him — it\'s on the fridge.',
+        content: 'That\'s wonderful. I\'ll try to visit this evening around 6 PM. Please tell him Meera drew a picture for him - it\'s on the fridge.',
         timestamp: '2026-02-28T08:35:00',
         isOwn: false,
         status: 'read',

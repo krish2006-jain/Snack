@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import {
@@ -571,7 +571,7 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
                                 <div className={styles.samFormHeader}>
                                     <h2 className={styles.samFormTitle}>Your Information</h2>
                                     <p className={styles.samFormDesc}>
-                                        Help {patient.name}&apos;s family reach you. All fields are optional —
+                                        Help {patient.name}&apos;s family reach you. All fields are optional -
                                         share only what you&apos;re comfortable with.
                                     </p>
                                 </div>
@@ -882,7 +882,7 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
                             <span className={styles.talkStatusLabel}>{talkStatus}</span>
                         </div>
 
-                        {/* 3D Avatar — fullscreen mode */}
+                        {/* 3D Avatar - fullscreen mode */}
                         <div className={styles.talkAvatarContainer}>
                             <SaathiAvatar
                                 isTyping={talkSending}
@@ -915,7 +915,7 @@ export default function ScanClient({ profile, token, defaultTab }: Props) {
                             <div className={styles.talkIntro}>
                                 <p className={styles.talkIntroText}>
                                     Saathi AI has access to {patient.name}&apos;s medical records.
-                                    Tap the mic and ask anything — allergies, medications, how to help.
+                                    Tap the mic and ask anything - allergies, medications, how to help.
                                 </p>
                             </div>
                         )}

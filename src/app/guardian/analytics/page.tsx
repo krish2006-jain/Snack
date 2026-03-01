@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
@@ -157,7 +157,7 @@ export default function AnalyticsPage() {
                         { label: 'Wandering Incidents', num: wanderingCount, suffix: '', delta: 'Last 30 days', up: wanderingCount === 0 },
                         { label: 'Schedule Completion', num: analytics ? Math.round((analytics.scheduleCompletion.completed / (analytics.scheduleCompletion.total || 1)) * 100) : 0, suffix: '%', delta: `${analytics?.scheduleCompletion.completed ?? 0}/${analytics?.scheduleCompletion.total ?? 0} tasks today`, up: true },
                     ].map((kpi, i) => (
-                        <div key={i} className={styles.kpiCard}>
+                        <div key={i} className={styles.kpiCard} data-tooltip={kpi.label}>
                             <span className={styles.kpiValue}>
                                 <AnimatedNumber value={kpi.num} />{kpi.suffix}
                             </span>
@@ -174,7 +174,7 @@ export default function AnalyticsPage() {
                     <section className={styles.chartCard} style={{ gridColumn: '1 / 3' }}>
                         <div className={styles.chartHeader}>
                             <div>
-                                <h2 className={styles.chartTitle}>Cognitive Score — Trend</h2>
+                                <h2 className={styles.chartTitle}>Cognitive Score - Trend</h2>
                                 <p className={styles.chartSub}>Game and assessment scores plotted over time</p>
                             </div>
                             <span className={`${styles.trendPill} ${trend >= 0 ? styles.trendUp : styles.trendDown}`}>
@@ -264,7 +264,7 @@ export default function AnalyticsPage() {
                     <p className={styles.exportNote}>
                         <Activity size={14} aria-hidden="true" /> Analytics generated from {patientFirstName}&apos;s daily care logs. Last updated: {today}.
                     </p>
-                    <button className={styles.exportBtn}>
+                    <button className={styles.exportBtn} data-tooltip="Download a PDF care report to share with doctors and family">
                         <Download size={16} aria-hidden="true" /> Export PDF Report
                     </button>
                 </div>

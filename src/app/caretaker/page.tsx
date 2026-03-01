@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { AppLayout } from '@/components/ui/AppLayout';
-import { caretakerProfile } from '@/lib/mock-data/caretaker';
+
 import {
     CheckCircle2, Clock, AlertCircle, Pill, BookOpen,
-    Stethoscope, MessageCircle, ChevronRight, TrendingUp,
+    Stethoscope, ChevronRight, TrendingUp,
     Thermometer, Users, Activity,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -13,7 +13,7 @@ import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { useSession } from '@/lib/useSession';
 import { apiFetch } from '@/lib/api';
 import styles from './page.module.css';
-import { todaysTasks, journalEntries, medications as mockMedications } from '@/lib/mock-data/caretaker';
+import { todaysTasks, journalEntries, type JournalEntry, medications as mockMedications } from '@/lib/mock-data/caretaker';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -101,12 +101,14 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
 export default function CaretakerDashboard() {
     const [loaded, setLoaded] = useState(false);
     const { user, isDemo } = useSession();
-    const userName = user?.name?.split(' ')[0] || caretakerProfile.firstName;
+    const userName = user?.name?.split(' ')[0] || 'Caregiver';
     const patientName = user?.patientName || 'Your Patient';
 
     const [apiTasks, setApiTasks] = useState<ScheduleTask[]>([]);
     const [apiMeds, setApiMeds] = useState<Medication[]>([]);
     const [medLogs, setMedLogs] = useState<MedLog[]>([]);
+    // null = loading, undefined = no entry exists, JournalEntry = loaded
+    const [apiJournalEntry, setApiJournalEntry] = useState<JournalEntry | null | undefined>(null);
 
     useEffect(() => {
         const t = setTimeout(() => setLoaded(true), 700);
@@ -121,16 +123,67 @@ export default function CaretakerDashboard() {
         apiFetch<{ medications: Medication[]; todayLogs: MedLog[] }>('/api/medications')
             .then(d => { setApiMeds(d.medications || []); setMedLogs(d.todayLogs || []); })
             .catch(() => { });
+        // Fetch most recent journal entry for Patient Snapshot widget
+        const rawToken = typeof window !== 'undefined' ? localStorage.getItem('saathi_token') : '';
+        fetch('/api/journal', { headers: { 'Authorization': `Bearer ${rawToken || ''}` } })
+            .then(r => r.json())
+            .then((data: { entries?: Array<{ id: string; mood_score: number; appetite: string; sleep_quality: string; incidents: string; notes: string; date: string }> }) => {
+                if (data.entries && data.entries.length > 0) {
+                    const e = data.entries[0];
+                    setApiJournalEntry({
+                        id: e.id,
+                        date: e.date,
+                        mood: (Math.min(5, Math.max(1, e.mood_score || 3))) as 1 | 2 | 3 | 4 | 5,
+                        appetite: (e.appetite || 'fair') as 'poor' | 'fair' | 'good' | 'excellent',
+                        sleep: (e.sleep_quality || 'fair') as 'poor' | 'fair' | 'good' | 'excellent',
+                        incidents: e.incidents || '',
+                        notes: e.notes || '',
+                        caretakerId: '',
+                    });
+                } else {
+                    setApiJournalEntry(undefined);
+                }
+            })
+            .catch(() => setApiJournalEntry(undefined));
     }, [isDemo]);
 
     // ── Resolve data ──────────────────────────────────────────────────────
     const useMock = isDemo || apiTasks.length === 0;
 
-    // Tasks
+    // Tasks - kept in state so marking done updates the UI instantly
     type ResolvedTask = { id: string; title: string; time: string; category: string; status: 'completed' | 'pending' | 'overdue' };
-    const resolvedTasks: ResolvedTask[] = useMock
-        ? todaysTasks.map(t => ({ id: t.id, title: t.title, time: t.time, category: t.category, status: t.status as 'completed' | 'pending' | 'overdue' }))
-        : apiTasks.map(t => ({ id: t.id, title: t.title, time: t.scheduled_time, category: t.category, status: t.is_completed ? 'completed' : 'pending' }));
+
+    const [resolvedTasks, setResolvedTasks] = useState<ResolvedTask[]>([]);
+
+    // Sync resolved tasks when source data genuinely changes (initial load or API response)
+    useEffect(() => {
+        const tasks: ResolvedTask[] = useMock
+            ? todaysTasks.map(t => ({ id: t.id, title: t.title, time: t.time, category: t.category, status: t.status as 'completed' | 'pending' | 'overdue' }))
+            : apiTasks.map(t => ({ id: t.id, title: t.title, time: t.scheduled_time, category: t.category, status: t.is_completed ? 'completed' : 'pending' }));
+        setResolvedTasks(tasks);
+    }, [useMock, apiTasks.length]); // only re-run when data source switches or API data count changes
+
+    const markTaskDone = async (taskId: string) => {
+        // Optimistically update UI
+        setResolvedTasks(prev => prev.map(t =>
+            t.id === taskId ? { ...t, status: 'completed' as const } : t
+        ));
+        // If using real API, persist
+        if (!useMock) {
+            try {
+                await apiFetch('/api/schedule', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ taskId, completed: true }),
+                });
+            } catch {
+                // Revert on failure
+                setResolvedTasks(prev => prev.map(t =>
+                    t.id === taskId ? { ...t, status: 'overdue' as const } : t
+                ));
+            }
+        }
+    };
 
     const completedTasks = resolvedTasks.filter(t => t.status === 'completed').length;
     const overdueTasks = resolvedTasks.filter(t => t.status === 'overdue');
@@ -147,8 +200,10 @@ export default function CaretakerDashboard() {
         ? mockMedications.filter(m => m.administeredToday.every(Boolean)).length
         : medLogs.length;
 
-    // Journal / mood (always from mock for caretaker view — caretaker enters these live on journal page)
-    const todayEntry = journalEntries[0];
+    // Journal / mood: demo uses mock journalEntries[0], real users use API response
+    const todayEntry: JournalEntry | undefined = isDemo
+        ? journalEntries[0]
+        : (apiJournalEntry ?? undefined);
 
     return (
         <AppLayout role="caretaker" userName={userName} alertCount={overdueTasks.length}>
@@ -162,7 +217,7 @@ export default function CaretakerDashboard() {
                         </h1>
                         <p className={styles.shiftInfo}>
                             <Clock size={16} />
-                            Shift: {caretakerProfile.shift}
+                            Your current shift
                         </p>
                     </div>
                 </div>
@@ -173,7 +228,7 @@ export default function CaretakerDashboard() {
                         <div className={styles.statsGrid}>
 
                             {/* Tasks Ring */}
-                            <div className={`${styles.statCard} card card--flat`}>
+                            <div className={`${styles.statCard} card card--flat`} data-tooltip="Percentage of today's care tasks that have been completed this shift">
                                 <div className={styles.ringWrapper}>
                                     <svg width={80} height={80} viewBox="0 0 88 88">
                                         <circle cx="44" cy="44" r="36" className={styles.ringCircleBg} />
@@ -196,7 +251,7 @@ export default function CaretakerDashboard() {
                             </div>
 
                             {/* Medications */}
-                            <div className={`${styles.statCard} card card--flat`}>
+                            <div className={`${styles.statCard} card card--flat`} data-tooltip="Number of medications administered today versus total prescribed for the patient">
                                 <div className={`${styles.iconWrapper} ${styles.iconWrapperSuccess}`}>
                                     <Pill size={24} color="var(--color-success)" />
                                 </div>
@@ -207,13 +262,13 @@ export default function CaretakerDashboard() {
                             </div>
 
                             {/* Today's Mood */}
-                            <div className={`${styles.statCard} card card--flat`}>
+                            <div className={`${styles.statCard} card card--flat`} data-tooltip="Patient's assessed mood for today based on journal observations">
                                 <div className={`${styles.iconWrapper} ${styles.iconWrapperMood}`}>
-                                    <MoodIcon score={todayEntry.mood} />
+                                    <MoodIcon score={todayEntry?.mood ?? 3} />
                                 </div>
                                 <div>
-                                    <p className={styles.statValue} style={{ color: moodColors[todayEntry.mood] }}>
-                                        {moodLabels[todayEntry.mood]}
+                                    <p className={styles.statValue} style={{ color: moodColors[todayEntry?.mood ?? 3] }}>
+                                        {todayEntry ? moodLabels[todayEntry.mood] : '-'}
                                     </p>
                                     <p className={styles.statLabel}>Today&apos;s mood</p>
                                 </div>
@@ -242,9 +297,9 @@ export default function CaretakerDashboard() {
                                                         <p className={styles.urgentItemTitle}>{t.title}</p>
                                                         <p className={styles.urgentItemTime}>Was due at {t.time}</p>
                                                     </div>
-                                                    <Link href="/caretaker/schedule" className="btn btn--danger btn--sm btn--pill">
+                                                    <button type="button" onClick={() => markTaskDone(t.id)} className="btn btn--danger btn--sm btn--pill" data-tooltip="Mark this overdue task as completed now">
                                                         Mark done
-                                                    </Link>
+                                                    </button>
                                                 </div>
                                             ))}
                                         </div>
@@ -252,10 +307,10 @@ export default function CaretakerDashboard() {
                                 )}
 
                                 {/* Recent tasks preview */}
-                                <div className="card card--flat card--padded">
+                                <div className="card card--flat card--padded" data-tooltip="Overview of today's scheduled care tasks and their completion status">
                                     <div className={styles.cardTitleRow}>
                                         <h2 className={styles.cardTitle}>Today&apos;s Schedule</h2>
-                                        <Link href="/caretaker/schedule" className={styles.viewAllLink}>
+                                        <Link href="/caretaker/schedule" className={styles.viewAllLink} data-tooltip="Open the full care schedule for today">
                                             View all <ChevronRight size={16} />
                                         </Link>
                                     </div>
@@ -291,18 +346,29 @@ export default function CaretakerDashboard() {
                                 </div>
 
                                 {/* Today's journal quick view */}
-                                {todayEntry && (
-                                    <div className="card card--gradient card--padded">
+                                {todayEntry ? (
+                                    <div className="card card--gradient card--padded" data-tooltip="Today's shift journal - quick observations about the patient's condition">
                                         <div className={styles.cardTitleRow}>
                                             <h2 className={styles.cardTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                                 <BookOpen size={20} color="var(--color-primary)" />
                                                 Today&apos;s shift journal
                                             </h2>
-                                            <Link href="/caretaker/journal" className={styles.viewAllLink}>Edit</Link>
+                                            <Link href="/caretaker/journal" className={styles.viewAllLink} data-tooltip="Edit or add to today's shift journal entry">Edit</Link>
                                         </div>
-                                        <p className={styles.journalPreview}>{todayEntry.notes}</p>
+                                        <p className={styles.journalPreview}>{todayEntry.notes || 'No notes yet.'}</p>
                                     </div>
-                                )}
+                                ) : !isDemo && apiJournalEntry === undefined ? (
+                                    <div className="card card--flat card--padded" data-tooltip="No journal entry has been created for today's shift yet.">
+                                        <div className={styles.cardTitleRow}>
+                                            <h2 className={styles.cardTitle} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <BookOpen size={20} color="var(--color-primary)" />
+                                                Shift journal
+                                            </h2>
+                                            <Link href="/caretaker/journal" className={styles.viewAllLink} data-tooltip="Add a new journal entry for today's shift">Add entry</Link>
+                                        </div>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: 8 }}>No journal entries yet. Tap &ldquo;Add entry&rdquo; to write today&apos;s notes.</p>
+                                    </div>
+                                ) : null}
                             </div>
 
                             {/* Right: quick actions + next tasks */}
@@ -311,16 +377,14 @@ export default function CaretakerDashboard() {
                                 <div className={`card card--flat ${styles.widgetCard}`}>
                                     <h2 className={styles.widgetTitle}>Quick actions</h2>
                                     <div className={styles.actionStack}>
-                                        <Link href="/caretaker/journal" className="btn btn--secondary btn--full" style={{ justifyContent: 'flex-start' }}>
+                                        <Link href="/caretaker/journal" className="btn btn--secondary btn--full" style={{ justifyContent: 'flex-start' }} data-tooltip="Write observations about the patient's condition, mood, and behaviour during your shift">
                                             <BookOpen size={18} /> Write journal entry
                                         </Link>
-                                        <Link href="/caretaker/medications" className="btn btn--secondary btn--full" style={{ justifyContent: 'flex-start' }}>
+                                        <Link href="/caretaker/medications" className="btn btn--secondary btn--full" style={{ justifyContent: 'flex-start' }} data-tooltip="Record that a medication has been administered to the patient">
                                             <Pill size={18} /> Log medication
                                         </Link>
-                                        <Link href="/caretaker/chat" className="btn btn--secondary btn--full" style={{ justifyContent: 'flex-start' }}>
-                                            <MessageCircle size={18} /> Message Guardian
-                                        </Link>
-                                        <Link href="/caretaker/schedule" className="btn btn--primary btn--full" style={{ justifyContent: 'flex-start' }}>
+
+                                        <Link href="/caretaker/schedule" className="btn btn--primary btn--full" style={{ justifyContent: 'flex-start' }} data-tooltip="View and manage the full care task schedule">
                                             <CheckCircle2 size={18} /> View all tasks
                                         </Link>
                                     </div>
@@ -345,21 +409,21 @@ export default function CaretakerDashboard() {
                                     </div>
                                 </div>
 
-                                {/* Patient snapshot — name from session */}
-                                <div className={`card ${styles.snapshotCard} ${styles.widgetCard}`}>
+                                {/* Patient snapshot - name from session */}
+                                <div className={`card ${styles.snapshotCard} ${styles.widgetCard}`} data-tooltip="Quick snapshot of the patient's current wellbeing key indicators">
                                     <div className={styles.snapshotHeader}>
                                         <div className={styles.snapshotAvatar}>
                                             <Users size={20} />
                                         </div>
                                         <div>
                                             <p className={styles.snapshotName}>{patientName}</p>
-                                            <span className="badge badge--primary">Active Patient</span>
+                                            <span className="badge badge--primary" data-tooltip="This patient is currently under active care">Active Patient</span>
                                         </div>
                                     </div>
                                     <div className={styles.snapshotVitals}>
-                                        <InfoRow icon={<Activity size={16} />} label="Mood" value={moodLabels[todayEntry.mood]} />
-                                        <InfoRow icon={<Thermometer size={16} />} label="Appetite" value={todayEntry.appetite} />
-                                        <InfoRow icon={<TrendingUp size={16} />} label="Sleep" value={todayEntry.sleep} />
+                                        <InfoRow icon={<Activity size={16} />} label="Mood" value={todayEntry ? moodLabels[todayEntry.mood] : '-'} />
+                                        <InfoRow icon={<Thermometer size={16} />} label="Appetite" value={todayEntry ? todayEntry.appetite : '-'} />
+                                        <InfoRow icon={<TrendingUp size={16} />} label="Sleep" value={todayEntry ? todayEntry.sleep : '-'} />
                                         <InfoRow icon={<Stethoscope size={16} />} label="Tasks" value={`${completedTasks}/${totalTasks} done`} />
                                     </div>
                                 </div>

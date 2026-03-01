@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockPeople, Person } from '@/lib/mock-data';
-import { Plus, Pencil, Trash2, Phone, Mic, X, Check } from 'lucide-react';
+import { Plus, Pencil, Trash2, Phone, Mic, X, Check, Square } from 'lucide-react';
 import styles from './page.module.css';
 
 const getInitials = (name: string) => name.split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
@@ -25,6 +25,50 @@ export default function PeoplePage() {
     const [showAdd, setShowAdd] = useState(false);
     const [form, setForm] = useState<FormState>({ ...EMPTY_FORM });
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+    // Voice note state
+    const [recordingId, setRecordingId] = useState<string | null>(null);
+    const [audioUrls, setAudioUrls] = useState<Record<string, string>>({});
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const audioChunksRef = useRef<Blob[]>([]);
+
+    const toggleRecording = async (personId: string) => {
+        // If already recording this person → stop
+        if (recordingId === personId && mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop();
+            setRecordingId(null);
+            return;
+        }
+        // If recording someone else → stop that first
+        if (recordingId && mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop();
+        }
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const recorder = new MediaRecorder(stream);
+            audioChunksRef.current = [];
+
+            recorder.ondataavailable = (e) => {
+                if (e.data.size > 0) audioChunksRef.current.push(e.data);
+            };
+
+            recorder.onstop = () => {
+                const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
+                setAudioUrls(prev => ({ ...prev, [personId]: url }));
+                // Stop all tracks to release microphone
+                stream.getTracks().forEach(t => t.stop());
+            };
+
+            recorder.start();
+            mediaRecorderRef.current = recorder;
+            setRecordingId(personId);
+        } catch (err) {
+            console.error('Microphone access denied:', err);
+            alert('Please allow microphone access to record voice notes.');
+        }
+    };
 
     const startEdit = (person: Person) => {
         setEditingId(person.id);
@@ -53,7 +97,7 @@ export default function PeoplePage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="People Wallet" subtitle={`People to remember — ${people.length} faces in the wallet`} />
+            <GuardianHeader title="People Wallet" subtitle={`People to remember - ${people.length} faces in the wallet`} />
             <main className={styles.content}>
                 {/* Stats */}
                 <div className={styles.statsRow}>
@@ -177,9 +221,25 @@ export default function PeoplePage() {
                                             </span>
                                         </div>
 
-                                        <button className={styles.voiceBtn} aria-label={`Add voice note for ${person.name}`}>
-                                            <Mic size={13} aria-hidden="true" /> Voice Note
+                                        <button
+                                            className={`${styles.voiceBtn} ${recordingId === person.id ? styles.voiceBtnRecording : ''}`}
+                                            onClick={() => toggleRecording(person.id)}
+                                            aria-label={recordingId === person.id ? `Stop recording for ${person.name}` : `Add voice note for ${person.name}`}
+                                        >
+                                            {recordingId === person.id ? (
+                                                <><Square size={13} aria-hidden="true" /> Stop Recording</>
+                                            ) : (
+                                                <><Mic size={13} aria-hidden="true" /> Voice Note</>
+                                            )}
                                         </button>
+                                        {audioUrls[person.id] && (
+                                            <audio
+                                                className={styles.audioPlayer}
+                                                src={audioUrls[person.id]}
+                                                controls
+                                                preload="metadata"
+                                            />
+                                        )}
                                     </div>
                                 )}
                             </article>

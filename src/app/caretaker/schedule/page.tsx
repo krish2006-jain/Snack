@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { AppLayout } from '@/components/ui/AppLayout';
@@ -102,7 +102,7 @@ function TaskRow({ task, onToggle }: { task: CaretakerTask; onToggle: (id: strin
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: isOverdue ? 'var(--color-danger)' : 'var(--text-muted)', fontSize: 12 }}>
                             {isOverdue ? <AlertCircle size={12} /> : <Clock size={12} />}
-                            <span>{isOverdue ? `Overdue — was ${task.time}` : task.time}</span>
+                            <span>{isOverdue ? `Overdue - was ${task.time}` : task.time}</span>
                         </div>
                         {isDone && task.completedAt && (
                             <span style={{ fontSize: 11, color: 'var(--color-success)', fontWeight: 500 }}>

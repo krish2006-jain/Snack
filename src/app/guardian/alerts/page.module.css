@@ -28,6 +28,7 @@
     border-radius: var(--radius-card-sm);
     transition: transform 200ms ease, box-shadow 200ms ease;
     cursor: default;
+    background: var(--bg-surface);
 }
 
 .summaryChip:hover {
@@ -162,7 +163,7 @@
 }
 
 .alertUnread {
-    background: #FDFBFF;
+    background: var(--bg-surface);
 }
 
 .alertIcon {

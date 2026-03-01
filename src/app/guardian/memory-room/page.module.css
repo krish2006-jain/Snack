@@ -1,0 +1,784 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.roomMapWrap {
+    padding: var(--space-6) var(--space-8) 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.roomMap {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-soft);
+}
+
+.roomOverview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
+}
+
+.roomStat {
+    background: linear-gradient(158deg, var(--bg-canvas) 0%, var(--bg-surface-soft) 100%);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card-sm);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.roomStat:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--border-medium);
+}
+
+.roomStatActive {
+    border-color: var(--color-primary);
+    background: var(--color-primary-muted);
+}
+
+.roomName {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.roomAvg {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.roomObjCount {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.roomSection {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin-bottom: var(--space-4);
+}
+
+.roomHeader {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: var(--space-5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 150ms ease;
+}
+
+.roomHeader:hover {
+    background: var(--bg-surface-soft);
+}
+
+.roomHeaderLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.roomTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-heading);
+}
+
+.roomDesc {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.roomHeaderRight {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text-muted);
+}
+
+.aiBtn,
+.addObjBtn,
+.viewRoomBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    transition: all 150ms ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.aiBtn {
+    background: var(--color-info-muted);
+    color: var(--color-info);
+    border: 1px solid transparent;
+}
+
+.aiBtn:hover {
+    background: var(--color-info);
+    color: white;
+}
+
+.aiBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.addObjBtn {
+    background: var(--color-primary);
+    color: white;
+    border: 1px solid transparent;
+}
+
+.addObjBtn:hover {
+    background: var(--color-primary-hover);
+}
+
+.viewRoomBtn {
+    background: var(--bg-surface-soft);
+    color: var(--text-heading);
+    border: 1px solid var(--border-subtle);
+}
+
+.viewRoomBtn:hover {
+    border-color: var(--border-medium);
+}
+
+.roomBody {
+    padding: 0 var(--space-5) var(--space-5);
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 8px;
+    padding-top: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.addForm {
+    background: var(--bg-surface-soft);
+    padding: var(--space-4);
+    border-radius: var(--radius-card-sm);
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.input {
+    height: 36px;
+    padding: 0 var(--space-3);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-button);
+    font-size: 13px;
+    color: var(--text-heading);
+    flex: 1;
+    min-width: 150px;
+    font-family: inherit;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--color-primary-muted);
+}
+
+.addFormActions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.cancelBtn,
+.saveBtn {
+    padding: 0 var(--space-4);
+    height: 36px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    transition: all 150ms ease;
+    border: none;
+}
+
+.cancelBtn {
+    background: transparent;
+    color: var(--text-muted);
+}
+
+.cancelBtn:hover {
+    color: var(--text-heading);
+    background: var(--bg-surface);
+}
+
+.saveBtn {
+    background: var(--color-primary);
+    color: white;
+}
+
+.saveBtn:hover {
+    background: var(--color-primary-hover);
+}
+
+.objectGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-4);
+}
+
+.objectCard {
+    background: var(--bg-canvas);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card-sm);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.objectTop {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.objectName {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-heading);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.categoryBadge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.objectActions {
+    display: flex;
+    gap: 4px;
+}
+
+.iconBtn,
+.iconBtnDanger {
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: var(--radius-button);
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 150ms ease, color 150ms ease;
+}
+
+.iconBtn:hover {
+    background: var(--bg-surface-soft);
+    color: var(--color-primary);
+}
+
+.iconBtnDanger:hover {
+    background: var(--color-danger-muted);
+    color: var(--color-danger);
+}
+
+.objectDesc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    flex: 1;
+}
+
+.objectLocation {
+    font-size: 12px;
+    color: var(--text-body);
+    font-family: monospace;
+    background: var(--bg-surface-soft);
+    padding: 4px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+/* Recall Bar */
+.recallWrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.recallTrack {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-surface-soft);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.recallFill {
+    height: 100%;
+    border-radius: var(--radius-pill);
+}
+
+.recallNum {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 32px;
+    text-align: right;
+}
+
+/* Heatmap */
+.roomHeatmap {
+    background: var(--bg-surface-soft);
+    border-radius: var(--radius-card-sm);
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.heatTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.heatRow {
+    display: flex;
+    gap: 2px;
+    height: 24px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.heatCell {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.heatBlock {
+    position: absolute;
+    inset: 0;
+}
+
+.heatLabel {
+    position: relative;
+    z-index: 1;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    padding: 0 2px;
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: var(--space-6);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-heading);
+    color: var(--bg-surface);
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-elevated);
+    z-index: 100;
+    animation: slideUp 200ms ease out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translate(-50%, 20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+
+    /* Custom Rooms Grid */
+    .customRoomsGrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-5);
+        margin-bottom: var(--space-6);
+    }
+
+    .customRoomCard {
+        background: var(--bg-canvas);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-card);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+        cursor: pointer;
+        position: relative;
+        height: 100%;
+    }
+
+    .customRoomCard:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-elevated);
+        border-color: var(--border-medium);
+    }
+
+    .customRoomThumb {
+        height: 160px;
+        background: var(--bg-surface-soft);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .customRoomThumbImg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 300ms ease;
+    }
+
+    .customRoomCard:hover .customRoomThumbImg {
+        transform: scale(1.05);
+    }
+
+    .customRoomInfo {
+        padding: var(--space-4);
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .customRoomTitle {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-heading);
+        margin: 0 0 4px 0;
+    }
+
+    .customRoomDesc {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin: 0 0 16px 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .customRoomActions {
+        margin-top: auto;
+        display: flex;
+        gap: var(--space-2);
+        border-top: 1px solid var(--border-subtle);
+        padding-top: var(--space-3);
+    }
+
+    .customRoomActions button,
+    .customRoomActions a {
+        flex: 1;
+        justify-content: center;
+    }
+
+    /* Demo box / Add Space Card */
+    .addSpaceCard {
+        border: 2px dashed var(--border-subtle);
+        border-radius: var(--radius-card);
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-3);
+        min-height: 250px;
+        cursor: pointer;
+        transition: border-color 200ms ease, background 200ms ease;
+        text-align: center;
+        padding: var(--space-5);
+    }
+
+    .addSpaceCard:hover {
+        border-color: var(--color-primary);
+        background: var(--color-primary-muted);
+    }
+
+    .addSpaceIcon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--bg-surface);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-primary);
+        box-shadow: var(--shadow-sm);
+        transition: transform 200ms ease;
+    }
+
+    .addSpaceCard:hover .addSpaceIcon {
+        transform: scale(1.1);
+    }
+
+    .addSpaceText {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-heading);
+    }
+
+    .addSpaceSubtext {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+
+    /* Custom Room Editor UI */
+    .editorHeader {
+        display: flex;
+        gap: var(--space-4);
+        align-items: center;
+        margin-bottom: var(--space-6);
+    }
+
+    .editorTitle {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-heading);
+        margin: 0;
+    }
+
+    .editorMain {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        gap: var(--space-6);
+    }
+
+    .editorLeft {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .editorInput {
+        font-size: 16px;
+        padding: var(--space-3);
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-button);
+        color: var(--text-heading);
+        font-family: inherit;
+        width: 100%;
+        transition: border-color 150ms ease;
+    }
+
+    .editorInput:focus {
+        outline: none;
+        border-color: var(--border-focus);
+        box-shadow: 0 0 0 3px var(--color-primary-muted);
+    }
+
+    .uploadBox {
+        background: var(--bg-surface);
+        padding: var(--space-4);
+        border-radius: var(--radius-card-sm);
+        border: 2px dashed var(--border-subtle);
+        transition: border-color 150ms ease;
+        cursor: pointer;
+    }
+
+    .uploadBox:hover {
+        border-color: var(--color-primary);
+    }
+
+    .uploadLabel {
+        font-weight: 600;
+        display: block;
+        margin-bottom: var(--space-2);
+        color: var(--text-heading);
+    }
+
+    .previewWrap {
+        position: relative;
+        width: 100%;
+        border-radius: var(--radius-card-sm);
+        overflow: hidden;
+        border: 1px solid var(--border-subtle);
+        background: #000;
+    }
+
+    .previewHint {
+        position: absolute;
+        top: var(--space-2);
+        left: var(--space-2);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 4px 8px;
+        border-radius: var(--radius-button);
+        z-index: 10;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .previewImg {
+        width: 100%;
+        display: block;
+        transition: opacity 150ms ease;
+    }
+
+    .previewImgCreate {
+        opacity: 0.7;
+        cursor: default;
+    }
+
+    .previewImgEdit {
+        opacity: 1;
+        cursor: crosshair;
+    }
+
+    .hotspotTarget {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        background: var(--color-primary);
+        color: white;
+        padding: 4px 8px;
+        border-radius: var(--radius-pill);
+        font-size: 12px;
+        font-weight: 600;
+        border: 2px solid white;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: transform 150ms ease;
+    }
+
+    .hotspotTarget:hover {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+
+    .editorRight {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .hotspotForm {
+        background: var(--bg-surface);
+        padding: var(--space-4);
+        border-radius: var(--radius-card-sm);
+        border: 1px solid var(--border-subtle);
+        position: sticky;
+        top: var(--space-6);
+    }
+
+    .formTitle {
+        margin-bottom: var(--space-4);
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-heading);
+    }
+
+    .fieldGroup {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    .fieldLabel {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .btnGroup {
+        display: flex;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
+    }
+
+    .btnGroup>button {
+        flex: 1;
+    }
+
+    .savedObjectsCard {
+        background: var(--bg-surface);
+        padding: var(--space-4);
+        border-radius: var(--radius-card-sm);
+        border: 1px solid var(--border-subtle);
+    }
+
+    .savedObjectsList {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .savedObjectItem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: var(--bg-surface-soft);
+        border-radius: var(--radius-button);
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .editObjBtn {
+        background: none;
+        border: none;
+        color: var(--color-primary);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 4px 8px;
+        border-radius: 4px;
+    }
+
+    .editObjBtn:hover {
+        background: var(--color-primary-muted);
+    }

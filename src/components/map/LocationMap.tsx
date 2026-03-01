@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
@@ -34,8 +34,8 @@ function svgIcon(color: string, label: string) {
     })
 }
 
-const patientIcon = svgIcon('#2D5A3D', 'P')    // green — patient
-const samaritanIcon = svgIcon('#2563EB', 'Y')   // blue — you (samaritan)
+const patientIcon = svgIcon('#2D5A3D', 'P')    // green - patient
+const samaritanIcon = svgIcon('#2563EB', 'Y')   // blue - you (samaritan)
 
 /* ── Distance helper (Haversine) ─────────────────────────── */
 function haversineKm(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {

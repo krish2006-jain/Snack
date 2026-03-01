@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Image from 'next/image';
@@ -57,7 +57,7 @@ export default function MemoriesPage() {
 
     return (
         <div className={styles.page}>
-            <GuardianHeader title="Memory Manager" subtitle={`${patientFirstName}'s memory archive — ${memories.length} memories stored`} />
+            <GuardianHeader title="Memory Manager" subtitle={`${patientFirstName}'s memory archive - ${memories.length} memories stored`} />
             <main className={styles.content}>
                 {/* Stats row */}
                 <div className={styles.statsRow}>
@@ -137,7 +137,7 @@ export default function MemoriesPage() {
                         >
                             <Upload size={28} color="var(--text-muted)" aria-hidden="true" />
                             <span className={styles.dropzoneText}>Drop a photo or audio file here, or click to browse</span>
-                            <span className={styles.dropzoneSub}>JPG, PNG, MP3, MP4 — max 50MB</span>
+                            <span className={styles.dropzoneSub}>JPG, PNG, MP3, MP4 - max 50MB</span>
                         </div>
                         <div className={styles.uploadForm}>
                             <div className={styles.uploadField}>

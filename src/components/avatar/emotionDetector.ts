@@ -1,4 +1,4 @@
-/**
+﻿/**
  * emotionDetector.ts
  *
  * Detects the dominant emotion in a text string and returns the
@@ -70,7 +70,7 @@ const EMOTION_RULES: Array<{
             emotion: 'neutral',
             expression: 'smile',
             animation: 'Talking_1',
-            patterns: /(?:)/,   // always matches — must stay last
+            patterns: /(?:)/,   // always matches - must stay last
         },
     ];
 
@@ -89,7 +89,7 @@ export function detectEmotion(text: string): EmotionResult {
             };
         }
     }
-    // Unreachable — neutral rule always matches
+    // Unreachable - neutral rule always matches
     return { emotion: 'neutral', expression: 'smile', animation: 'Talking_1' };
 }
 

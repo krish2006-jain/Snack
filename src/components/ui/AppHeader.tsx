@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -36,15 +36,14 @@ export function AppHeader({
                 className={`floating-nav ${scrolled ? 'floating-nav--scrolled' : ''}`}
                 style={{ justifyContent: 'space-between' }}
             >
-                <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 2 }} data-tooltip="Go to SaathiCare home">
                     <Logo />
                 </Link>
                 <nav style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
-                    <Link href="/about" style={{ color: scrolled ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 500, transition: 'color 0.2s' }}>About</Link>
-                    <Link href="/guardian" style={{ color: scrolled ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 500, transition: 'color 0.2s' }}>For Guardians</Link>
-                    <Link href="/scan" style={{ color: scrolled ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 500 }}>QR Scan</Link>
+                    <Link href="/guardian" style={{ color: scrolled ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 500, transition: 'color 0.2s' }} data-tooltip="Access the Guardian dashboard">For Guardians</Link>
+                    <Link href="/scan" style={{ color: scrolled ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 500 }} data-tooltip="Scan a patient QR bracelet">QR Scan</Link>
                 </nav>
-                <Link href="/login" className="btn btn--glass btn--pill" style={{ padding: '10px 24px', minHeight: 40, fontSize: 14 }}>
+                <Link href="/login" className="btn btn--glass btn--pill" style={{ padding: '10px 24px', minHeight: 40, fontSize: 14 }} data-tooltip="Sign in to your SaathiCare account">
                     Sign In
                 </Link>
             </header>
@@ -54,7 +53,7 @@ export function AppHeader({
     if (variant === 'patient') {
         return (
             <header className="app-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Link href="/patient" style={{ display: 'flex', alignItems: 'center' }}>
+                <Link href="/patient" style={{ display: 'flex', alignItems: 'center' }} data-tooltip="Go to your home dashboard">
                     <Logo compact />
                 </Link>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -63,6 +62,7 @@ export function AppHeader({
                             onClick={onSignOut}
                             className="btn--icon"
                             aria-label="Sign out"
+                            data-tooltip="Sign out of your account"
                             style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                         >
                             <User size={20} color="var(--text-body)" />
@@ -73,6 +73,7 @@ export function AppHeader({
                         className="btn btn--danger btn--pill"
                         style={{ padding: '10px 20px', minHeight: 40, gap: 6 }}
                         aria-label="SOS Emergency"
+                        data-tooltip="Tap to send an emergency SOS alert to your guardians and nearby helpers"
                     >
                         <AlertTriangle size={18} />
                         <span style={{ fontWeight: 700, fontSize: 14 }}>SOS</span>
@@ -82,10 +83,10 @@ export function AppHeader({
         );
     }
 
-    // default — guardian/caretaker
+    // default - guardian/caretaker
     return (
         <header className="app-header">
-            <Link href="/" style={{ display: 'flex', alignItems: 'center', marginRight: 'auto' }}>
+            <Link href="/" style={{ display: 'flex', alignItems: 'center', marginRight: 'auto' }} data-tooltip="Go to SaathiCare home">
                 <Logo />
             </Link>
 
@@ -94,6 +95,8 @@ export function AppHeader({
                 <button
                     className="btn--icon"
                     aria-label={`${alertCount} notifications`}
+                    data-tooltip={alertCount > 0 ? `${alertCount} unread alerts need your attention` : 'No new notifications'}
+                    data-tooltip-pos="bottom"
                     style={{ position: 'relative', background: 'transparent', border: '1px solid var(--border-subtle)', borderRadius: 12, width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                 >
                     <Bell size={20} color="var(--text-body)" />
@@ -120,7 +123,7 @@ export function AppHeader({
                 </button>
 
                 {/* Avatar + name */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }} data-tooltip="Your account" data-tooltip-pos="bottom">
                     <div style={{
                         width: 36,
                         height: 36,

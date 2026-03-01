@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -6,8 +6,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import {
     LayoutDashboard, Calendar, Image, Users, Brain, Gamepad2,
     FileText, QrCode, Bell, BarChart3, Activity, ScrollText,
-    CheckSquare, BookOpen, Pill, MessageCircle, ChevronDown,
-    ChevronLeft, ChevronRight,
+    CheckSquare, BookOpen, Pill, ChevronDown,
+    ChevronLeft, ChevronRight, Heart
 } from 'lucide-react';
 import { Logo } from './AppHeader';
 import { useSession } from '@/lib/useSession';
@@ -19,6 +19,7 @@ interface NavItem {
     href: string;
     icon: React.ReactNode;
     exact?: boolean;
+    tooltip?: string;
 }
 
 interface NavGroup {
@@ -30,33 +31,33 @@ const guardianGroups: NavGroup[] = [
     {
         label: 'Overview',
         items: [
-            { label: 'Dashboard', href: '/guardian', icon: <LayoutDashboard size={18} />, exact: true },
+            { label: 'Dashboard', href: '/guardian', icon: <LayoutDashboard size={18} />, exact: true, tooltip: 'Overview of all your patient\'s care metrics and daily activity' },
         ],
     },
     {
         label: 'Care & Content',
         items: [
-            { label: 'Schedule', href: '/guardian/schedule', icon: <Calendar size={18} /> },
-            { label: 'Memories', href: '/guardian/memories', icon: <Image size={18} /> },
-            { label: 'People', href: '/guardian/people', icon: <Users size={18} /> },
-            { label: 'Memory Room', href: '/guardian/memory-room', icon: <Brain size={18} /> },
+            { label: 'Schedule', href: '/guardian/schedule', icon: <Calendar size={18} />, tooltip: 'View and manage the patient\'s daily care schedule' },
+            { label: 'Memories', href: '/guardian/memories', icon: <Image size={18} />, tooltip: 'Upload and curate photo flashcards for memory therapy' },
+            { label: 'People', href: '/guardian/people', icon: <Users size={18} />, tooltip: 'Manage the patient\'s people wallet - family and friends' },
+            { label: 'Memory Room', href: '/guardian/memory-room', icon: <Brain size={18} />, tooltip: 'Set up interactive virtual rooms for spatial memory therapy' },
         ],
     },
     {
         label: 'Engagement',
         items: [
-            { label: 'Games', href: '/guardian/games', icon: <Gamepad2 size={18} /> },
-            { label: 'Analytics', href: '/guardian/analytics', icon: <BarChart3 size={18} /> },
-            { label: 'Care Stage', href: '/guardian/stage', icon: <Activity size={18} /> },
+            { label: 'Games', href: '/guardian/games', icon: <Gamepad2 size={18} />, tooltip: 'View brain game scores, streaks, and activity logs' },
+            { label: 'Analytics', href: '/guardian/analytics', icon: <BarChart3 size={18} />, tooltip: 'Deep-dive into cognitive score trends and health metrics' },
+            { label: 'Care Stage', href: '/guardian/stage', icon: <Activity size={18} />, tooltip: 'Understand the current Alzheimer\'s care stage and what it means' },
         ],
     },
     {
         label: 'Administration',
         items: [
-            { label: 'Health Records', href: '/guardian/health', icon: <FileText size={18} /> },
-            { label: 'QR Code', href: '/guardian/qr', icon: <QrCode size={18} /> },
-            { label: 'Alerts', href: '/guardian/alerts', icon: <Bell size={18} /> },
-            { label: 'Reports', href: '/guardian/reports', icon: <ScrollText size={18} /> },
+            { label: 'Health Records', href: '/guardian/health', icon: <FileText size={18} />, tooltip: 'View and manage the patient\'s medical health records' },
+            { label: 'QR Code', href: '/guardian/qr', icon: <QrCode size={18} />, tooltip: 'Manage the emergency QR bracelet and view scan history' },
+            { label: 'Alerts', href: '/guardian/alerts', icon: <Bell size={18} />, tooltip: 'View and respond to safety and care alerts' },
+            { label: 'Reports', href: '/guardian/reports', icon: <ScrollText size={18} />, tooltip: 'Generate and download care reports for medical professionals' },
         ],
     },
 ];
@@ -65,26 +66,20 @@ const caretakerGroups: NavGroup[] = [
     {
         label: 'Overview',
         items: [
-            { label: 'Dashboard', href: '/caretaker', icon: <LayoutDashboard size={18} />, exact: true },
+            { label: 'Dashboard', href: '/caretaker', icon: <LayoutDashboard size={18} />, exact: true, tooltip: 'Overview of today\'s shift tasks, medications, and patient status' },
         ],
     },
     {
         label: 'Daily Tasks',
         items: [
-            { label: 'Tasks', href: '/caretaker/schedule', icon: <CheckSquare size={18} /> },
-            { label: 'Medications', href: '/caretaker/medications', icon: <Pill size={18} /> },
+            { label: 'Tasks', href: '/caretaker/schedule', icon: <CheckSquare size={18} />, tooltip: 'View and complete today\'s care tasks' },
+            { label: 'Medications', href: '/caretaker/medications', icon: <Pill size={18} />, tooltip: 'Log administered medications and track adherence' },
         ],
     },
     {
         label: 'Records',
         items: [
-            { label: 'Journal', href: '/caretaker/journal', icon: <BookOpen size={18} /> },
-        ],
-    },
-    {
-        label: 'Communication',
-        items: [
-            { label: 'Chat', href: '/caretaker/chat', icon: <MessageCircle size={18} /> },
+            { label: 'Journal', href: '/caretaker/journal', icon: <BookOpen size={18} />, tooltip: 'Write shift observations and notes about the patient' },
         ],
     },
 ];
@@ -97,7 +92,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
     const pathname = usePathname();
     const groups = role === 'guardian' ? guardianGroups : caretakerGroups;
     const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
     const { user, logout } = useSession();
     const userName = user?.name || (role === 'caretaker' ? 'Caregiver' : 'Guardian');
 
@@ -115,44 +110,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
 
     return (
         <aside className={`app-sidebar ${sidebarCollapsed ? 'app-sidebar--collapsed' : ''}`} role="navigation">
-            {/* Collapse toggle button */}
-            <button
-                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-                style={{
-                    position: 'absolute',
-                    top: 20,
-                    right: -14,
-                    width: 28,
-                    height: 28,
-                    borderRadius: '50%',
-                    background: 'var(--bg-surface)',
-                    border: '1px solid var(--border-subtle)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'var(--text-muted)',
-                    zIndex: 60,
-                    cursor: 'pointer',
-                    transition: 'background 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
-                }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'var(--color-primary-muted)';
-                    e.currentTarget.style.color = 'var(--color-primary)';
-                    e.currentTarget.style.transform = 'scale(1.15)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)';
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'var(--bg-surface)';
-                    e.currentTarget.style.color = 'var(--text-muted)';
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
-                }}
-            >
-                {sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-            </button>
+
 
             {/* Logo area */}
             <div style={{
@@ -164,15 +122,27 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 overflow: 'hidden',
                 whiteSpace: 'nowrap'
             }}>
-                <div style={{
-                    width: 36,
-                    height: 36,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                }}>
-                    <Logo />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{
+                        width: 36,
+                        height: 36,
+                        background: 'var(--color-primary-muted)',
+                        color: 'var(--color-primary)',
+                        borderRadius: 10,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                    }}>
+                        <Heart size={20} />
+                    </div>
+                    <div className="sidebar-text" style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        flexShrink: 0
+                    }}>
+                        <Logo />
+                    </div>
                 </div>
             </div>
 
@@ -209,6 +179,8 @@ export function AppSidebar({ role }: AppSidebarProps) {
                                     className="sidebar-text"
                                     onClick={() => toggleGroup(group.label)}
                                     aria-expanded={isOpen}
+                                    data-tooltip={isOpen ? `Collapse ${group.label}` : `Expand ${group.label}`}
+                                    data-tooltip-pos="right"
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
@@ -268,6 +240,8 @@ export function AppSidebar({ role }: AppSidebarProps) {
                                             className={`nav-item ${active ? 'nav-item--active' : ''}`}
                                             aria-current={active ? 'page' : undefined}
                                             title={item.label}
+                                            data-tooltip={item.tooltip || item.label}
+                                            data-tooltip-pos="right"
                                             style={{
                                                 paddingLeft: 12,
                                                 paddingRight: 12
@@ -294,9 +268,8 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 })}
             </nav>
 
-            {/* footer with profile + sign-out for both roles */}
-            <div style={{ marginTop: 'auto', padding: '16px 20px', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 8, overflow: 'hidden' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ marginTop: 'auto', padding: '16px 20px', borderTop: '1px solid var(--border-subtle)', background: 'var(--bg-sidebar)', display: 'flex', flexDirection: 'column', gap: 8, overflow: 'hidden' }}>
+                <div className="sidebar-footer-profile" data-tooltip="Your account profile">
                     <div style={{
                         width: 32,
                         height: 32,
@@ -334,6 +307,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 <button
                     onClick={logout}
                     className="btn btn--ghost btn--sm sidebar-text"
+                    data-tooltip="Sign out of your SaathiCare account"
                     style={{
                         width: '100%',
                         justifyContent: 'flex-start',

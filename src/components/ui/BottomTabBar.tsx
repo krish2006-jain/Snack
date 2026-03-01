@@ -5,11 +5,11 @@ import { usePathname } from 'next/navigation';
 import { Home, Calendar, BookImage, Users, Bot } from 'lucide-react';
 
 const tabs = [
-    { label: 'Home', href: '/patient', icon: <Home size={22} /> },
-    { label: 'Schedule', href: '/patient/schedule', icon: <Calendar size={22} /> },
-    { label: 'Memories', href: '/patient/memories', icon: <BookImage size={22} /> },
-    { label: 'People', href: '/patient/people', icon: <Users size={22} /> },
-    { label: 'Companion', href: '/patient/companion', icon: <Bot size={22} /> },
+    { label: 'Home', href: '/patient', icon: <Home size={22} />, tooltip: 'Go to your home dashboard' },
+    { label: 'Schedule', href: '/patient/schedule', icon: <Calendar size={22} />, tooltip: 'View today\'s tasks and appointments' },
+    { label: 'Memories', href: '/patient/memories', icon: <BookImage size={22} />, tooltip: 'Practice memory recall with flashcards' },
+    { label: 'People', href: '/patient/people', icon: <Users size={22} />, tooltip: 'See the people who care about you' },
+    { label: 'Companion', href: '/patient/companion', icon: <Bot size={22} />, tooltip: 'Talk to your AI memory companion' },
 ];
 
 export function BottomTabBar() {
@@ -27,6 +27,8 @@ export function BottomTabBar() {
                         className={`tab-item ${isActive ? 'tab-item--active' : ''}`}
                         aria-current={isActive ? 'page' : undefined}
                         aria-label={tab.label}
+                        data-tooltip={tab.tooltip}
+                        data-tooltip-pos="top"
                     >
                         <span style={{
                             color: isActive ? 'var(--color-primary)' : 'var(--text-muted)',

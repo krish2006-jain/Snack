@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionUser } from '@/lib/session';
 
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
             'SELECT game_type, score, stars, played_at FROM game_sessions WHERE patient_id = ? AND played_at > ? ORDER BY played_at'
         ).all(session.patientId, thirtyDaysAgo) as { game_type: string; score: number; stars: number; played_at: number }[];
 
-        // Cognitive score trend (simulated from game data — group by day)
+        // Cognitive score trend (simulated from game data - group by day)
         const scoreByDay: Record<string, { total: number; count: number }> = {};
         gameSessions.forEach((s) => {
             const day = new Date(s.played_at * 1000).toISOString().split('T')[0];

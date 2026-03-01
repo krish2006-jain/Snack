@@ -1,27 +1,26 @@
-'use client';
+﻿'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
 import { mockQRScans, mockEmergencyContacts } from '@/lib/mock-data';
 import { Download, Printer, ShieldCheck, ShieldOff, RefreshCw, Eye, EyeOff } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
 import styles from './page.module.css';
 
-declare global {
-    interface Window { QRCode: unknown }
-}
-
 type PrivacyField = 'name' | 'address' | 'phone' | 'bloodGroup' | 'diagnosis' | 'guardianName' | 'guardianPhone';
 
 const PRIVACY_FIELDS_STATIC = [
     { key: 'name' as PrivacyField, label: "Patient's Full Name", description: 'Visible to finder' },
-    { key: 'address' as PrivacyField, label: "Home Address", description: 'Sector 12, Gurugram — helps return home' },
+    { key: 'address' as PrivacyField, label: "Home Address", description: 'Sector 12, Gurugram - helps return home' },
     { key: 'phone' as PrivacyField, label: "Emergency Phone", description: 'Direct call on emergency' },
     { key: 'bloodGroup' as PrivacyField, label: "Blood Group", description: 'For medical emergencies' },
-    { key: 'diagnosis' as PrivacyField, label: "Diagnosis", description: "Alzheimer's Disease — context for finder" },
+    { key: 'diagnosis' as PrivacyField, label: "Diagnosis", description: "Alzheimer's Disease - context for finder" },
     { key: 'guardianName' as PrivacyField, label: "Guardian Name", description: 'Who to contact' },
     { key: 'guardianPhone' as PrivacyField, label: "Guardian Phone", description: 'Guardian contact number' },
 ];
+
+// Live emergency profile URL - scanning this opens the patient's full emergency page
+const QR_TARGET_URL = 'https://snack-production-ca02.up.railway.app/scan/ravi-sharma-2024';
 
 export default function QRPage() {
     const { user } = useSession();
@@ -43,67 +42,56 @@ export default function QRPage() {
     };
 
     useEffect(() => {
-        // Draw a visual QR placeholder since we use qrcode lib
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
 
-        const size = 220;
-        canvas.width = size;
-        canvas.height = size;
-
-        // Draw QR-like pattern
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, size, size);
-
-        ctx.fillStyle = '#1F1135';
-        const blockSize = 8;
-        const pattern = [
-            [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
-            [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-            [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1],
-            [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-            [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1],
-            [0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0],
-            [1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0],
-            [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1],
-            [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0],
-            [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0],
-            [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0],
-            [1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0],
-            [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
-        ];
-
-        const xOffset = (size - pattern[0].length * blockSize) / 2;
-        const yOffset = (size - pattern.length * blockSize) / 2;
-
-        pattern.forEach((row, r) => {
-            row.forEach((cell, c) => {
-                if (cell) {
-                    ctx.fillRect(xOffset + c * blockSize, yOffset + r * blockSize, blockSize - 1, blockSize - 1);
+        // Dynamically import qrcode to avoid SSR issues
+        import('qrcode').then((QRCode) => {
+            QRCode.toCanvas(canvas, QR_TARGET_URL, {
+                width: 220,
+                margin: 2,
+                color: {
+                    dark: '#1A1A1A',
+                    light: '#FFFFFF',
+                },
+                errorCorrectionLevel: 'H', // High - allows logo overlay
+            }, (err) => {
+                if (err) {
+                    console.error('[QR] Generation failed:', err);
+                    return;
                 }
+
+                // Overlay a branded "SC" logo in the center
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    const s = canvas.width;
+                    const logoSize = 38;
+                    const x = (s - logoSize) / 2;
+                    const y = (s - logoSize) / 2;
+
+                    // White padding
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.beginPath();
+                    ctx.roundRect(x - 3, y - 3, logoSize + 6, logoSize + 6, 6);
+                    ctx.fill();
+
+                    // Green square
+                    ctx.fillStyle = '#2D5A3D';
+                    ctx.beginPath();
+                    ctx.roundRect(x, y, logoSize, logoSize, 5);
+                    ctx.fill();
+
+                    // "SC" label
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = 'bold 13px system-ui, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('SC', x + logoSize / 2, y + logoSize / 2);
+                }
+
+                setQrGenerated(true);
             });
         });
-
-        // SaathiCare watermark center
-        ctx.fillStyle = '#7C3AED';
-        ctx.fillRect(size / 2 - 20, size / 2 - 20, 40, 40);
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 11px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('SC', size / 2, size / 2);
-
-        setQrGenerated(true);
     }, []);
 
     const handleDownload = () => {
@@ -111,7 +99,7 @@ export default function QRPage() {
         if (!canvas) return;
         const link = document.createElement('a');
         link.download = `saathicare-qr-${patientSlug}.png`;
-        link.href = canvas.toDataURL();
+        link.href = canvas.toDataURL('image/png');
         link.click();
         showToast('QR code downloaded');
     };
@@ -141,7 +129,11 @@ export default function QRPage() {
                             </div>
 
                             <div className={styles.qrCanvas}>
-                                <canvas ref={canvasRef} className={styles.canvas} aria-label={`QR code for ${patientName} SaathiCare ID`} />
+                                <canvas
+                                    ref={canvasRef}
+                                    className={styles.canvas}
+                                    aria-label={`Scannable QR code for ${patientName} - opens emergency profile`}
+                                />
                                 {!isActive && (
                                     <div className={styles.inactiveOverlay}>
                                         <ShieldOff size={36} />
@@ -149,6 +141,23 @@ export default function QRPage() {
                                     </div>
                                 )}
                             </div>
+
+                            {/* Live URL info badge */}
+                            {qrGenerated && (
+                                <div style={{
+                                    fontSize: 11,
+                                    color: 'var(--color-success)',
+                                    background: 'var(--color-success-bg)',
+                                    border: '1px solid rgba(45,122,79,0.2)',
+                                    borderRadius: 8,
+                                    padding: '6px 12px',
+                                    textAlign: 'center',
+                                    fontWeight: 600,
+                                    lineHeight: 1.5,
+                                }}>
+                                    ✅ Scan with any phone - opens live emergency profile
+                                </div>
+                            )}
 
                             <div className={styles.qrPatientInfo}>
                                 {privacy.name && <span className={styles.qrName}>{patientName}</span>}

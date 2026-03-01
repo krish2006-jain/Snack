@@ -1,4 +1,4 @@
-// ── SaathiCare Mock-Data barrel ───────────────────────────── //
+﻿// ── SaathiCare Mock-Data barrel ───────────────────────────── //
 // Re-exports everything from the domain-specific files so any
 // page can do:  import { ... } from '@/lib/mock-data'
 
@@ -243,21 +243,21 @@ export interface Memory {
 export const mockMemories: Memory[] = [
     {
         id: 'mem-01', title: "Ravi and Smita's Wedding Day",
-        description: "A beautiful moment from Ravi and Smita's wedding celebration — a day filled with joy, family, and the beginning of their beautiful shared journey together. Smita in her bridal ensemble, Ravi in his finest attire, surrounded by the warmth of their loved ones.",
+        description: "A beautiful moment from Ravi and Smita's wedding celebration - a day filled with joy, family, and the beginning of their beautiful shared journey together. Smita in her bridal ensemble, Ravi in his finest attire, surrounded by the warmth of their loved ones.",
         date: '1985-06-15', type: 'photo', emotion: 'happy', tags: ['Smita', 'wedding', 'love', 'family'],
         recallScore: 98,
         image: '/images/Wedding Day.png',
     },
     {
         id: 'mem-02', title: 'Family Picnic - Childhood Memories',
-        description: "A joyful family picnic from their younger days — Ravi, Smita, and the children enjoying outdoor games, laughter, and delicious homemade food under the open sky. These moments of togetherness shaped the foundation of the family's strongest bonds.",
+        description: "A joyful family picnic from their younger days - Ravi, Smita, and the children enjoying outdoor games, laughter, and delicious homemade food under the open sky. These moments of togetherness shaped the foundation of the family's strongest bonds.",
         date: '1995-03-20', type: 'photo', emotion: 'nostalgic', tags: ['family', 'picnic', 'childhood', 'outdoor'],
         recallScore: 85,
         image: '/images/Family Picnic (Childhood).png',
     },
     {
         id: 'mem-03', title: 'Childhood Home',
-        description: "The cherished home where Ravi and Smita raised their family — the walls that held countless celebrations, quiet moments, and everyday routines. This house became the heart of their family's world, filled with memories of growth and togetherness.",
+        description: "The cherished home where Ravi and Smita raised their family - the walls that held countless celebrations, quiet moments, and everyday routines. This house became the heart of their family's world, filled with memories of growth and togetherness.",
         date: '1988-01-10', type: 'photo', emotion: 'nostalgic', tags: ['home', 'childhood', 'family', 'memories'],
         recallScore: 80,
         image: '/images/Childhood Home.png',
@@ -307,7 +307,7 @@ export const mockSchedule: ScheduleTask[] = [
     { id: 'gs-sa1', day: 'Sat', time: '08:00', category: 'medication', title: 'Morning medication', description: 'Donepezil 10mg', completed: false },
     { id: 'gs-sa2', day: 'Sat', time: '11:00', category: 'exercise', title: 'Outdoor walk', description: 'Sector 15 park with Anita', completed: false },
     { id: 'gs-sa3', day: 'Sat', time: '15:00', category: 'game', title: 'Word Recall Game', description: 'Word recall brain exercise on tablet', completed: false },
-    { id: 'gs-sa4', day: 'Sat', time: '16:00', category: 'chore', title: 'Water the Plants', description: 'Water balcony plants — tulsi, marigold, money plant', completed: false },
+    { id: 'gs-sa4', day: 'Sat', time: '16:00', category: 'chore', title: 'Water the Plants', description: 'Water balcony plants - tulsi, marigold, money plant', completed: false },
     { id: 'gs-su1', day: 'Sun', time: '08:00', category: 'medication', title: 'Morning medication', description: 'Donepezil 10mg', completed: false },
     { id: 'gs-su2', day: 'Sun', time: '17:00', category: 'social', title: 'Priya visits', description: 'Weekly family visit', completed: false },
 ]

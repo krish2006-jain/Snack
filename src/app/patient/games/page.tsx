@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { Layers, Type, Grid2x2, Star, Flame, Zap, Trophy } from 'lucide-react';
@@ -36,7 +36,7 @@ const games: GameCard[] = [
         id: 'word_recall',
         slug: 'word_recall',
         name: 'Word Recall',
-        description: 'Remember words about your life — then see how many come back.',
+        description: 'Remember words about your life - then see how many come back.',
         icon: <Type size={28} />,
         difficulty: 'Moderate',
         stars: 2,
@@ -97,11 +97,11 @@ export default function GamesPage() {
                 </div>
 
                 {/* Brain score card */}
-                <div className={styles.scoreCard}>
+                <div className={styles.scoreCard} data-tooltip="Your overall brain health score based on recent game performance">
                     <CircularScore score={brainScore} />
                     <div className={styles.scoreInfo}>
                         <p className={styles.scoreLabel}>Brain Score</p>
-                        <div className={styles.streakRow}>
+                        <div className={styles.streakRow} data-tooltip="Number of consecutive days you've played brain games">
                             <Flame size={16} color="var(--color-warning)" />
                             <span className={styles.streakText}>{streak} day streak</span>
                         </div>
@@ -111,11 +111,11 @@ export default function GamesPage() {
 
             {/* Stats row */}
             <div className={styles.statsRow}>
-                <div className={styles.statChip}>
+                <div className={styles.statChip} data-tooltip="Your highest single game score this week">
                     <Trophy size={15} color="var(--color-warning)" />
                     <span>Best score this week: <strong>85</strong></span>
                 </div>
-                <div className={styles.statChip}>
+                <div className={styles.statChip} data-tooltip="How many brain games you've completed today out of today's goal">
                     <Zap size={15} color="var(--color-success)" />
                     <span>Games today: <strong>2 / 3</strong></span>
                 </div>
@@ -164,6 +164,7 @@ export default function GamesPage() {
                                 className={styles.playBtn}
                                 style={{ background: game.color, boxShadow: `0 6px 20px ${game.color}44` }}
                                 aria-label={`Play ${game.name}`}
+                                data-tooltip={`Start playing ${game.name}`}
                             >
                                 Play
                             </Link>

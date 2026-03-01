@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getNextFallback } from '@/lib/companion-fallbacks';
 
@@ -7,20 +7,20 @@ interface Params {
 }
 
 const GUARDIAN_REPLIES = [
-    "Thank you so much for being there. I'm on my way — should be there in about 10 minutes.",
+    "Thank you so much for being there. I'm on my way - should be there in about 10 minutes.",
     "Please stay with him. He responds well to calm, slow speech in Hindi.",
     "Can you describe where exactly you are? I'll share with the caretaker too.",
-    "Thank you! His favourite phrase is 'Sab theek hai' — it calms him down.",
+    "Thank you! His favourite phrase is 'Sab theek hai' - it calms him down.",
     "I've alerted Nurse Anita as well. She might reach before me.",
     "You're an angel. Please don't leave him alone. I'm coming as fast as I can.",
 ];
 
 const CARETAKER_REPLIES = [
     "Thank you for contacting me. I'm his daily caretaker. Is he responsive?",
-    "Please check if he seems dehydrated — offer him water if possible.",
+    "Please check if he seems dehydrated - offer him water if possible.",
     "I'm 15 minutes away. Please keep him seated if you can.",
     "Does he have his ID bracelet on? It's brown leather with his name.",
-    "Thank you so much. I know his routine well — I'll be there shortly.",
+    "Thank you so much. I know his routine well - I'll be there shortly.",
     "If he seems agitated, try speaking softly and saying 'Ravi ji, Anita aa rahi hai'.",
 ];
 
@@ -52,7 +52,7 @@ export async function POST(req: Request, { params }: Params) {
             return NextResponse.json({ error: 'Invalid QR code.' }, { status: 404 });
         }
 
-        // ─── AI Channel — Lyzr Agent (Saathi AI) ─────────────────────────────
+        // ─── AI Channel - Lyzr Agent (Saathi AI) ─────────────────────────────
         if (channel === 'ai') {
             const patientName = (profile.preferred_name || profile.name || 'the patient') as string;
             const careStage = (profile.care_stage || 'moderate') as string;
@@ -73,7 +73,7 @@ export async function POST(req: Request, { params }: Params) {
             // We embed the patient record at the start of the FIRST message so
             // the agent can reason over it immediately.
             const medicalContext = [
-                `[PATIENT MEDICAL RECORD — ${patientName}]`,
+                `[PATIENT MEDICAL RECORD - ${patientName}]`,
                 `Full name: ${profile.name as string}`,
                 `Care stage: ${careStage} Alzheimer's`,
                 `Blood type: ${(profile.blood_type as string) || 'B+'}`,
@@ -145,13 +145,13 @@ export async function POST(req: Request, { params }: Params) {
             }
         }
 
-        // ─── Guardian Channel — simulated replies ─────────────────────────────
+        // ─── Guardian Channel - simulated replies ─────────────────────────────
         if (channel === 'guardian') {
             const reply = GUARDIAN_REPLIES[Math.floor(Math.random() * GUARDIAN_REPLIES.length)];
             return NextResponse.json({ reply, sender: 'Priya Sharma', channel: 'guardian' });
         }
 
-        // ─── Caretaker Channel — simulated replies ────────────────────────────
+        // ─── Caretaker Channel - simulated replies ────────────────────────────
         if (channel === 'caretaker') {
             const reply = CARETAKER_REPLIES[Math.floor(Math.random() * CARETAKER_REPLIES.length)];
             return NextResponse.json({ reply, sender: 'Nurse Anita', channel: 'caretaker' });

@@ -1,4 +1,4 @@
-/** 
+﻿/** 
  * Pre-written warm responses for when the Gemini API is unavailable. 
  * Note: These are hardcoded for the demo user profile (Ravi, Priya, Meera, etc.).
  * In a production system, these would be generated dynamically or use a template engine.
@@ -7,7 +7,7 @@ export const companionFallbacks = [
     "I'm right here, Ravi. What's on your mind today?",
     "That's a lovely thought. Tell me more about it.",
     "It's completely okay to feel that way. I'm listening.",
-    "Priya called earlier — she loves you very much.",
+    "Priya called earlier - she loves you very much.",
     "Would you like to hear some music? It always makes you feel better.",
     "Remember, you're never alone. I'm always here for you.",
     "Your morning chai must have been nice today. Did you enjoy it?",
@@ -15,7 +15,7 @@ export const companionFallbacks = [
     "I noticed you did really well in your card game today. You're getting better!",
     "Do you remember Rahul's cricket match last week? He scored 42 runs!",
     "It's a beautiful day outside. The sun is shining, just like your smile.",
-    "Let me tell you something nice — Priya is planning to visit this Sunday.",
+    "Let me tell you something nice - Priya is planning to visit this Sunday.",
     "You taught mathematics for 35 years. Your students still talk about you.",
     "Would you like me to read something to you? I know you like stories.",
     "Take a deep breath with me. In... and out. You're doing great.",

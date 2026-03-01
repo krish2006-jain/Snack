@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import GuardianHeader from '@/components/guardian/GuardianHeader';
@@ -47,28 +47,28 @@ export default function AlertsPage() {
             <main className={styles.content}>
                 {/* Summary chips */}
                 <div className={styles.summaryRow}>
-                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-danger)', background: 'var(--color-danger-bg)' }}>
+                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-danger)' }} data-tooltip="Number of critical safety alerts requiring immediate attention">
                         <ShieldAlert size={16} color="var(--color-danger)" aria-hidden="true" />
                         <div>
                             <span className={styles.chipNum} style={{ color: 'var(--color-danger)' }}>{counts.danger}</span>
                             <span className={styles.chipLbl}>Critical</span>
                         </div>
                     </div>
-                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-warning)', background: 'var(--color-warning-bg)' }}>
+                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-warning)' }} data-tooltip="Number of warning-level alerts that need attention soon">
                         <AlertTriangle size={16} color="var(--color-warning)" aria-hidden="true" />
                         <div>
                             <span className={styles.chipNum} style={{ color: 'var(--color-warning)' }}>{counts.warning}</span>
                             <span className={styles.chipLbl}>Warnings</span>
                         </div>
                     </div>
-                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-info)', background: 'var(--color-info-bg)' }}>
+                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-info)' }} data-tooltip="Informational updates about the patient's care activities">
                         <Info size={16} color="var(--color-info)" aria-hidden="true" />
                         <div>
                             <span className={styles.chipNum} style={{ color: 'var(--color-info)' }}>{counts.info}</span>
                             <span className={styles.chipLbl}>Info</span>
                         </div>
                     </div>
-                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-success)', background: 'var(--color-success-bg)' }}>
+                    <div className={styles.summaryChip} style={{ borderColor: 'var(--color-success)' }} data-tooltip="Positive updates showing good care progress">
                         <CheckCircle2 size={16} color="var(--color-success)" aria-hidden="true" />
                         <div>
                             <span className={styles.chipNum} style={{ color: 'var(--color-success)' }}>{counts.success}</span>
@@ -76,7 +76,7 @@ export default function AlertsPage() {
                         </div>
                     </div>
                     {unreadCount > 0 && (
-                        <button className={styles.markAllBtn} onClick={markAllRead}>
+                        <button className={styles.markAllBtn} onClick={markAllRead} data-tooltip="Mark all unread alerts as read at once">
                             <MailOpen size={14} aria-hidden="true" /> Mark all read
                         </button>
                     )}
@@ -89,6 +89,7 @@ export default function AlertsPage() {
                         onClick={() => setTab('alerts')}
                         role="tab"
                         aria-selected={tab === 'alerts'}
+                        data-tooltip="View care and safety alerts for your patient"
                     >
                         <Bell size={14} aria-hidden="true" /> Alerts {unreadCount > 0 && <span className={styles.tabBadge}>{unreadCount}</span>}
                     </button>
@@ -97,6 +98,7 @@ export default function AlertsPage() {
                         onClick={() => setTab('qr')}
                         role="tab"
                         aria-selected={tab === 'qr'}
+                        data-tooltip="View the complete history of QR bracelet scans by Good Samaritans"
                     >
                         <QrCode size={14} aria-hidden="true" /> QR Scan Log
                     </button>
@@ -149,7 +151,7 @@ export default function AlertsPage() {
                                                     })}
                                                 </span>
                                                 {!alert.read && (
-                                                    <button className={styles.readBtn} onClick={() => markRead(alert.id)}>
+                                                    <button className={styles.readBtn} onClick={() => markRead(alert.id)} data-tooltip="Mark this specific alert as read">
                                                         Mark read
                                                     </button>
                                                 )}
@@ -181,7 +183,7 @@ export default function AlertsPage() {
                                     </span>
                                     <span className={styles.qrLoc}>{scan.location}</span>
                                     <span className={styles.qrType}>{scan.scannerNote ? scan.scannerNote.slice(0, 15) + '...' : 'Unknown'}</span>
-                                    <span className={styles.qrNote}>{scan.scannerNote || '—'}</span>
+                                    <span className={styles.qrNote}>{scan.scannerNote || '-'}</span>
                                 </div>
                             ))}
                         </div>

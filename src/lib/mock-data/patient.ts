@@ -1,4 +1,4 @@
-// Mock data for SaathiCare — Ravi Sharma, 72, Moderate Alzheimer's
+﻿// Mock data for SaathiCare - Ravi Sharma, 72, Moderate Alzheimer's
 
 export interface Patient {
     id: string;
@@ -116,7 +116,7 @@ export const mockCaretaker: Caretaker = {
     shiftEnd: '4:00 PM',
 };
 
-// TODAY'S SCHEDULE — 9 tasks across all categories
+// TODAY'S SCHEDULE - 9 tasks across all categories
 export const mockSchedule: ScheduleTask[] = [
     {
         id: 'task-1',
@@ -142,7 +142,7 @@ export const mockSchedule: ScheduleTask[] = [
         time: '8:00 AM',
         status: 'done',
         category: 'Meal',
-        description: 'Idli sabzi + warm milk — no spicy food today',
+        description: 'Idli sabzi + warm milk - no spicy food today',
         photo: '',
     },
     {
@@ -169,7 +169,7 @@ export const mockSchedule: ScheduleTask[] = [
         time: '1:00 PM',
         status: 'upcoming',
         category: 'Meal',
-        description: 'Dal chawal + seasonal sabzi — no spicy food',
+        description: 'Dal chawal + seasonal sabzi - no spicy food',
         photo: '',
     },
     {
@@ -178,7 +178,7 @@ export const mockSchedule: ScheduleTask[] = [
         time: '2:30 PM',
         status: 'upcoming',
         category: 'Rest',
-        description: 'Rest in bed — keep blinds half-closed, no screen time',
+        description: 'Rest in bed - keep blinds half-closed, no screen time',
         photo: '',
     },
     {
@@ -187,7 +187,7 @@ export const mockSchedule: ScheduleTask[] = [
         time: '4:00 PM',
         status: 'upcoming',
         category: 'Game',
-        description: 'Play the word recall game for 10 minutes — good for memory!',
+        description: 'Play the word recall game for 10 minutes - good for memory!',
         photo: '',
     },
     {
@@ -196,7 +196,7 @@ export const mockSchedule: ScheduleTask[] = [
         time: '5:30 PM',
         status: 'upcoming',
         category: 'Chore',
-        description: 'Water the balcony plants — tulsi, marigold, and the money plant',
+        description: 'Water the balcony plants - tulsi, marigold, and the money plant',
         photo: '',
     },
     {
@@ -220,31 +220,34 @@ export const mockSchedule: ScheduleTask[] = [
 ];
 
 
-// FLASHCARDS — 14 cards
+// FLASHCARDS - 14 cards
 export const mockFlashcards: Flashcard[] = [
     {
         id: 'fc-1',
         category: 'family',
         question: 'Who is this smiling woman calling you every Sunday?',
-        answer: 'Priya — your daughter',
+        answer: 'Priya - your daughter',
         description: 'Priya is your eldest daughter. She lives in Gurugram with her husband Rajesh and your grandchildren Aarav (8) and Riya (5). She calls you every Sunday evening.',
-        tip: 'Think of the name that starts with P — like your favourite puri!',
+        photo: '/images/priya.png',
+        tip: 'Think of the name that starts with P - like your favourite puri!',
     },
     {
         id: 'fc-2',
         category: 'family',
         question: 'Who is the young woman who brings you medicine every morning?',
-        answer: 'Nurse Anita — your caretaker',
+        answer: 'Nurse Anita - your caretaker',
         description: 'Anita has been your daytime caretaker for two years. She joins you on morning walks and makes sure your medicines are taken on time.',
+        photo: '/images/anita.png',
         tip: 'She wears white and is always carrying a small bag.',
     },
     {
         id: 'fc-3',
         category: 'family',
-        question: 'What is the name of Priya\'s son — your grandson?',
-        answer: 'Aarav — 8 years old',
+        question: 'What is the name of Priya\'s son - your grandson?',
+        answer: 'Aarav - 8 years old',
         description: 'Aarav loves cricket and is in Class 3. He calls you "Dadu" and loves when you tell him stories.',
-        tip: 'Aarav — like "Aarav Shah" the singer. He is 8 years old.',
+        photo: '/images/aarav.png',
+        tip: 'Aarav - like "Aarav Shah" the singer. He is 8 years old.',
     },
     {
         id: 'fc-4',
@@ -258,31 +261,31 @@ export const mockFlashcards: Flashcard[] = [
         id: 'fc-5',
         category: 'places',
         question: 'In which city did you work for 30 years?',
-        answer: 'Delhi — at LIC Connaught Place office',
+        answer: 'Delhi - at LIC Connaught Place office',
         description: 'You worked as a Branch Manager at Life Insurance Corporation\'s Connaught Place office for 30 years before retiring in 2018.',
-        tip: 'The office had a big circular park nearby — Connaught Place.',
+        tip: 'The office had a big circular park nearby - Connaught Place.',
     },
     {
         id: 'fc-6',
         category: 'memories',
         question: 'What is the special dish your wife Kamla made every Sunday?',
-        answer: 'Chole bhature — from her grandmother\'s recipe',
+        answer: 'Chole bhature - from her grandmother\'s recipe',
         description: 'Every Sunday morning, Kamla made chole bhature using her grandmother\'s recipe. The whole colony knew the smell. You still make it sometimes.',
-        tip: 'Think of Sunday mornings — the sound of puris frying.',
+        tip: 'Think of Sunday mornings - the sound of puris frying.',
     },
     {
         id: 'fc-7',
         category: 'memories',
         question: 'In which year did you get married?',
-        answer: '1978 — in Varanasi',
+        answer: '1978 - in Varanasi',
         description: 'You married Kamla in 1978 in a traditional ceremony in Varanasi at the Dashashwamedh Ghat. You have been together for 45 wonderful years.',
-        tip: '1978 — India was playing cricket against West Indies that year!',
+        tip: '1978 - India was playing cricket against West Indies that year!',
     },
     {
         id: 'fc-8',
         category: 'memories',
         question: 'What sport did you love playing in your youth?',
-        answer: 'Cricket — opening batsman for your colony team',
+        answer: 'Cricket - opening batsman for your colony team',
         description: 'You played cricket as an opening batsman for the Sector 7 colony team in Delhi from age 18 to 35. Your highest score was 84 not out.',
         tip: 'You always had your bat oiled and ready by the door.',
     },
@@ -290,15 +293,15 @@ export const mockFlashcards: Flashcard[] = [
         id: 'fc-9',
         category: 'family',
         question: 'Who is Priya\'s husband\'s name?',
-        answer: 'Rajesh Khanna — works in IT',
+        answer: 'Rajesh Khanna - works in IT',
         description: 'Rajesh is Priya\'s husband. He works as a software engineer in Gurugram. He calls you every Friday evening and visits on festivals.',
-        tip: 'Rajesh — same name as the famous actor, but different person!',
+        tip: 'Rajesh - same name as the famous actor, but different person!',
     },
     {
         id: 'fc-10',
         category: 'objects',
         question: 'What is this orange-and-blue box near your bed?',
-        answer: 'Your medicine box — opened every morning and evening',
+        answer: 'Your medicine box - opened every morning and evening',
         description: 'This is your weekly medicine organiser. The morning slot has Donepezil (white tablet). Evening slot has Memantine (pink tablet) and Vitamin D capsule.',
         tip: 'Orange lid = morning, blue lid = evening.',
     },
@@ -306,37 +309,37 @@ export const mockFlashcards: Flashcard[] = [
         id: 'fc-11',
         category: 'objects',
         question: 'What does the red button on your bracelet do?',
-        answer: 'Calls Priya and Anita for help — press if you need anything',
+        answer: 'Calls Priya and Anita for help - press if you need anything',
         description: 'Your QR bracelet has a red button. Pressing it sends an alert to Priya and Anita immediately. You can also use it to scan and see your information.',
-        tip: 'Red = help. Like a red traffic light — means stop and ask for help.',
+        tip: 'Red = help. Like a red traffic light - means stop and ask for help.',
     },
     {
         id: 'fc-12',
         category: 'places',
         question: 'Where is your favourite chai shop?',
-        answer: 'Ram\'s tea stall — outside Sector 15 market',
+        answer: 'Ram\'s tea stall - outside Sector 15 market',
         description: 'Ram\'s stall near the Sector 15 market gate has your favourite cutting chai with extra elaichi. You went there every morning before retirement.',
         tip: 'The tea shop with the old wooden bench outside the market.',
     },
     {
         id: 'fc-13',
         category: 'family',
-        question: 'What is Priya\'s daughter\'s name — your granddaughter?',
-        answer: 'Riya — 5 years old, loves drawing',
+        question: 'What is Priya\'s daughter\'s name - your granddaughter?',
+        answer: 'Riya - 5 years old, loves drawing',
         description: 'Little Riya is 5 years old and already loves drawing and painting. She made a picture of you and it is on your bedroom wall.',
-        tip: 'Riya — like "Riya" the actress. She always has colours on her hands.',
+        tip: 'Riya - like "Riya" the actress. She always has colours on her hands.',
     },
     {
         id: 'fc-14',
         category: 'memories',
         question: 'What was your favourite film that you watched in cinema?',
-        answer: 'Sholay — watched it 7 times in Regal Cinema, Delhi',
+        answer: 'Sholay - watched it 7 times in Regal Cinema, Delhi',
         description: 'Sholay was your all-time favourite film. You watched it 7 times in Regal Cinema in Connaught Place. You still remember all of Gabbar\'s dialogues.',
-        tip: 'Kitne aadmi the? — you never forget that dialogue!',
+        tip: 'Kitne aadmi the? - you never forget that dialogue!',
     },
 ];
 
-// PEOPLE WALLET — 7 people
+// PEOPLE WALLET - 7 people
 export const mockPeople: PersonCard[] = [
     {
         id: 'person-0',
@@ -403,7 +406,7 @@ export const mockPeople: PersonCard[] = [
     },
 ];
 
-// VOICE JOURNAL — Patient-recorded stories
+// VOICE JOURNAL - Patient-recorded stories
 export interface VoiceJournalEntry {
     id: string;
     transcription: string;
@@ -417,7 +420,7 @@ export interface VoiceJournalEntry {
 export const mockVoiceJournal: VoiceJournalEntry[] = [
     {
         id: 'vj-1',
-        transcription: 'Today Priya came to visit me. She brought Aarav and Riya. Aarav showed me his cricket trophy — he won at school! We had chai together and I told them about the time I scored 84 runs in the colony match.',
+        transcription: 'Today Priya came to visit me. She brought Aarav and Riya. Aarav showed me his cricket trophy - he won at school! We had chai together and I told them about the time I scored 84 runs in the colony match.',
         entities: ['Priya', 'Aarav', 'Riya', 'cricket', 'chai'],
         sentiment: 'happy',
         durationSeconds: 32,
@@ -453,7 +456,7 @@ export const mockVoiceJournal: VoiceJournalEntry[] = [
     },
     {
         id: 'vj-5',
-        transcription: 'Played the card match game today and scored 88! Anita said I am getting better. I remembered all the photos — Priya, Smita, Aarav, everyone. Feeling good today.',
+        transcription: 'Played the card match game today and scored 88! Anita said I am getting better. I remembered all the photos - Priya, Smita, Aarav, everyone. Feeling good today.',
         entities: ['Anita', 'Priya', 'Smita', 'Aarav'],
         sentiment: 'happy',
         durationSeconds: 18,
@@ -462,7 +465,7 @@ export const mockVoiceJournal: VoiceJournalEntry[] = [
     },
 ];
 
-// FAMILY CONTRIBUTIONS — Stories from family
+// FAMILY CONTRIBUTIONS - Stories from family
 export interface FamilyContribution {
     id: string;
     contributorName: string;
@@ -485,7 +488,7 @@ export const mockFamilyContributions: FamilyContribution[] = [
         contributorPhoto: '/images/priya.png',
         contentType: 'text',
         title: 'Remember our Sunday Picnic?',
-        content: 'Papa, remember when we went to India Gate for a picnic? You bought us all ice cream — butterscotch for me and chocolate for Mohit. You said "Ice cream is the best medicine!" We sat on the grass and watched the sunset. That was the most peaceful evening. I still think about it whenever I eat butterscotch ice cream. Love you, Papa!',
+        content: 'Papa, remember when we went to India Gate for a picnic? You bought us all ice cream - butterscotch for me and chocolate for Mohit. You said "Ice cream is the best medicine!" We sat on the grass and watched the sunset. That was the most peaceful evening. I still think about it whenever I eat butterscotch ice cream. Love you, Papa!',
         status: 'approved',
         createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
         timeLabel: '2 hours ago',
@@ -497,7 +500,7 @@ export const mockFamilyContributions: FamilyContribution[] = [
         contributorPhoto: '/images/mohit.png',
         contentType: 'text',
         title: 'Your Cricket Stories',
-        content: 'Papa, I told my friends about your 84 not out in the colony match. They could not believe it! You always said "Cricket teaches patience" — I use that advice every day at work. Missing you in Mumbai. Will come soon for Holi. Keep playing those brain games — your grandson Aarav says he wants to challenge you!',
+        content: 'Papa, I told my friends about your 84 not out in the colony match. They could not believe it! You always said "Cricket teaches patience" - I use that advice every day at work. Missing you in Mumbai. Will come soon for Holi. Keep playing those brain games - your grandson Aarav says he wants to challenge you!',
         status: 'approved',
         createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
         timeLabel: 'Yesterday',
@@ -521,7 +524,7 @@ export const mockFamilyContributions: FamilyContribution[] = [
         contributorPhoto: '/images/riya.png',
         contentType: 'text',
         title: 'I Drew You, Dadu!',
-        content: 'Dadu, I drew a picture of you and me in the garden! You are watering the marigolds and I am painting. Mummy said she will bring it when we visit. I used your favourite colour — orange like the marigolds! I love you Dadu. 🌸🎨',
+        content: 'Dadu, I drew a picture of you and me in the garden! You are watering the marigolds and I am painting. Mummy said she will bring it when we visit. I used your favourite colour - orange like the marigolds! I love you Dadu. 🌸🎨',
         status: 'approved',
         createdAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
         timeLabel: '5 days ago',
@@ -545,7 +548,7 @@ export const mockFamilyContributions: FamilyContribution[] = [
         contributorPhoto: '/images/mohit.png',
         contentType: 'text',
         title: 'Your Favourite Sholay Dialogue',
-        content: 'Papa, at the office party I quoted your favourite dialogue — "Kitne aadmi the?" Everyone laughed! You would have loved it. Remember how we watched Sholay together 7 times? I think the next time I visit we should watch it again. Regal Cinema style, at home!',
+        content: 'Papa, at the office party I quoted your favourite dialogue - "Kitne aadmi the?" Everyone laughed! You would have loved it. Remember how we watched Sholay together 7 times? I think the next time I visit we should watch it again. Regal Cinema style, at home!',
         status: 'pending',
         createdAt: new Date(Date.now() - 1 * 3600 * 1000).toISOString(),
         timeLabel: '1 hour ago',

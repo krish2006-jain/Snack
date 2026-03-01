@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -175,8 +175,8 @@ export default function PatientHome() {
                     <section className={styles.section}>
                         <div className={styles.quickGrid}>
 
-                            {/* Featured — Schedule */}
-                            <Link href="/patient/schedule" className={`${styles.quickCard} ${styles.quickCardFeatured} card-enter`} style={{ animationDelay: '0ms' }}>
+                            {/* Featured - Schedule */}
+                            <Link href="/patient/schedule" className={`${styles.quickCard} ${styles.quickCardFeatured} card-enter`} style={{ animationDelay: '0ms' }} data-tooltip="View and manage all of today's tasks and appointments">
                                 <div className={styles.quickCardTop}>
                                     <Calendar size={44} color="var(--color-primary)" aria-hidden="true" />
                                     <span className={styles.quickBadge}><AnimatedNumber value={pendingTasks} /> left</span>
@@ -186,16 +186,16 @@ export default function PatientHome() {
                                 <ChevronRight size={22} className={styles.chevron} />
                             </Link>
 
-                            {/* Memory Time + Memory Room — split half-block */}
+                            {/* Memory Time + Memory Room - split half-block */}
                             <div className={styles.splitCardRow}>
-                                <Link href="/patient/memories" className={`${styles.quickCard} ${styles.quickCardSplit} card-enter`} style={{ animationDelay: '100ms' }}>
+                                <Link href="/patient/memories" className={`${styles.quickCard} ${styles.quickCardSplit} card-enter`} style={{ animationDelay: '100ms' }} data-tooltip="Practice memory recall with AI-guided photo flashcards">
                                     <Brain size={32} color="var(--color-primary)" aria-hidden="true" />
                                     <div>
                                         <h2 className={styles.quickTitleSmall}>Memory Time</h2>
                                         <p className={styles.quickSub}>Flashcards</p>
                                     </div>
                                 </Link>
-                                <Link href="/patient/memory-room" className={`${styles.quickCard} ${styles.quickCardSplit} card-enter`} style={{ animationDelay: '150ms' }}>
+                                <Link href="/patient/memory-room" className={`${styles.quickCard} ${styles.quickCardSplit} card-enter`} style={{ animationDelay: '150ms' }} data-tooltip="Explore familiar virtual spaces connected to your memories">
                                     <Home size={32} color="var(--color-primary)" aria-hidden="true" />
                                     <div>
                                         <h2 className={styles.quickTitleSmall}>Memory Room</h2>
@@ -205,22 +205,22 @@ export default function PatientHome() {
                             </div>
 
                             {/* My People */}
-                            <Link href="/patient/people" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '200ms' }}>
+                            <Link href="/patient/people" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '200ms' }} data-tooltip="See the family and friends who are part of your care network">
                                 <Users size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>My People</h2>
                                 <p className={styles.quickSub}><AnimatedNumber value={resolvedPeopleCount} /> people who love you</p>
                             </Link>
 
-                            {/* Saathi — split block */}
+                            {/* Saathi - split block */}
                             <div className={styles.splitCardRow}>
-                                <Link href="/patient/companion" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '300ms' }}>
+                                <Link href="/patient/companion" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '300ms' }} data-tooltip="Have a real-time voice conversation with your AI memory companion">
                                     <Mic size={32} color="var(--color-primary)" aria-hidden="true" />
                                     <div>
                                         <h2 className={styles.quickTitleSmall}>Talk to Saathi</h2>
                                         <p className={styles.quickSub}>Voice</p>
                                     </div>
                                 </Link>
-                                <Link href="/patient/chat" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '350ms' }}>
+                                <Link href="/patient/chat" className={`${styles.quickCard} ${styles.quickCardSplit} ${styles.quickCardCompanion} card-enter`} style={{ animationDelay: '350ms' }} data-tooltip="Text chat with Saathi for emotional support and memory exercises">
                                     <MessageCircle size={32} color="var(--color-primary)" aria-hidden="true" />
                                     <div>
                                         <h2 className={styles.quickTitleSmall}>Chat with Saathi</h2>
@@ -230,14 +230,14 @@ export default function PatientHome() {
                             </div>
 
                             {/* Brain Games */}
-                            <Link href="/patient/games" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '400ms' }}>
+                            <Link href="/patient/games" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '400ms' }} data-tooltip="Play cognitive games designed to keep your mind sharp and active">
                                 <Gamepad2 size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Brain Games</h2>
                                 <p className={styles.quickSub}>Keep your mind active</p>
                             </Link>
 
                             {/* Stories */}
-                            <Link href="/patient/stories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '500ms' }}>
+                            <Link href="/patient/stories" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '500ms' }} data-tooltip="Read your personal journal and heartfelt messages from family">
                                 <BookOpen size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Stories</h2>
                                 <p className={styles.quickSub}>Your journal and family messages</p>
@@ -245,7 +245,7 @@ export default function PatientHome() {
                         </div>
                     </section>
 
-                    {/* Medication reminder — only show if there's a med to remind about */}
+                    {/* Medication reminder - only show if there's a med to remind about */}
                     {!medTaken && medName && (
                         <section className={styles.section}>
                             <div className={`card card--urgent ${styles.medCard}`}>
@@ -258,7 +258,7 @@ export default function PatientHome() {
                                         <h3 className={styles.medTitle}>Time to take {medName}</h3>
                                         <div className={styles.medMeta}>
                                             <Clock size={14} />
-                                            <span>{medTime}{medNote ? ` — ${medNote}` : ''}</span>
+                                            <span>{medTime}{medNote ? ` - ${medNote}` : ''}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -266,6 +266,7 @@ export default function PatientHome() {
                                     className={`btn btn--success btn--patient ${styles.medBtn}`}
                                     onClick={() => setMedTaken(true)}
                                     aria-label={`Mark ${medName} as taken`}
+                                    data-tooltip="Confirm you have taken this medication. Great job staying on track!"
                                 >
                                     <CheckCircle size={22} />
                                     Mark as Taken
@@ -293,7 +294,7 @@ export default function PatientHome() {
                         <div className={styles.scheduleCard}>
                             <div className={styles.scheduleSectionHeader}>
                                 <h2 className={styles.sectionTitle}>Coming up today</h2>
-                                <div className={styles.progressBar} role="progressbar" aria-valuenow={completedTasks} aria-valuemax={totalTasks} aria-label={`${completedTasks} of ${totalTasks} tasks done`}>
+                                <div className={styles.progressBar} role="progressbar" aria-valuenow={completedTasks} aria-valuemax={totalTasks} aria-label={`${completedTasks} of ${totalTasks} tasks done`} data-tooltip={`${completedTasks} of ${totalTasks} tasks completed today`}>
                                     <div className={styles.progressFill} style={{ width: `${totalTasks ? (completedTasks / totalTasks) * 100 : 0}%` }} />
                                 </div>
                                 <span className={styles.progressLabel}>
@@ -324,7 +325,7 @@ export default function PatientHome() {
                                         );
                                     })}
                             </div>
-                            <Link href="/patient/schedule" className={`btn btn--ghost ${styles.viewAllBtn}`}>
+                            <Link href="/patient/schedule" className={`btn btn--ghost ${styles.viewAllBtn}`} data-tooltip="Open your full daily schedule with all tasks and times">
                                 See full schedule
                                 <ChevronRight size={16} />
                             </Link>

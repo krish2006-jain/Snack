@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { AppHeader } from './AppHeader';
 import { AppSidebar } from './AppSidebar';
@@ -32,7 +32,7 @@ export function AppLayout({ role, children, userName, alertCount }: AppLayoutPro
         );
     }
 
-    // Guardian or Caretaker — full shell with sidebar
+    // Guardian or Caretaker - full shell with sidebar
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-surface-soft)' }}>
             <AppHeader

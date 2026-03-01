@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 /**
- * 3D Avatar Model — loads the GLB model with morph targets,
+ * 3D Avatar Model - loads the GLB model with morph targets,
  * viseme lip-sync, facial expressions, and animations.
  * Ported from Haven/frontend/src/components/Avatar.jsx
  */

@@ -1,4 +1,4 @@
-export default function LivingRoomSVG({ className }: { className?: string }) {
+﻿export default function LivingRoomSVG({ className }: { className?: string }) {
     return (
         <svg
             className={className}
@@ -27,7 +27,7 @@ export default function LivingRoomSVG({ className }: { className?: string }) {
             <g data-object-id="rug">
                 <ellipse cx="350" cy="500" rx="280" ry="55" fill="#DCD0C0" opacity="0.6" />
                 <ellipse cx="350" cy="500" rx="260" ry="42" fill="#E8DED0" opacity="0.5" />
-                {/* Rug pattern — border lines */}
+                {/* Rug pattern - border lines */}
                 <ellipse cx="350" cy="500" rx="240" ry="36" fill="none" stroke="#C8B8A0" strokeWidth="1.5" strokeDasharray="8 4" opacity="0.4" />
             </g>
 

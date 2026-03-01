@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useMemo } from 'react';
 import { Heart, X, ChevronLeft, ChevronRight, MessageSquareHeart, FileText } from 'lucide-react';
@@ -60,7 +60,7 @@ export default function FamilyStoriesPage() {
                 </p>
             </div>
 
-            {/* Stories bubble row — family avatars */}
+            {/* Stories bubble row - family avatars */}
             <div className={styles.storiesRow}>
                 {contributors.map((person, i) => (
                     <button

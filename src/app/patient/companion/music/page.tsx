@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -25,7 +25,7 @@ const moods: MoodOption[] = [
         sublabel: 'Peaceful & rested',
         icon: <Wind size={28} />,
         playlist: 'Raag Bhairavi Mornings',
-        tracks: ['Raag Bhairavi — Pandit Jasraj', 'Thumri in Bhairavi — Girija Devi', 'Morning Raga — Bismillah Khan', 'Bhajan — Lata Mangeshkar'],
+        tracks: ['Raag Bhairavi - Pandit Jasraj', 'Thumri in Bhairavi - Girija Devi', 'Morning Raga - Bismillah Khan', 'Bhajan - Lata Mangeshkar'],
         color: '#3B82F6',
     },
     {
@@ -34,7 +34,7 @@ const moods: MoodOption[] = [
         sublabel: 'Worried or uneasy',
         icon: <Zap size={28} />,
         playlist: 'Slow & Soothing Hindostani',
-        tracks: ['Dil Dhoondta Hai — Mausam', 'Lag Ja Gale — Lata Mangeshkar', 'Aye Mere Watan — Lata Mangeshkar', 'Tere Liye — Veer-Zaara'],
+        tracks: ['Dil Dhoondta Hai - Mausam', 'Lag Ja Gale - Lata Mangeshkar', 'Aye Mere Watan - Lata Mangeshkar', 'Tere Liye - Veer-Zaara'],
         color: '#F59E0B',
     },
     {
@@ -43,7 +43,7 @@ const moods: MoodOption[] = [
         sublabel: 'Joyful & bright',
         icon: <Smile size={28} />,
         playlist: 'Old Hindi Evergreens',
-        tracks: ['Mere Sapno Ki Rani — Aradhana', 'Aaja Sanam — Chori Chori', 'Dum Maro Dum — Hare Rama Hare Krishna', 'Yeh Shaam Mastani — Kati Patang'],
+        tracks: ['Mere Sapno Ki Rani - Aradhana', 'Aaja Sanam - Chori Chori', 'Dum Maro Dum - Hare Rama Hare Krishna', 'Yeh Shaam Mastani - Kati Patang'],
         color: '#22C55E',
     },
     {
@@ -61,7 +61,7 @@ const moods: MoodOption[] = [
         sublabel: 'Restless or irritable',
         icon: <Meh size={28} />,
         playlist: 'Slow Instrumental Sitar',
-        tracks: ['Raga Yaman — Ravi Shankar', 'Evening Raga — Ali Akbar Khan', 'Tilak Kamod Gat — Ravi Shankar', 'Sitar Meditation — Nikhil Banerjee'],
+        tracks: ['Raga Yaman - Ravi Shankar', 'Evening Raga - Ali Akbar Khan', 'Tilak Kamod Gat - Ravi Shankar', 'Sitar Meditation - Nikhil Banerjee'],
         color: '#EF4444',
     },
 ];

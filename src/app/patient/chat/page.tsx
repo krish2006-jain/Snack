@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, Heart, ArrowLeft } from 'lucide-react';
@@ -17,7 +17,7 @@ const warmResponses = [
     "I'm right here. What's on your mind today?",
     "That's a lovely thought. Tell me more about it.",
     "It's completely okay to feel that way. I'm listening.",
-    "Your family called earlier — they love you very much.",
+    "Your family called earlier - they love you very much.",
     "Would you like me to remind you of a happy memory?",
     "You are safe and you are home. I'm here with you.",
     "Let's take it one moment at a time. No rush at all.",

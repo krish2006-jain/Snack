@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
@@ -12,32 +12,37 @@ interface Card {
     id: string;
     name: string;
     relation: string;
-    initials: string;
+    photo: string;
     color: string;
     isFlipped: boolean;
     isMatched: boolean;
+    displayMode: 'photo' | 'name';
 }
 
-const COLORS = ['#2D5A3D', '#3B82F6', '#22C55E', '#F59E0B'];
-
-// Take 2 pairs from mockPeople for moderate difficulty
-const peoplePairs = mockPeople.slice(0, 2);
+const COLORS = ['#2D5A3D', '#3B82F6', '#22C55E', '#F59E0B', '#8B5CF6', '#EC4899'];
 
 function makeCards(): Card[] {
     const pairs: Card[] = [];
-    peoplePairs.forEach((p, i) => {
-        const initials = p.name.split(' ').map((w) => w[0]).join('').slice(0, 2);
-        const base = { id: p.id, name: p.name, relation: p.relation, initials, color: COLORS[i], isFlipped: false, isMatched: false };
-        pairs.push({ ...base, uid: `${p.id}-a` });
-        pairs.push({ ...base, uid: `${p.id}-b` });
+    const _people = mockPeople as any[];
+    // Use family members with photos (skip 'Self')
+    const validPeople = _people.filter(p => (p.image || p.photo) && (p.relation || p.relationship) !== 'Self').slice(0, 4);
+
+    validPeople.forEach((p, i) => {
+        const photoUrl = p.image || p.photo;
+        const relationStr = p.relation || p.relationship;
+        const base = { id: p.id, name: p.name, relation: relationStr, photo: photoUrl, color: COLORS[i % COLORS.length], isFlipped: false, isMatched: false };
+        // Card A shows the photo
+        pairs.push({ ...base, uid: `${p.id}-photo`, displayMode: 'photo' });
+        // Card B shows the name
+        pairs.push({ ...base, uid: `${p.id}-name`, displayMode: 'name' });
     });
-    // Shuffle
+    // Shuffle cards
     return pairs.sort(() => Math.random() - 0.5);
 }
 
 function calcStars(flips: number, time: number): number {
-    if (flips <= 6 && time <= 30) return 3;
-    if (flips <= 10 && time <= 60) return 2;
+    if (flips <= 10 && time <= 45) return 3;
+    if (flips <= 16 && time <= 90) return 2;
     return 1;
 }
 
@@ -102,7 +107,7 @@ export default function CardMatchGame() {
                     }, 50);
                 }, 500);
             } else {
-                // No match — flip back
+                // No match - flip back
                 setTimeout(() => {
                     setCards((prev) => prev.map((c) => newSelected.includes(c.uid) ? { ...c, isFlipped: false } : c));
                     setSelected([]);
@@ -131,7 +136,7 @@ export default function CardMatchGame() {
                     <ArrowLeft size={20} />
                     <span>Games</span>
                 </button>
-                <h1 className={styles.gameTitle}>Card Match</h1>
+                <h1 className={styles.gameTitle}>Face to Name</h1>
                 <div className={styles.stats}>
                     <div className={styles.stat}>
                         <Timer size={16} />
@@ -145,7 +150,7 @@ export default function CardMatchGame() {
             </div>
 
             <div className={styles.content}>
-                <p className={styles.hint}>Find the matching pairs of your family, {userName}.</p>
+                <p className={styles.hint}>Match the photo of your family member with their name, {userName}.</p>
 
                 {/* Card grid */}
                 <div className={styles.cardGrid} aria-label="Card matching game grid" role="grid">
@@ -154,7 +159,7 @@ export default function CardMatchGame() {
                             key={card.uid}
                             className={`${styles.card} ${card.isFlipped || card.isMatched ? styles.cardFlipped : ''} ${card.isMatched ? styles.cardMatched : ''}`}
                             onClick={() => handleFlip(card.uid)}
-                            aria-label={card.isFlipped || card.isMatched ? `${card.name}, ${card.relation}` : 'Face-down card'}
+                            aria-label={card.isFlipped || card.isMatched ? (card.displayMode === 'photo' ? `Photo of ${card.name}` : `Name: ${card.name}`) : 'Face-down card'}
                             aria-pressed={card.isFlipped || card.isMatched}
                             disabled={card.isMatched || won}
                         >
@@ -167,11 +172,16 @@ export default function CardMatchGame() {
                                 </div>
                                 {/* Front */}
                                 <div className={styles.cardFront} style={{ '--card-color': card.color } as React.CSSProperties}>
-                                    <div className={styles.cardAvatar} style={{ background: card.color }}>
-                                        {card.initials}
-                                    </div>
-                                    <p className={styles.cardName}>{card.name}</p>
-                                    <p className={styles.cardRelation}>{card.relation}</p>
+                                    {card.displayMode === 'photo' ? (
+                                        <div className={styles.cardAvatar}>
+                                            <img src={card.photo} alt={card.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                            <p className={styles.cardName} style={{ fontSize: '1.4rem' }}>{card.name}</p>
+                                            <p className={styles.cardRelation}>{card.relation}</p>
+                                        </div>
+                                    )}
                                     {card.isMatched && <div className={styles.matchedOverlay} aria-hidden="true">✓</div>}
                                 </div>
                             </div>

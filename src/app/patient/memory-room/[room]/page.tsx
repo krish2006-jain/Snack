@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Volume2, CheckCircle, Plus, AlertTriangle, X, Trophy, Star, Clock, Lightbulb, Sparkles, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Volume2, CheckCircle, AlertTriangle, X, Trophy, Star, Clock, Lightbulb, Sparkles, RotateCcw } from 'lucide-react';
 import { KitchenRoomSVG, BedroomRoomSVG, LivingRoomSVG, GardenRoomSVG, PrayerRoomSVG } from '@/components/rooms';
 import styles from './room.module.css';
 
@@ -24,9 +24,10 @@ interface HotspotData {
 interface RoomDefinition {
     name: string;
     description: string;
-    bgClass: string;
+    bgClass?: string;
+    bgImage?: string;
     hotspots: HotspotData[];
-    SvgComponent: React.ComponentType<{ className?: string }>;
+    SvgComponent?: React.ComponentType<{ className?: string }>;
 }
 
 const ROOMS: Record<string, RoomDefinition> = {
@@ -43,7 +44,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Your Chai Cup',
                     subtitle: 'The brown ceramic mug from Priya',
-                    detail: 'Your favourite cup — the wide brown ceramic one Priya brought from Haridwar. You always hold it with both hands in the morning. Sunita makes your chai at 7:30 AM sharp: two spoons of sugar, cardamom, and a little ginger.',
+                    detail: 'Your favourite cup - the wide brown ceramic one Priya brought from Haridwar. You always hold it with both hands in the morning. Sunita makes your chai at 7:30 AM sharp: two spoons of sugar, cardamom, and a little ginger.',
                     tip: 'Try to remember: what does your chai smell like in the morning?',
                 }
             },
@@ -54,7 +55,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Masala Dabba',
                     subtitle: 'Silver box with 7 compartments',
-                    detail: 'The round dabba with the silver lid — Sunita\'s masala dabba. It has 7 small compartments: jeera, haldi, dhaniya, mirchi, hing, ajwain, and garam masala in the center. It lives on the counter left of the stove.',
+                    detail: 'The round dabba with the silver lid - Sunita\'s masala dabba. It has 7 small compartments: jeera, haldi, dhaniya, mirchi, hing, ajwain, and garam masala in the center. It lives on the counter left of the stove.',
                     tip: 'Touch the lid carefully. Do you recognise the smell from inside?',
                 }
             },
@@ -63,7 +64,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 label: 'Gas Stove',
                 x: 58, y: 46,
                 flashcard: {
-                    title: 'Gas Stove — Safety',
+                    title: 'Gas Stove - Safety',
                     subtitle: 'Always ask Sunita or Nurse Anita before using',
                     detail: 'This is the gas stove where chai and meals are cooked. For your safety, please do not use the stove alone. If you smell gas, leave the kitchen and call Sunita or Nurse Anita immediately.',
                     tip: 'Remember the rule: cooking is always with company.',
@@ -77,8 +78,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 x: 89, y: 42,
                 flashcard: {
                     title: 'The LG Fridge',
-                    subtitle: 'Medicines on top shelf — labelled by Priya',
-                    detail: 'This is the LG fridge — 260 litres, bought in 2019 during Diwali. The top shelf holds your medications, all labelled clearly by Priya with the time and dose on sticky notes. Reach it carefully to avoid losing your balance.',
+                    subtitle: 'Medicines on top shelf - labelled by Priya',
+                    detail: 'This is the LG fridge - 260 litres, bought in 2019 during Diwali. The top shelf holds your medications, all labelled clearly by Priya with the time and dose on sticky notes. Reach it carefully to avoid losing your balance.',
                     tip: 'Priya labelled everything in big blue letters so you can always find what you need.',
                 }
             },
@@ -89,8 +90,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Kitchen Clock',
                     subtitle: 'Round white clock above the window',
-                    detail: 'The round white clock hung above the kitchen window. It was bought from Connaught Place in 2003 — you picked it during a Saturday market trip with Sunita. It runs on a single AA battery. It shows the right time.',
-                    tip: 'Look at the clock now — can you tell what time it is?',
+                    detail: 'The round white clock hung above the kitchen window. It was bought from Connaught Place in 2003 - you picked it during a Saturday market trip with Sunita. It runs on a single AA battery. It shows the right time.',
+                    tip: 'Look at the clock now - can you tell what time it is?',
                 }
             },
             {
@@ -98,7 +99,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 label: 'Medicine Box',
                 x: 78, y: 22,
                 flashcard: {
-                    title: 'Medicine Box — Important',
+                    title: 'Medicine Box - Important',
                     subtitle: 'Only take medicine when Nurse Anita confirms',
                     detail: 'This white lockable cabinet sits above your bedside table and has all your medicines. Donepezil in the morning at 7 AM, Vitamin D on Sundays, Memantine at 7 PM. Always wait for Nurse Anita to confirm before taking any.',
                     tip: 'Never take extra medicine if you forget. Just tell Anita.',
@@ -121,8 +122,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'The Rosewood Bed',
                     subtitle: 'You sleep on the right side',
-                    detail: 'Your bed — a solid rosewood double bed bought from a furniture shop in Sector 18, Gurugram, in 2004. You always sleep on the right side (when lying down). Sunita takes the left. The white cotton bedsheet is changed every Sunday.',
-                    tip: 'If you wake up at night confused, stay calm — you are in your own bedroom at home.',
+                    detail: 'Your bed - a solid rosewood double bed bought from a furniture shop in Sector 18, Gurugram, in 2004. You always sleep on the right side (when lying down). Sunita takes the left. The white cotton bedsheet is changed every Sunday.',
+                    tip: 'If you wake up at night confused, stay calm - you are in your own bedroom at home.',
                 }
             },
             {
@@ -130,8 +131,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 label: 'Medicine Cabinet',
                 x: 78, y: 30,
                 flashcard: {
-                    title: 'Medicine Cabinet — Safety',
-                    subtitle: 'Everything labelled — only take as told',
+                    title: 'Medicine Cabinet - Safety',
+                    subtitle: 'Everything labelled - only take as told',
                     detail: 'The white wall-mounted cabinet above your right bedside table. All medicines are inside, labelled with time and dose by Priya. Do not open and take medicines on your own. Nurse Anita handles all doses.',
                     tip: 'The cabinet door has a lock. Nurse Anita has the key.',
                     isSafety: true,
@@ -145,7 +146,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Steel Almirah',
                     subtitle: 'Clothes left door, documents right door',
-                    detail: 'Your large Godrej steel almirah — three doors. Left side holds your kurtas, pyjamas, and Sunita\'s sarees. Middle holds folded bedsheets and towels. The right door has your important documents: Aadhaar, bank papers, land records.',
+                    detail: 'Your large Godrej steel almirah - three doors. Left side holds your kurtas, pyjamas, and Sunita\'s sarees. Middle holds folded bedsheets and towels. The right door has your important documents: Aadhaar, bank papers, land records.',
                     tip: 'Your blue and white kurta for pooja is in the second rack on the left.',
                 }
             },
@@ -156,7 +157,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Ajanta Wall Clock',
                     subtitle: 'Gifted by Priya on your 65th birthday',
-                    detail: 'This circular Ajanta clock was a birthday gift from Priya on your 65th birthday — 2018. It has a wooden frame and a quiet tick. It hangs above the bedroom door. The time shown is always correct — check it when you wake up.',
+                    detail: 'This circular Ajanta clock was a birthday gift from Priya on your 65th birthday - 2018. It has a wooden frame and a quiet tick. It hangs above the bedroom door. The time shown is always correct - check it when you wake up.',
                     tip: 'Look at this clock first thing every morning to orient yourself.',
                 }
             },
@@ -174,8 +175,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 x: 14, y: 58,
                 flashcard: {
                     title: 'Your Recliner',
-                    subtitle: 'Brown leather — your favourite spot',
-                    detail: 'The brown leather recliner chair near the east window — this is YOUR chair. You\'ve sat here for morning newspapers, afternoon naps, and evening chai for seven years. The footrest lever is on the right armrest.',
+                    subtitle: 'Brown leather - your favourite spot',
+                    detail: 'The brown leather recliner chair near the east window - this is YOUR chair. You\'ve sat here for morning newspapers, afternoon naps, and evening chai for seven years. The footrest lever is on the right armrest.',
                     tip: 'This is the safest, most familiar seat in the house. Come here when you feel overwhelmed.',
                 }
             },
@@ -185,7 +186,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 x: 82, y: 42,
                 flashcard: {
                     title: 'Samsung Television',
-                    subtitle: '43 inch — Doordarshan News at 9 PM',
+                    subtitle: '43 inch - Doordarshan News at 9 PM',
                     detail: 'Your Samsung 43-inch TV. The remote is always kept on the right armrest of the recliner. Press the red power button to turn on. Channel 101 is Doordarshan News for your 9 PM bulletin. Volume up/down on the right side of the remote.',
                     tip: 'If the TV shows a black screen, try pressing the red button on the remote twice.',
                 }
@@ -197,7 +198,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Family Photo Wall',
                     subtitle: '12 framed photos from 1980 to 2019',
-                    detail: 'Twelve framed photographs on the north wall — your family\'s story. Top row: your wedding (1980), Amit\'s birth (1985), Priya\'s birth (1987). Middle: family picnics, Shimla trip 2009, Amit\'s IIT result. Bottom: Priya\'s wedding (2012), Arjun\'s birth (2019).',
+                    detail: 'Twelve framed photographs on the north wall - your family\'s story. Top row: your wedding (1980), Amit\'s birth (1985), Priya\'s birth (1987). Middle: family picnics, Shimla trip 2009, Amit\'s IIT result. Bottom: Priya\'s wedding (2012), Arjun\'s birth (2019).',
                     tip: 'Look at each photo and try to name the people. Can you name three?',
                 }
             },
@@ -208,8 +209,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Prayer Corner',
                     subtitle: 'Ram, Ganesh, and Durga idols',
-                    detail: 'Your small mandir in the northwest corner of the living room. Ram, Ganesh, and Durga idols on a marble shelf. The agarbatti holder is brass — you do pooja at 7:00 AM every morning. Sunita lights the diya at 6:50 AM.',
-                    tip: 'The pooja routine helps your memory — try to say the Gayatri Mantra during pooja.',
+                    detail: 'Your small mandir in the northwest corner of the living room. Ram, Ganesh, and Durga idols on a marble shelf. The agarbatti holder is brass - you do pooja at 7:00 AM every morning. Sunita lights the diya at 6:50 AM.',
+                    tip: 'The pooja routine helps your memory - try to say the Gayatri Mantra during pooja.',
                 }
             },
         ],
@@ -227,7 +228,7 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Your Morning Bench',
                     subtitle: 'Sunlight, chai, and newspaper by 8 AM',
-                    detail: 'The iron bench near the marigold patch — your morning spot. You sit here at 8 AM after breakfast, facing the sun. Vitamin D from morning light is part of your health routine. Nurse Anita sits nearby.',
+                    detail: 'The iron bench near the marigold patch - your morning spot. You sit here at 8 AM after breakfast, facing the sun. Vitamin D from morning light is part of your health routine. Nurse Anita sits nearby.',
                     tip: 'Spending 20 minutes in morning sun helps your brain and your mood.',
                 }
             },
@@ -256,8 +257,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 x: 50, y: 35,
                 flashcard: {
                     title: 'Your Home Mandir',
-                    subtitle: 'Ram, Ganesh, Durga — pooja at 7 AM',
-                    detail: 'The teak wood mandir in the prayer room. Ram, Ganesh, and Durga idols on the upper shelf. The brass diya, agarbatti stand, and a small bell are always here. Pooja at 7:00 AM every day — Sunita prepares the flowers.',
+                    subtitle: 'Ram, Ganesh, Durga - pooja at 7 AM',
+                    detail: 'The teak wood mandir in the prayer room. Ram, Ganesh, and Durga idols on the upper shelf. The brass diya, agarbatti stand, and a small bell are always here. Pooja at 7:00 AM every day - Sunita prepares the flowers.',
                     tip: 'The Gayatri Mantra centres your mind. Try saying it slowly once.',
                 }
             },
@@ -268,8 +269,8 @@ const ROOMS: Record<string, RoomDefinition> = {
                 flashcard: {
                     title: 'Bhajan Sangrah',
                     subtitle: 'Tulsidas Ramcharitmanas + personal notes',
-                    detail: 'Your old bhajan book — a green-covered notebook combining Tulsidas verses and bhajans you\'ve written down since 1992. It has 86 pages. Some bhajans are in your handwriting in black ink. The book lives on the right shelf of the mandir.',
-                    tip: 'Reading one bhajan aloud — even haltingly — brings mental calm.',
+                    detail: 'Your old bhajan book - a green-covered notebook combining Tulsidas verses and bhajans you\'ve written down since 1992. It has 86 pages. Some bhajans are in your handwriting in black ink. The book lives on the right shelf of the mandir.',
+                    tip: 'Reading one bhajan aloud - even haltingly - brings mental calm.',
                 }
             },
         ],
@@ -279,7 +280,7 @@ const ROOMS: Record<string, RoomDefinition> = {
 /* ── Score helpers ── */
 const POINTS_PER_OBJECT = 100;
 const HINT_PENALTY = 30;
-const TIME_BONUS_THRESHOLD = 120; // seconds — bonus if completed within this
+const TIME_BONUS_THRESHOLD = 120; // seconds - bonus if completed within this
 
 function formatTimer(seconds: number): string {
     const m = Math.floor(seconds / 60);
@@ -290,9 +291,26 @@ function formatTimer(seconds: number): string {
 export default function RoomScenePage() {
     const params = useParams();
     const router = useRouter();
-    const roomSlug = params?.room as string ?? 'kitchen';
-    const room = ROOMS[roomSlug] ?? ROOMS.kitchen;
-    const RoomSVG = room.SvgComponent;
+    const roomSlug = params?.room as string;
+
+    const [customRoom, setCustomRoom] = useState<any>(null);
+
+    useEffect(() => {
+        if (!ROOMS[roomSlug]) {
+            try {
+                const raw = localStorage.getItem('saathi_custom_rooms');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    const found = parsed.find((r: any) => r.slug === roomSlug);
+                    if (found) setCustomRoom(found);
+                }
+            } catch (e) { console.error('Error loading custom rooms'); }
+        }
+    }, [roomSlug]);
+
+    const baseRoom = ROOMS[roomSlug];
+    const room = baseRoom || customRoom;
+    const RoomSVG = baseRoom?.SvgComponent;
 
     const [activeHotspot, setActiveHotspot] = useState<HotspotData | null>(null);
     const [remembered, setRemembered] = useState<Set<string>>(new Set());
@@ -307,21 +325,23 @@ export default function RoomScenePage() {
 
     // Load best score from localStorage
     useEffect(() => {
+        if (!room) return;
         try {
             const saved = localStorage.getItem(`saathi_room_best_${roomSlug}`);
             if (saved) setBestScore(parseInt(saved, 10));
         } catch { }
-    }, [roomSlug]);
+    }, [roomSlug, room]);
 
     // Timer
     useEffect(() => {
-        if (isComplete) return;
+        if (isComplete || !room) return;
         const interval = setInterval(() => setTimer((t) => t + 1), 1000);
         return () => clearInterval(interval);
-    }, [isComplete]);
+    }, [isComplete, room]);
 
     // Check completion
     useEffect(() => {
+        if (!room) return;
         if (remembered.size === room.hotspots.length && room.hotspots.length > 0 && !isComplete) {
             const timeBonus = timer <= TIME_BONUS_THRESHOLD ? Math.max(0, (TIME_BONUS_THRESHOLD - timer) * 2) : 0;
             const finalScore = score + timeBonus;
@@ -335,7 +355,7 @@ export default function RoomScenePage() {
                 } catch { }
             }
         }
-    }, [remembered, room.hotspots.length, isComplete, score, timer, bestScore, roomSlug]);
+    }, [remembered, room?.hotspots?.length, isComplete, score, timer, bestScore, roomSlug, room]);
 
     const speak = (text: string) => {
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -357,7 +377,8 @@ export default function RoomScenePage() {
     }, [remembered, streak]);
 
     const handleHint = () => {
-        const unrevealed = room.hotspots.filter((hs) => !remembered.has(hs.id));
+        if (!room) return;
+        const unrevealed = room.hotspots.filter((hs: any) => !remembered.has(hs.id));
         if (unrevealed.length === 0) return;
         const target = unrevealed[Math.floor(Math.random() * unrevealed.length)];
         setHintTarget(target);
@@ -385,6 +406,8 @@ export default function RoomScenePage() {
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
     }, []);
+
+    if (!room) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-surface)' }}>Loading Room...</div>;
 
     const remaining = room.hotspots.length - remembered.size;
 
@@ -447,12 +470,15 @@ export default function RoomScenePage() {
 
             {/* Room scene */}
             <div className={styles.sceneWrap}>
-                <div className={`${styles.scene} ${styles[room.bgClass]}`} aria-label={`${room.name} scene with interactive objects`}>
-                    {/* SVG Room Illustration */}
-                    <RoomSVG className={styles.roomSvg} />
+                <div className={`${styles.scene} ${room.bgClass ? styles[room.bgClass] : ''}`} aria-label={`${room.name} scene with interactive objects`}>
+                    {/* SVG Room Illustration OR Custom Image */}
+                    {RoomSVG && <RoomSVG className={styles.roomSvg} />}
+                    {!RoomSVG && room.bgImage && (
+                        <img src={room.bgImage} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, left: 0 }} />
+                    )}
 
                     {/* Hotspots */}
-                    {room.hotspots.map((hs) => (
+                    {room.hotspots.map((hs: any) => (
                         <button
                             key={hs.id}
                             className={`${styles.hotspot} ${remembered.has(hs.id) ? styles.hotspotRemembered : ''} ${hs.flashcard.isSafety ? styles.hotspotSafety : ''} ${showHint && hintTarget?.id === hs.id ? styles.hotspotHinted : ''}`}
@@ -641,14 +667,7 @@ export default function RoomScenePage() {
                                     Already Remembered
                                 </div>
                             )}
-                            <button
-                                className={styles.moreBtn}
-                                onClick={() => speak(`Tell me more about: ${activeHotspot.flashcard.detail}`)}
-                                aria-label="Tell me more"
-                            >
-                                <Plus size={18} />
-                                Tell Me More
-                            </button>
+
                         </div>
                     </div>
                 </div>

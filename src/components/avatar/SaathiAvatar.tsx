@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 /**
- * SaathiAvatar — 3D avatar wrapper that renders the GLB model
+ * SaathiAvatar - 3D avatar wrapper that renders the GLB model
  * in a Three.js canvas, with Web Speech API for TTS/STT,
  * and connects to the existing LLM APIs.
  *
@@ -134,7 +134,7 @@ export default function SaathiAvatar({
         );
     }, []);
 
-    // Chrome keepalive ref — Chrome pauses long utterances after ~15s
+    // Chrome keepalive ref - Chrome pauses long utterances after ~15s
     const keepAliveRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // ALWAYS speak + animate when a new AI response arrives
@@ -172,7 +172,7 @@ export default function SaathiAvatar({
         setIsSpeaking(true);
         onSpeakingChange?.(true);
 
-        // Function to actually speak — called after a delay (Chrome bug workaround)
+        // Function to actually speak - called after a delay (Chrome bug workaround)
         const doSpeak = () => {
             const utterance = new SpeechSynthesisUtterance(latestResponse);
             utterance.lang = 'en-IN';
@@ -411,7 +411,7 @@ export default function SaathiAvatar({
 
     return (
         <div className={wrapperClasses}>
-            {/* Controls row — hidden in fullscreen mode */}
+            {/* Controls row - hidden in fullscreen mode */}
             {!fullscreen && (
                 <div className={styles.controlsRow}>
                     {collapsible && (
@@ -449,7 +449,7 @@ export default function SaathiAvatar({
                 <Loader />
             </div>
 
-            {/* Voice controls — in fullscreen they overlay the bottom of the canvas */}
+            {/* Voice controls - in fullscreen they overlay the bottom of the canvas */}
             <div className={`${styles.voiceControls} ${fullscreen ? styles.voiceControlsOverlay : ''}`}>
                 {onVoiceInput && (
                     <button

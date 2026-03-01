@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -51,28 +51,97 @@ import { mockAnalytics, mockAlerts, mockSchedule, mockGameScores, type Alert as 
 function CognitiveTrendChart({ scores }: { scores: { date: string; score: number }[] }) {
     if (!scores || scores.length < 2) return null;
     const max = 100, min = 50, range = max - min;
-    const w = 220, h = 64;
-    const points = scores.map((d, i) => {
-        const x = (i / (scores.length - 1)) * w;
-        const y = h - ((d.score - min) / range) * h;
-        return `${x},${y}`;
-    });
+    const padLeft = 28, padRight = 8, padTop = 12, padBottom = 22;
+    const w = 280, h = 100;
+    const chartW = w - padLeft - padRight;
+    const chartH = h - padTop - padBottom;
+
+    const getX = (i: number) => padLeft + (i / (scores.length - 1)) * chartW;
+    const getY = (score: number) => padTop + chartH - ((score - min) / range) * chartH;
+
+    const points = scores.map((d, i) => `${getX(i)},${getY(d.score)}`);
     const pathD = `M ${points.join(' L ')}`;
-    const areaD = `M 0,${h} L ${points.join(' L ')} L ${w},${h} Z`;
+    const areaD = `M ${padLeft},${padTop + chartH} L ${points.join(' L ')} L ${getX(scores.length - 1)},${padTop + chartH} Z`;
+
+    const gridLines = [60, 70, 80, 90];
+
     return (
-        <svg viewBox={`0 0 ${w} ${h}`} className={styles.trendChart} aria-label="Cognitive score trend">
+        <svg viewBox={`0 0 ${w} ${h}`} className={styles.trendChart} preserveAspectRatio="xMidYMid meet" aria-label="Cognitive score trend">
             <defs>
                 <linearGradient id="cog-grad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.02" />
+                    <stop offset="0%" stopColor="#2D5A3D" stopOpacity="0.18" />
+                    <stop offset="100%" stopColor="#2D5A3D" stopOpacity="0.02" />
                 </linearGradient>
             </defs>
+            {gridLines.map(val => (
+                <g key={val}>
+                    <line x1={padLeft} y1={getY(val)} x2={w - padRight} y2={getY(val)}
+                        stroke="var(--border-subtle)" strokeWidth="0.8" strokeDasharray="3 2" />
+                    <text x={padLeft - 4} y={getY(val) + 3} textAnchor="end"
+                        fill="var(--text-muted)" fontSize="8" fontWeight="500">{val}</text>
+                </g>
+            ))}
             <path d={areaD} fill="url(#cog-grad)" />
-            <path d={pathD} stroke="#7C3AED" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+            <path d={pathD} stroke="var(--color-primary)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
             {scores.map((d, i) => {
-                const x = (i / (scores.length - 1)) * w;
-                const y = h - ((d.score - min) / range) * h;
-                return <circle key={i} cx={x} cy={y} r="3.5" fill="#7C3AED" />;
+                const cx = getX(i);
+                const cy = getY(d.score);
+                const isLast = i === scores.length - 1;
+                return (
+                    <g key={i}>
+                        <circle cx={cx} cy={cy} r={isLast ? 4 : 2.5}
+                            fill={isLast ? 'var(--color-primary)' : 'var(--color-primary-light)'}
+                            stroke="var(--bg-surface)" strokeWidth={isLast ? 1.5 : 0.8} />
+                        {isLast && (
+                            <text x={cx} y={cy - 8} textAnchor="middle"
+                                fill="var(--color-primary)" fontSize="10" fontWeight="700">{d.score}</text>
+                        )}
+                    </g>
+                );
+            })}
+            {scores.map((d, i) => {
+                if (i !== 0 && i !== scores.length - 1 && i !== Math.floor(scores.length / 2)) return null;
+                const label = new Date(d.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+                return (
+                    <text key={`label-${i}`} x={getX(i)} y={h - 3} textAnchor="middle"
+                        fill="var(--text-muted)" fontSize="8" fontWeight="500">{label}</text>
+                );
+            })}
+        </svg>
+    );
+}
+
+function MetricsBarChart({ data }: { data: { label: string; value: number; color: string }[] }) {
+    const w = 280, h = 100;
+    const padLeft = 6, padRight = 6, padTop = 8, padBottom = 24;
+    const chartW = w - padLeft - padRight;
+    const chartH = h - padTop - padBottom;
+    const barCount = data.length;
+    const gap = 12;
+    const barW = (chartW - gap * (barCount - 1)) / barCount;
+
+    return (
+        <svg viewBox={`0 0 ${w} ${h}`} className={styles.trendChart} preserveAspectRatio="xMidYMid meet" aria-label="Health metrics">
+            {data.map((d, i) => {
+                const x = padLeft + i * (barW + gap);
+                const barH = (d.value / 100) * chartH;
+                const y = padTop + chartH - barH;
+                return (
+                    <g key={i}>
+                        {/* Background bar */}
+                        <rect x={x} y={padTop} width={barW} height={chartH}
+                            rx={6} fill="var(--border-subtle)" opacity="0.4" />
+                        {/* Value bar */}
+                        <rect x={x} y={y} width={barW} height={barH}
+                            rx={6} fill={d.color} opacity="0.85" />
+                        {/* Value label */}
+                        <text x={x + barW / 2} y={y - 4} textAnchor="middle"
+                            fill="var(--text-heading)" fontSize="9" fontWeight="700">{d.value}%</text>
+                        {/* Category label */}
+                        <text x={x + barW / 2} y={h - 4} textAnchor="middle"
+                            fill="var(--text-muted)" fontSize="7.5" fontWeight="500">{d.label}</text>
+                    </g>
+                );
             })}
         </svg>
     );
@@ -157,7 +226,7 @@ export default function GuardianDashboard() {
     // Alerts
     const resolvedAlerts = isDemo ? mockAlerts.slice(0, 3) : alerts.slice(0, 3);
 
-    // QR scans — number only
+    // QR scans - number only
     const resolvedQrCount = isDemo ? mockQRScans.length : qrCount;
 
     const categoryColors: Record<string, string> = {
@@ -177,7 +246,7 @@ export default function GuardianDashboard() {
             <main className={styles.content}>
                 {!loaded ? <SkeletonDash /> : (
                     <>
-                        <section className={styles.digest} aria-label="Daily digest">
+                        <section className={styles.digest} aria-label="Daily digest" data-tooltip="AI-generated daily summary of your patient's care metrics and activity">
                             <div className={styles.digestIcon}><Zap size={15} aria-hidden="true" /></div>
                             <p className={styles.digestText}>
                                 <strong>Today&rsquo;s summary:</strong> {patientName} completed {completedToday} of {resolvedSchedule.length} tasks today.
@@ -191,7 +260,7 @@ export default function GuardianDashboard() {
 
                         <div className={styles.grid}>
                             {/* COGNITIVE SCORE */}
-                            <article className={`${styles.card} ${styles.cardFeatured}`} aria-label="Cognitive score overview">
+                            <article className={`${styles.card} ${styles.cardFeatured}`} aria-label="Cognitive score overview" data-tooltip="Overall cognitive health score based on memory, recall, and engagement data">
                                 <div className={styles.cardHeaderRow}>
                                     <div>
                                         <span className={styles.cardLabel}>Cognitive Score</span>
@@ -199,7 +268,7 @@ export default function GuardianDashboard() {
                                             <span className={styles.scoreNum}><AnimatedNumber value={cogScore} /></span>
                                             <span className={styles.scoreMax}>/100</span>
                                             {trendDelta !== 0 && (
-                                                <span className={styles.scoreDelta}>
+                                                <span className={styles.scoreDelta} data-tooltip={`Score changed by ${trendDelta > 0 ? '+' : ''}${trendDelta} points compared to the first recorded reading`}>
                                                     <TrendingUp size={13} aria-hidden="true" /> {trendDelta > 0 ? '+' : ''}{trendDelta} this period
                                                 </span>
                                             )}
@@ -208,31 +277,44 @@ export default function GuardianDashboard() {
                                     </div>
                                     <span className={styles.scoreBadge}>{analytics?.careStage?.charAt(0).toUpperCase() + (analytics?.careStage?.slice(1) ?? '') || 'Moderate'}</span>
                                 </div>
-                                <CognitiveTrendChart scores={cogTrend} />
                                 <div className={styles.featuredStats}>
-                                    <div className={styles.fStat}>
+                                    <div className={styles.fStat} data-tooltip="Percentage of prescribed medications taken on time this period">
                                         <span className={styles.fStatNum}><AnimatedNumber value={medAdherence} suffix="%" /></span>
                                         <span className={styles.fStatLabel}>Medication adherence</span>
                                     </div>
-                                    <div className={styles.fStat}>
+                                    <div className={styles.fStat} data-tooltip="Average accuracy on memory recall exercises - higher is better">
                                         <span className={styles.fStatNum}><AnimatedNumber value={recallPct} suffix="%" /></span>
                                         <span className={styles.fStatLabel}>Avg recall rate</span>
                                     </div>
-                                    <div className={styles.fStat}>
+                                    <div className={styles.fStat} data-tooltip="Number of consecutive days your patient has played a brain game">
                                         <span className={styles.fStatNum}><AnimatedNumber value={gameStreak} suffix="d" /></span>
                                         <span className={styles.fStatLabel}>Game streak</span>
                                     </div>
                                 </div>
-                                <Link href="/guardian/analytics" className={styles.cardLink}>
+                                <div className={styles.dualCharts}>
+                                    <div className={styles.chartPane}>
+                                        <span className={styles.chartPaneLabel}>Score Trend</span>
+                                        <CognitiveTrendChart scores={cogTrend} />
+                                    </div>
+                                    <div className={styles.chartPane}>
+                                        <span className={styles.chartPaneLabel}>Health Metrics</span>
+                                        <MetricsBarChart data={[
+                                            { label: 'Medication', value: medAdherence, color: 'var(--color-success)' },
+                                            { label: 'Recall', value: recallPct, color: 'var(--color-info)' },
+                                            { label: 'Game Avg', value: avgGame, color: 'var(--color-warning)' },
+                                        ]} />
+                                    </div>
+                                </div>
+                                <Link href="/guardian/analytics" className={styles.cardLink} data-tooltip="View detailed graphs, trends, and historical cognitive data">
                                     Full analytics <ChevronRight size={14} aria-hidden="true" />
                                 </Link>
                             </article>
 
                             {/* TODAY'S SCHEDULE */}
-                            <article className={styles.card} aria-label="Today's schedule summary">
+                            <article className={styles.card} aria-label="Today's schedule summary" data-tooltip="Today's task schedule showing completed and pending care tasks">
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><Calendar size={13} aria-hidden="true" /> Schedule</span>
-                                    <Link href="/guardian/schedule" className={styles.viewAll}>View all</Link>
+                                    <Link href="/guardian/schedule" className={styles.viewAll} data-tooltip="See and manage the full care schedule">View all</Link>
                                 </div>
                                 <div className={styles.taskProgress}>
                                     <div className={styles.taskBar}>
@@ -253,7 +335,7 @@ export default function GuardianDashboard() {
                             </article>
 
                             {/* MOOD */}
-                            <article className={styles.card} aria-label="Patient's mood">
+                            <article className={styles.card} aria-label="Patient's mood" data-tooltip="Patient's dominant emotional state based on today's logged mood entries">
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><Smile size={13} aria-hidden="true" /> Mood Today</span>
                                 </div>
@@ -262,10 +344,10 @@ export default function GuardianDashboard() {
                             </article>
 
                             {/* MEMORY RECALL */}
-                            <article className={styles.card} aria-label="Memory recall stats">
+                            <article className={styles.card} aria-label="Memory recall stats" data-tooltip="Memory recall accuracy - how correctly your patient identifies people and memories">
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><Brain size={13} aria-hidden="true" /> Memory Recall</span>
-                                    <Link href="/guardian/memories" className={styles.viewAll}>View</Link>
+                                    <Link href="/guardian/memories" className={styles.viewAll} data-tooltip="Manage memory flashcards and view recall history">View</Link>
                                 </div>
                                 <div className={styles.recallScore}>
                                     <span className={styles.recallNum}><AnimatedNumber value={recallPct} suffix="%" /></span>
@@ -277,10 +359,10 @@ export default function GuardianDashboard() {
                             </article>
 
                             {/* GAMES */}
-                            <article className={styles.card} aria-label="Games and activities">
+                            <article className={styles.card} aria-label="Games and activities" data-tooltip="Brain game engagement stats - streaks build cognitive resilience">
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><Gamepad2 size={13} aria-hidden="true" /> Games</span>
-                                    <Link href="/guardian/games" className={styles.viewAll}>View</Link>
+                                    <Link href="/guardian/games" className={styles.viewAll} data-tooltip="View detailed game scores and activity logs">View</Link>
                                 </div>
                                 <div className={styles.streakWrap}>
                                     <span className={styles.streakNum}><AnimatedNumber value={gameStreak} /></span>
@@ -293,10 +375,11 @@ export default function GuardianDashboard() {
                             <article
                                 className={`${styles.card} ${resolvedAlerts.length > 0 ? styles.cardUrgent : ''}`}
                                 aria-label="Recent alerts"
+                                data-tooltip="Recent safety and care alerts that need your attention"
                             >
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><AlertTriangle size={13} aria-hidden="true" /> Alerts</span>
-                                    <Link href="/guardian/alerts" className={styles.viewAll}>All alerts</Link>
+                                    <Link href="/guardian/alerts" className={styles.viewAll} data-tooltip="View all alerts and mark them as read">All alerts</Link>
                                 </div>
                                 {resolvedAlerts.length === 0 ? (
                                     <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '8px' }}>No recent alerts.</p>
@@ -325,10 +408,10 @@ export default function GuardianDashboard() {
                             </article>
 
                             {/* QR LOG */}
-                            <article className={styles.card} aria-label="QR scan log">
+                            <article className={styles.card} aria-label="QR scan log" data-tooltip="Total number of times your patient's emergency QR bracelet has been scanned by strangers">
                                 <div className={styles.cardTopRow}>
                                     <span className={styles.cardLabel}><QrCode size={13} aria-hidden="true" /> QR Scans</span>
-                                    <Link href="/guardian/qr" className={styles.viewAll}>Manage</Link>
+                                    <Link href="/guardian/qr" className={styles.viewAll} data-tooltip="Manage QR codes and view the full scan history">Manage</Link>
                                 </div>
                                 <div className={styles.qrCount}>
                                     <span className={styles.qrNum}><AnimatedNumber value={resolvedQrCount} /></span>
