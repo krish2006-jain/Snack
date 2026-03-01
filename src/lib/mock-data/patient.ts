@@ -554,3 +554,54 @@ export const mockFamilyContributions: FamilyContribution[] = [
         timeLabel: '1 hour ago',
     },
 ];
+
+// NOSTALGIA RADIO
+export interface RadioSong {
+    id: string;
+    title: string;
+    artist: string;
+    era: string;
+    addedBy: string;
+    coverColor: string;
+    youtubeUrl?: string;
+    audioUrl?: string;
+}
+
+export const mockRadioSongs: RadioSong[] = [
+    {
+        id: 'song-1',
+        title: 'Lag Jaa Gale',
+        artist: 'Lata Mangeshkar',
+        era: '1960s',
+        addedBy: 'Smita Sharma',
+        coverColor: '#9D174D',
+        audioUrl: '/audio/song1.mp3',
+    },
+    {
+        id: 'song-2',
+        title: 'Kishore Kumar Classics',
+        artist: 'Kishore Kumar',
+        era: '1970s',
+        addedBy: 'Mohit Sharma',
+        coverColor: '#0369A1',
+        audioUrl: '/audio/song2.mp3',
+    },
+    {
+        id: 'song-3',
+        title: 'Yeh Dosti Hum Nahi Todenge',
+        artist: 'Kishore Kumar & Manna Dey',
+        era: '1975',
+        addedBy: 'Priya Sharma',
+        coverColor: '#B45309',
+        audioUrl: '/audio/song3.mp3',
+    },
+    {
+        id: 'song-4',
+        title: 'Awara Hoon',
+        artist: 'Mukesh',
+        era: '1950s',
+        addedBy: 'Smita Sharma',
+        coverColor: '#1E3A5F',
+        audioUrl: '/audio/song4.mp3',
+    }
+];

@@ -119,16 +119,33 @@ export default function SaathiAvatar({
         }
     }, [isTyping]);
 
-    // Helper: pick the best available voice
-    const pickVoice = useCallback(() => {
+    // Helper: pick the best available voice based on text language
+    const pickVoice = useCallback((textToSpeak: string) => {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length === 0) return null;
-        return (
-            voices.find(v => v.lang === 'en-IN') ||
-            voices.find(v => v.lang === 'en-US') ||
-            voices.find(v => v.lang.startsWith('en')) ||
-            voices[0]
-        );
+
+        // Detect Devanagari script (Hindi/Marathi) using regex
+        // Range \u0900-\u097F covers Devanagari characters
+        const hasDevanagari = /[\u0900-\u097F]/.test(textToSpeak);
+
+        if (hasDevanagari) {
+            // Prioritize Hindi or Marathi voices
+            return (
+                voices.find(v => v.lang === 'hi-IN') ||
+                voices.find(v => v.lang === 'mr-IN') ||
+                voices.find(v => v.lang.startsWith('hi')) ||
+                voices.find(v => v.lang === 'en-IN') || // Fallback to Indian English if no native voice
+                voices[0]
+            );
+        } else {
+            // Default to English voices
+            return (
+                voices.find(v => v.lang === 'en-IN') ||
+                voices.find(v => v.lang === 'en-US') ||
+                voices.find(v => v.lang.startsWith('en')) ||
+                voices[0]
+            );
+        }
     }, []);
 
     // ALWAYS speak + animate when a new AI response arrives
@@ -170,7 +187,7 @@ export default function SaathiAvatar({
             utterance.pitch = 1.05;
             utterance.volume = voiceEnabled ? 1 : 0;
 
-            const voice = pickVoice();
+            const voice = pickVoice(latestResponse);
             if (voice) utterance.voice = voice;
 
             utteranceRef.current = utterance;
@@ -269,7 +286,7 @@ export default function SaathiAvatar({
                 newUtterance.rate = 0.9;
                 newUtterance.pitch = 1.05;
                 newUtterance.volume = voiceEnabled ? 1 : 0;
-                const voice = pickVoice();
+                const voice = pickVoice(latestResponse);
                 if (voice) newUtterance.voice = voice;
                 newUtterance.onend = utteranceRef.current!.onend;
                 newUtterance.onerror = utteranceRef.current!.onerror;

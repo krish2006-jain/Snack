@@ -15,6 +15,7 @@ import {
     Home,
     Mic,
     BookOpen,
+    Radio,
 } from 'lucide-react';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import { useSession } from '@/lib/useSession';
@@ -234,6 +235,13 @@ export default function PatientHome() {
                                 <Gamepad2 size={44} color="var(--color-primary)" aria-hidden="true" />
                                 <h2 className={styles.quickTitle}>Brain Games</h2>
                                 <p className={styles.quickSub}>Keep your mind active</p>
+                            </Link>
+
+                            {/* Nostalgia Radio */}
+                            <Link href="/patient/radio" className={`${styles.quickCard} card-enter`} style={{ animationDelay: '450ms' }} data-tooltip="Listen to favorite songs from the past">
+                                <Radio size={44} color="var(--color-primary)" aria-hidden="true" />
+                                <h2 className={styles.quickTitle}>Nostalgia Radio</h2>
+                                <p className={styles.quickSub}>Music from the past</p>
                             </Link>
 
                             {/* Stories */}

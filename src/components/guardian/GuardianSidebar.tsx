@@ -8,7 +8,7 @@ import {
     LayoutDashboard, Calendar, Brain, Users, Home,
     Gamepad2, FileText, QrCode, Bell, BarChart3,
     Layers, ClipboardList, LogOut, Heart, ChevronDown,
-    ChevronLeft, ChevronRight,
+    ChevronLeft, ChevronRight, Radio,
 } from 'lucide-react';
 import { useSession } from '@/lib/useSession';
 import styles from './GuardianSidebar.module.css';
@@ -38,6 +38,7 @@ const navGroups: NavGroup[] = [
             { href: '/guardian/memories', label: 'Memories', icon: <Brain size={18} /> },
             { href: '/guardian/memory-room', label: 'Memory Room', icon: <Home size={18} /> },
             { href: '/guardian/people', label: 'People Wallet', icon: <Users size={18} /> },
+            { href: '/guardian/radio', label: 'Nostalgia Radio', icon: <Radio size={18} /> },
             { href: '/guardian/contributions', label: 'Contributions', icon: <Heart size={18} />, badge: 1 },
         ],
     },
